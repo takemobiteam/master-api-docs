@@ -1,0 +1,3014 @@
+FORMAT: 1A
+HOST: https://api.takemobi.com/
+
+# The Mobi Travel Planning API
+
+Mobi provides a REST API for accessing the inter-modal transportation planning 
+services. This page documents the second version of the API.
+
+Current version of Mobi API is running on:
+
+* https://api.takemobi.com/
+
+You will need to use https when querying the endpoints: http queries (on port 80) are not supported at the moment. 
+
+The API has four endpoints, **/mobility-data-repository/\<version\>/**, **/intermodal/\<version\>/**, **/mobility-planner/\<version\>/**, **/execution/\<version\>/**, 
+for retriving available mobility services, computing routes, planning multi-event trips, and monitoring trip progress.
+
+In order for a client application to be able to access Mobi API
+on behalf of it's users, the owner of the client application must first
+request access keys by sending an email to [peng@takemobi.com]. 
+Please provide your company name and application/project name.
+
+Our service currently covers Boston, San Francisco, Los Angeles, New York City, and other top 30 US metro areas. 
+Other cities can be added by request.
+
+## Allowed HTTP requests
+
+* GET - Retrieves a resource or list of resources
+* POST - Creates or updates a resource
+* PUT - Updates a resource
+* DELETE - Deletes a resource
+
+
+# Group Planning
+
+## Create Problem [/mobility-planner/demo/v2/problem{?user_id}]
+
+Create a new planning problem and find the best solution for the current problem.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique for the user creating the planning problem.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + solution (Solution, optional) - the solution object for the problem.
+        + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
+        + destination (Location, optional) - the representative location of this plan.
+        + display (Display, optional) - any recommended configurations for displaying this solutions.
+        
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Create Micro Planning Problem [/mobility-planner/demo/v2/problem/micro{?user_id}]
+
+Create a micro planning problem and find the best solution for it. A micro planning problem shares the same structure with a whole day planning problem, 
+but the time span is usually within an hour and both the start and end locations are inside a park. It is used for generating additional activities for guests when they
+have a small gap between two activities. Currently the types of POIs that can be included in this micro plan are ATTRACTION and ENTERTAINMENT.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + solution (Solution, optional) - the solution object for the micro planning problem.
+        + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
+        + destination (Location, optional) - the representative location of this plan.
+        + display (Display, optional) - any recommended configurations for displaying this solutions.
+        
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Next Best Solution [/mobility-planner/demo/v2/next-solution{?user_id}]
+
+Find the next best solution for the current problem.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+
+### GET
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + solution (Solution, optional) - the solution object for the problem.
+        + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
+        + destination (Location, optional) - the representative location of this plan.
+        + display (Display, optional) - any recommended configurations for displaying this solutions.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Alternative Activities [/mobility-planner/demo/v2/alternative-activity{?user_id,problem_id,solution_id,activity_id,max_number}]
+
+Given a solution, calculate preferred alternative activities for one inside the solution.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem
+    + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that alternatives should apply to.
+    + activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity that calculated alternatives will replace.
+    + max_number: `10` (number,required) - the max number of alternative activities to return.
+
+### GET
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + alternatives (array[Activity], optional) - a set of alternative activities for the one specified in the solution.
+        + locations (array[TimedLocation], optional) - a set of location objects referred by the alternative activities.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Select Alternative Activity and Replan [/mobility-planner/demo/v2/alternative-activity{?user_id,replan,problem_id,solution_id,activity_id}]
+
+Given the alternative activity for one in the existing solution, calculate a new plan.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + replan: `false` (boolean, required) - a boolean value. If set to true, the planner will try to find the best plan for the alternative activity, without preserving the existing selections.
+    + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem.
+    + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that this alternative should apply to.
+    + activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity that this alternative will replace.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (Activity, required)
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + solution (Solution, optional) - the solution object for the problem.
+        + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
+        + destination (Location, optional) - the representative location of this plan.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Candidate Activities For Insertion [/mobility-planner/demo/v2/additional-activity{?user_id,problem_id,solution_id,preceding_activity_id,succeeding_activity_id,max_number}]
+
+Given a solution, calculate preferred activities that can be added between the two specified activities.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem
+    + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that alternatives should apply to.
+    + preceding_activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity that represents the start of the time gap.
+    + succeeding_activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity that represents the end of the time gap.
+    + max_number: `10` (number,required) - the max number of alternative activities to return.
+
+### GET
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + alternatives (array[Activity], optional) - a set of additional activities for the gap between the activities specified in the solution.
+        + locations (array[Location], optional) - a set of location objects referred by the alternative activities.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Select Additional Activity and Replan [/mobility-planner/demo/v2/additional-activity{?user_id,problem_id,solution_id,preceding_activity_id,succeeding_activity_id}]
+
+Given the additional activity between the two specified ones, calculate a new plan.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem.
+    + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that alternatives should apply to.
+    + preceding_activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity that represents the start of the time gap.
+    + succeeding_activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity that represents the end of the time gap.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (Activity, required)
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + solution (Solution, optional) - the solution object for the problem.
+        + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
+        + destination (Location, optional) - the representative location of this plan.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+
+## Get Alternative Transportation [/mobility-planner/demo/v2/alternative-transportation{?user_id,problem_id,solution_id,activity_id}]
+
+Given a solution and a traversal activity, calculate preferred alternative transportation for it.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem
+    + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that alternatives should apply to.
+    + activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the traversal activity that calculated alternative transportation will replace.
+
+### GET
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + alternatives (array[Activity], optional) - a set of alternative transportation activities for the one specified in the solution.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+
+## Select Alternative Transportation and Replan [/mobility-planner/demo/v2/alternative-transportation{?user_id,problem_id,solution_id,activity_id,new_mode}]
+
+Given the alternative transportation activity for one in the existing solution, calculate a new plan.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem.
+    + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that this alternative should apply to.
+    + activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the transportation activity that this alternative will replace.
+    + new_mode: `DRIVE` (string, required) - a unique identifier for the activity that this alternative will replace.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (Activity, required)
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + solution (Solution, optional) - the solution object for the problem.
+        + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
+        + destination (Location, optional) - the representative location of this plan.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Reschedule Activity [/mobility-planner/demo/v2/reschedule-activity{?user_id,problem_id,solution_id}]
+
+Given an activity from the existing solution but with an updated schedule (start/end times or duration), calculate a new plan.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem.
+    + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that this rescheduling should apply to.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (Activity, required)
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + solution (Solution, optional) - the solution object for the problem.
+        + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
+        + destination (Location, optional) - the representative location of this plan.
+        + display (Display, optional) - any recommended configurations for displaying this solutions.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Remove Activity and Replan [/mobility-planner/demo/v2/activity{?user_id,problem_id,solution_id,activity_id}]
+
+Remove the specified activity in the existing solution, and calculate a new plan.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem.
+    + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution this removal will apply to.
+    + activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity to be removed.
+
+### DELETE
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + solution (Solution, optional) - the solution object for the problem.
+        + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
+        + destination (Location, optional) - the representative location of this plan.
+        + display (Display, optional) - any recommended configurations for displaying this solutions.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Add Temporal Conflict and Replan [/mobility-planner/demo/v2/temporal-conflict{?user_id}]
+
+Insert a new conflict of one temporal constraint and find the next best solution for the current problem.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (Constraint, required)
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + solution (Solution, optional) - the solution object for the problem.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Confirm Plan for Execution [/mobility-planner/demo/v2/solution{?problem_id,solution_id,user_id}]
+
+Confirm a solution for execution.
+
+### POST
+
++ Parameters
+    + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem created.
+    + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution to confirm.
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+
++ Response 200 (application/json)
+
+        The plan has been confirmed.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Get Confirmed Plan for a Problem [/mobility-planner/demo/v2/solution/confirmed{?problem_id}]
+
+Get confirmed solution for the given problem.
+
+### GET
+
++ Parameters
+    + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem created.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + `problem_id`: `4af63767-826b-4a76-af99-53e71840378d` (string, required) - a unique identifier for the given planning problem.
+        + `solution_id`: `59392ab2-61a9-418d-924b-217ed8fd043e` (string, required) - a unique identifier for a solution previously confirmed for the problem.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Commit events in Plan to Google Calendar [/mobility-planner/demo/google/calendar/commit/{problem_id}/{solution_id}]
+
+Commit the events in the plan to the user's Google calendar. Will redirect to Google's authentication page to obtain access.
+
+### GET
+
++ Parameters
+    + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem created.
+    + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution plan to commit.
+
++ Response 200 (application/json)
+
+        The plan has been committed successfully.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Sync events from Google Calendar [/mobility-planner/demo/v2/google/calendar/sync/{start}/{end}]
+
+Retrieve events in the user's Google calendar. Will redirect to Google's authentication page to obtain access.
+
+### GET
+
++ Parameters
+    + start: `5456345743` (number, required) - start time of the calendar event range to retrieve. It is a unix timestamp in seconds.
+    + end: `5456345743` (number, required) - end time of the calendar event range to retrieve. It is a unix timestamp in seconds.
+
++ Response 200 (application/json)
+
+        A list of events in the user's calendar that fits the time range. See https://developers.google.com/calendar/v3/reference/events for the response event format.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+## Plan Profile [/mobility-planner/demo/v2/profile{?user_id,mode,context}]
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique user identifier for the planning problem profile.
+    + mode (AllowedProblemMode, required) - the planner mode used for filtering preference options in the profile.
+    + context (string, optional) - the context used for filtering preference options in the profile.
+
+### GET
+
+Retrieve the planning problem profile.
+
++ Response 200 (application/json)
+
+    + Attributes (Profile, optional)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+### POST
+
+Update the planning problem profile for the user.
+
++ Request (application/json)
+
+    + Attributes (Profile, required)
+
++ Response 200 (application/json)
+
+        The profile has been updated.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+## Plan Profile Avatar [/mobility-planner/demo/v2/profile/avatar{?user_id}]
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique user identifier for the planning problem profile.
+
+### POST
+
+Update the avatar in the planning problem profile for the user.
+
++ Request (multipart/form)
+
+    + Attributes
+        + file: PNG image file
+
++ Response 200 (application/json)
+
+    + Attributes (Profile, required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+## Plan Profile Domain [/mobility-planner/demo/v2/profile/domain{?mode,context}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this profile domain.
+    + context (string, optional) - the context used for this profile domain.
+
+### GET
+
+Retrieve allowed profile options given the planning problem mode and context.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + domains (array[Preference], optional) - a list of preference options allowed for different categories of preferences.
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+## Plan POIs [/mobility-planner/demo/v2/domain{?mode,context}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this domain.
+    + context (string, optional) - only return POIs in this domain that has the specified context.
+
+### GET
+
+Retrieve all possible POIs that can be added to the planning problem given the specified planning problem mode and context.
+
++ Response 200 (application/json)
+
+    + Attributes (array[POIDomain], optional)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+## Plan Contexts [/mobility-planner/demo/v2/domain/contexts{?mode}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+
+### GET
+
+Retrieve all compatible contexts given the specified planning problem mode.
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + contexts (array[CandidateGoal], required) - a list of solution objects found for the problem.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Get Previous Problem [/mobility-planner/demo/v2/problem{?problem_id}]
+
++ Parameters
+    + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique problem identifier for a previously solved planning problem.
+
+### GET
+
+Retrieve a previously solved problem and solutions objects.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + problem (Problem, required) - the problem object that matches the given problem id.
+        + solutions (array[Solution], required) - a list of solution objects found for the problem.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+## Get Previous Solution [/mobility-planner/demo/v2/solution{?problem_id,solution_id}]
+
+Get previously generated solution for the given problem.
+
+### GET
+
++ Parameters
+    + `problem_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem created.
+    + `solution_id`: `59392ab2-61a9-418d-924b-217ed8fd043e` (string, required) - a unique identifier for a solution previously generated for the problem.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + solutions (Solution, required) - the solution objects found for the problem.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Get Example Problem [/mobility-planner/demo/v2/example{?user_id,mode}]
+
++ Parameters
+    + `user_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique user identifier for the planning problem profile.
+    + mode (AllowedProblemMode, optional) - the planner mode constraint. The example problem will be returned only if it is compatible with the mode. If not specified, the example problem (if one exists for the profile) will be returned.
+
+### GET
+
+Retrieve an example problem for this user.
+
++ Response 200 (application/json)
+
+    + Attributes (Problem, optional)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Get Example Profiles [/mobility-planner/demo/v2/example/profiles{?mode,in_destination,blue_sky}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode constraint. The example profiles will be returned only if it is compatible with the mode.
+    + `in_destination`: `false` (boolean, optional) - a boolean flag. If set to true, only in_destination profiles will be returned.
+    + `blue_sky`: `false` (boolean, optional) - a boolean flag. If set to true, only blue_sky profiles will be returned.
+
+### GET
+
+Retrieve all compatible profile Ids for the mode.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + mode (AllowedProblemMode, required) - the requested planner mode.
+        + `in_destination` (boolean, required) - the requested in_destination flag.
+        + `blue_sky` (boolean, required) - the requested blue_sky flag.
+        + `profiles` (array[Profile], required) - a list of profiles compatible with the given mode and flags.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Verify Service Status [/mobility-planner/demo/v2/verify]
+
+Check if the planning service is up and running.
+
+### GET
+
++ Response 200 (application/json)
+
+        The planning service is up and running.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+# Group Routing
+
+## Intermodal Routes [/intermodal/v1/routes/all{?origin,origin_name,destination,destination_name,waypoints,waypoint_arrival_times,waypoint_departure_times,modes,departure_time,arrival_time,duration_stay,accessible,memberships,max_results,duration_margin,walkingtime_margin,bikingtime_margin,cost_margin,save_response,street_parking,electric_charger,config,request_id}]
+
+Compute best intermodal routes. The set of parameters accepted by different transportation modes are identical, though some may be 
+ignored give the different mode combinations allowed (e.g. the choices of parking providers will be ignored in transit only routes). 
+
++ Parameters
+    + origin: `42.44303,-71.22896` (string, required) - A comma separated string that encodes the coordinates of the trip origin.
+    + `origin_name`: `origin` (string, optional) - The name of the trip origin.
+    + destination: `42.358463,-71.093465` (string, required) - A comma separated string that encodes the coordinates of the trip destination.
+    + `destination_name`: `destination` (string, optional) - The name of the trip destination.
+    + waypoints: `42.44303,-71.22896,42.44303,-71.22896,42.44303,-71.22896` (string, optional) - The latitude and longitude numbers of all intermediate waypoints to stop at.
+    + `waypoint_arrival_times`: `1482289608,-1,-1` (string, optional) - The desired arrival times at each waypoint, in seconds since midnight, January 1, 1970 UTC. Set to -1 if no desired arrival time for the corresponding waypoint.
+    + `waypoint_departure_times`: `-1,-1,1482289608` (string, optional) - The desired departure times at each waypoint, in seconds since midnight, January 1, 1970 UTC. Set to -1 if no desired departure time for the corresponding waypoint.
+    + modes: `TRANSIT` (string, required) - The travel modes requested for the trip. You can include multiple mode names, separated by the comma character `,`, such as `TRANSIT,BIKESHARE`. 
+        + Members
+            + DRIVE
+            + BIKE
+            + WALK
+            + TRANSIT
+            + CARSHARE
+            + BIKESHARE
+            + TAXI
+    + `departure_time`: `1482289608` (integer, optional) - Specifies the desired time of departure as an integer in seconds since midnight, January 1, 1970 UTC. Only one of the departure/arrival time constraints can be set.
+    + `arrival_time`: `1482289608` (integer, optional) - Specifies the desired time of arrival as an integer in seconds since midnight, January 1, 1970 UTC. Only one of the departure/arrival time constraints can be set.
+    + `duration_stay`: `3600` (integer, optional) - specifies the desired duration of stay at the destination (in seconds). Used for calculating the cost associated with parking and carshare.
+    + accessible: `true` (boolean, optional) - Specifies if any transit route included in the trip must be accessible (applies to both vehicles and stops).
+        + Default: `false`
+    + memberships (AllowedMembershipType, optional) - Specifies the user holds any transit cards, passes, bikeshare or carshare or rideshare memberships. You can include multiple membership names, separated by the comma character `,`, such as `BLUEBIKES24,UBER,LYFT`.
+    + `max_results`: `5`(integer, optional) - Specifies maximum number of routes to be returned in the response.
+        + Default: `25`
+    + `duration_margin`: `5`(number, optional) - Specifies the maximum difference in the total durations of two routes in the response, when every other metrics of the routes being equal.
+        + Default: `0`
+    + `walkingtime_margin`: `5`(number, optional) - Specifies the maximum difference in the total walking durations of two routes in the response, when every other metrics of the routes being equal.
+        + Default: `0`
+    + `bikingtime_margin`: `5`(number, optional) - Specifies the maximum difference in the total biking durations of two routes in the response, when every other metrics of the routes being equal.
+        + Default: `0`
+    + `cost_margin`: `5`(number, optional) - Specifies the maximum difference in the total cost of two routes in the response, when every other metrics of the routes being equal.
+        + Default: `0`
+    + `street_parking`: `true` (boolean, optional) - Specifies if on-street parking can be used in the routing results.
+        + Default: `true`
+    + `electric_charger`: `false` (boolean, optional) - Specifies if only parking locations with electric vehicle charging devices can be used in the routing results.
+        + Default: `false`
+    + config: `DISNEY` (string, optional) - Specifies if any special configuration should be used when calculate routing results.
+        + Members
+            + DISNEY
+            + CUBIC
+            + FORD   
+    + `request_id`: `324-25sdfgsd-345364-sdgfdsfg` (string, optional) - A UUID for the routing request for future reference.
+        + Default: ``
+    + `save_response`: `false` (boolean, optional) - Specifies if the results should be saved in the server for further analysis.
+        + Default: `false`
+
+### GET
+
+The response of this action is a JSON object that encodes one or more routes. By default, the routes returned are optimized along the pareto front of two objectives, which are different depending on the modes specified:
+
+* Park and Walk: cost and walking time.
+* Park and Transit: cost and trip duration.
+* Park and Bikeshare: cost and the sum of walking and biking times.
+* Park and Rideshare: cost and trip duration.
+* Transit and Walk: duration and walking time.
+* Transit and Bikeshare: duration and the sum of walking and biking times.
+* Transit and Rideshare: cost and trip duration.
+* Transit and Carshare: cost and trip duration.
+* Bikeshare: duration and walking time.
+* Bikeshare and Carshare: cost and trip duration.
+* CarShare: cost and walking time.
+* Rideshare: cost and trip duration.
+
+The formats of responses for different transportation modes are the same, 
+though some optional fields (parking, transit, rideshare, bikeshare and carshare) 
+may appear in the routes of some modes.
+
++ Request
+    + Headers
+
+            Authorization:  Bearer <id_token> - (optional) the `id_token` returned from the authentication endpoint.
+            Device-Id: <app_id> - (optional) the installation id of the app that is sending the routing request. No authentication required and this id will only be used to identify the request if saved.
+
++ Response 200 (application/json)
+
+    A set of routes from the origin to the destination.
+
+    + Attributes
+        + routes (array[Route], optional) - the set of routes found that meet the requirements.
+        + spec (RoutingSolutionSpec, optional) - the specifications of the solution and the routing process.
+        
++ Response 204
+
++ Response 400
+
+        Bad Request.
+        
++ Response 500
+
+        Internal Server Error.       
+ 
+
+## Multi-to-multi summary [/intermodal/v1/routes/multi-to-multi]
+
+Calculate route attributes (not the route) for each pair of locations defined in the query.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (MultiRoutingQuery, required)
+  
++ Response 200 (application/json)
+
+    A set of routes for each requested pair of locations.
+
+    + Attributes (MultiRoutingSummaryResult, required)
+        
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.            
+ 
+
+## Multi-to-multi path [/intermodal/v1/routes/multi-to-multi-path]
+
+Calculate paths (not the detailed routes) for each pair of locations defined in the query.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (MultiRoutingQuery, required)
+  
++ Response 200 (application/json)
+
+    A set of routes for each requested pair of locations.
+
+    + Attributes (MultiRoutingPathResult, required)
+        
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.    
+
+
+# Group Execution
+
+## Status [/mobility-planner/v1/execution/status]
+
+### Update Activity Status [POST /mobility-planner/v1/execution/status{?user_id}]
+
+Update the status of an activity in the user's plan. If the update makes the plan infeasible, an error message will be returned.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+
++ Request (application/json)
+
+    + Attributes (ActivityStatusUpdates, required)
+
++ Response 200 (application/json)
+
+        Status update is successful.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+### Get Plan Status [GET /mobility-planner/v1/execution/status{?user_id}]
+
+Get the status of the user's plan.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + status (enum, required) - contains metadata on the request.
+            + Members
+                + CREATED - indicates the planning problem has been created for the user.
+                + CONFIRMED - indicates a plan has been selected by the user.
+                + EXECUTING - indicates the execution of the plan has started.
+                + DELAYED - indicates an execution delay that causes the original plan to be over-constrained. Additional relaxations are required to restore consistency.
+                + INTERRUPTED - indicates that the user's plan has become infeasible due to delay or other unexpected interruptions. Replanning is required.
+                + COMPLETED - indicates that all activities in the plan has been executed successfully.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Events [/mobility-planner/v1/execution/events]
+
+### Get Events [GET /mobility-planner/v1/execution/events{?user_id,lowerbound,upperbound}]
+
+Get active events of the user within the specified time period. If no user id is given, all active events of all users within the specified time period wil be returned.
+
+For an event, e,  in the user’s calendar, it will be returned if the following criteria are satisfied:
+
+1. let the current time (unix time in seconds) to be t: scheduledEndTime(e) > t - 21600s (6 hours) AND scheduledStartTime(e) < t + 86400s (24 hours)
+2. e is part of an active plan. An active plan is one computed by the planner, for events from the user’s calendar and the web interface, and confirmed by the user. One user can have no more than one active plan at any time. That means: whenever the user confirms a new plan, the previously confirmed plan will be discarded (even if there is zero overlapping), and all events in the previous plan will no longer be tracked.
+
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user.
+    + lowerbound: 1513725841 (number, optional) - the lower time bound within which events can be returned. Default is Current time minus 6 hours.
+    + upperbound: 1513728841 (number, optional) - the upper time bound within which events can be returned. Default is Current time plus 24 hours.
+
++ Response 200 (application/json)
+
+    + Attributes (array[Activity], required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+### Update Estimated Event Timing [POST /mobility-planner/v1/execution/estimated_times{?user_id}]
+
+Update the estimated start time, end time, or duration for events. A consistency check will be executed after the update, and an error will be returned if the original plan is no longer valid.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+
++ Request (application/json)
+
+    + Attributes (ActivityTimingUpdates, required)
+    
++ Response 200 (application/json)
+
+    + Attributes (array[Activity], required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+### Update Actual Event Timing [POST /mobility-planner/v1/execution/actual_times{?user_id}]
+
+Update the actual start time or end time for events. A consistency check will be executed after the update, and an error will be returned if the original plan is no longer valid.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+
++ Request (application/json)
+
+    + Attributes (ActivityTimingUpdates, required)
+    
++ Response 200 (application/json)
+
+    + Attributes (array[Activity], required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+        
+## Replan [/mobility-planner/v1/execution/problem]
+
+### Update Problem for Replanning [PUT /mobility-planner/v1/execution/problem{?user_id}]
+
+Update the current state of the user and update the user's planning problem.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+
++ Request (application/json)
+
+    + Attributes (TimedLocation, required)
+
++ Response 200 (application/json)
+
+    + Attributes (Problem, required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+        
+### Get Problem For Replanning [GET /mobility-planner/v1/execution/problem{?user_id}]
+
+Get the current planning problem for the user.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+
++ Response 200 (application/json)
+
+    + Attributes (Problem, required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+        
+### Replan and Get Solution [POST /mobility-planner/v1/execution/solution{?user_id}]
+
+Replan the current planning problem and get solution.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+
++ Request (application/json)
+
+    + Attributes (TimedLocation, required)
+
++ Response 200 (application/json)
+
+    + Attributes (Solution, required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+        
+### Update Plan Schedule [PUT /mobility-planner/v1/execution/schedule{?user_id}]
+
+Computing a new schedule for an existing plan with activity updates. If the plan is no longer consistent, an error will be returned signaling that additional relaxations or replanning is required.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+
++ Response 200 (application/json)
+
+    The new plan for the problem.
+
+    + Attributes (Solution, required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+        
+### Update Plan Relaxations [PUT /mobility-planner/v1/execution/relaxations{?user_id}]
+
+Computing a new schedule for the plan by re-computing relaxations to the existing one with activity updates. An error will be returned if no feasible relaxations can be found.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+
++ Response 200 (application/json)
+
+    The new plan for the problem.
+
+    + Attributes (Solution, required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+# Group Data Repository
+
+## Transit [/mobility-data-repository/v1/transit]
+
+### Stop Locations [GET /mobility-data-repository/v1/transit/stations{?lat,lng,radius}]
+
+This query will return a list of the nearest stops from a particular location, within the radius specified. 
+
++ Parameters
+    + lat: `42.360954` (number, required) - the latitude for location near which stops should be returned. 
+    + lng: `-71.101483` (number, required) - the longitude for location near which stops should be returned.
+    + radius: `1000` (number, optional) - the radius of search in meters.
+
++ Response 200 (application/json)
+
+    An array of transit stations found that meet the search requirements.
+ 
+    + Attributes (array[TransitStation], required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+### Arriving Vehicles [GET /mobility-data-repository/v1/transit/arrivals{?stop_id,agency}]
+
+This query will return predicted arrivals and departures in the next hour for a direction and route for a
+particular stop. 
+
++ Parameters
+    + stop_id: `70070` (string, required) - GTFS-compatible id value for the station whose predictions should be returned. 
+    + agency (enum, required) - The name of the transit agency returned from the stop location endpoint.
+        + Members
+            + MBTA - (Boston)
+            + AC Transit - (SF Bay Area)
+            + BART - (SF Bay Area)
+            + Caltrain - (SF Bay Area)
+            + VTA - (SF Bay Area)
+            + San Francisco Municipal Transportation Agency - (SF Bay Area)
+            + Metro - Los Angeles - (Los Angeles)
+            
++ Response 200 (application/json)
+
+    An array of arrival predictions for transit routes that serves this stop.
+
+    + Attributes (array[TransitRoutePrediction], required)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+### Vehicle Positions [GET /mobility-data-repository/v1/transit/vehicles{?route_id,agency}]
+
+This query will return the positions of vehicles operating on a transit route. 
+
++ Parameters
+    + route_id: `1345` (string, required) - GTFS-compatible id value for the route whose vehicle positions should be returned. 
+    + agency (enum, required) - The name of the transit agency returned from the routing endpoint.
+        + Members
+            + MBTA - (Boston)
+            + AC Transit - (SF Bay Area)
+            + BART - (SF Bay Area)
+            + Caltrain - (SF Bay Area)
+            + VTA - (SF Bay Area)
+            + San Francisco Municipal Transportation Agency - (SF Bay Area)
+            + Metro - Los Angeles - (Los Angeles)
+            
++ Response 200 (application/json)
+
+    An array of vehicle positions for the transit routes.
+
+    + Attributes (array[TransitVehicleLocation], required)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+## Parking [/mobility-data-repository/v1/parking]
+
+### Locations [GET /mobility-data-repository/v1/parking/locations{?lat,lng,radius,limit,street}]
+
+This query will return a list of the nearest parking from a particular location. Up to the specified count are returned, within the radius specified. 
+
++ Parameters
+    + lat: `42.360954` (number, required) - the latitude for location near which parking should be returned. 
+    + lng: `-71.101483` (number, required) - the longitude for location near which parking should be returned.
+    + radius: `1000` (number, optional) - the radius of search in meters.
+    + limit: `20` (number, optional) - the maximum number of results returned.
+    + street: `false` (boolea, optional) - if street parking should be included in the results.
+
++ Response 200 (application/json)
+
+    An array of parking locations found that meet the search requirements.
+
+    + Attributes (array[ParkingLocation], required)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+## CarShare [/mobility-data-repository/v1/carshare]
+
+### Locations [GET /mobility-data-repository/v1/carshare/locations{?lat,lng,radius,limit,operator}]
+
+This query will return a list of the nearest carshare locations from a particular location. Up to the specified count are returned, within the radius specified. 
+
++ Parameters
+    + lat: `42.360954` (number, required) - the latitude for location near which carshare locations should be returned. 
+    + lng: `-71.101483` (number, required) - the longitude for location near which carshare locations should be returned.
+    + radius: `1000` (number, optional) - the radius of search in meters.
+    + limit: `20` (number, optional) - the maximum number of results returned.
+    + operator (enum, optional) - the name of the carshare network operator.
+        + Members
+            + ZIPCAR
+            + MAVEN
+
++ Response 200 (application/json)
+
+    An array of carshare locations found that meet the search requirements.
+
+    + Attributes (array[CarShareLocation], required)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+### Vehicles [GET /mobility-data-repository/v1/carshare/vehicles{?lat,lng,radius,limit,operator,location_id}]
+
+This query will return a list of carshare vehicles. 
+
++ Parameters
+    + lat: `42.360954` (number, required) - the latitude for location near which carshare vehicles should be returned. 
+    + lng: `-71.101483` (number, required) - the longitude for location near which carshare vehicles should be returned.
+    + radius: `1000` (number, optional) - the radius of search in meters.
+    + limit: `20` (number, optional) - the maximum number of results returned.
+    + operator (enum, optional) - the name of the carshare network operator.
+        + Members
+            + ZIPCAR
+            + MAVEN
+    + location_id: `2056127341` (string, required) - id value for a carshare location whose vehicles should be returned. 
+            
++ Response 200 (application/json)
+
+    An array of carshare vehicles at the location.
+    
+    + Attributes (array[CarShareVehicle], optional)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+## BikeShare [/mobility-data-repository/v1/bikeshare]
+
+### Locations [GET /mobility-data-repository/v1/bikeshare/stations{?lat,lng,radius,limit,system}]
+
+This query will return a list of the nearest bikeshare locations from a particular location, within the radius and system specified. 
+
++ Parameters
+    + lat: `42.360954` (number, required) - the latitude for location near which bikeshare stations should be returned. 
+    + lng: `-71.101483` (number, required) - the longitude for location near which bikeshare stations should be returned.
+    + radius: `1000` (number, optional) - the radius of search in meters.
+    + limit: `20` (number, optional) - the maximum number of results returned.
+    + system (enum, optional) - The name of the bikeshare network system.
+        + Members
+            + HUBWAY
+            + CITIBIKE
+
++ Response 200 (application/json)
+
+    An array of bikeshare stations found that meet the search requirements.
+
+    + Attributes (array[BikeShareStation], required)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+    
+## RideShare [/mobility-data-repository/v1/rideshare]
+
+### ETA [GET /mobility-data-repository/v1/rideshare/eta{?lat,lng,operator}]
+
+This query will return a list of the nearest bikeshare locations from a particular location, within the radius and system specified. 
+
++ Parameters
+    + lat: `42.360954` (number, required) - the latitude for location near which ridesahre service ETA should be returned. 
+    + lng: `-71.101483` (number, required) - the longitude for location near which ridesahre service ETA should be returned.
+    + operator (enum, optional) - The name of the rideshare network operator.
+        + Members
+            + HUBWAY
+            + CITIBIKE
+
++ Response 200 (application/json)
+
+    An array of rideshare service ETAs.
+
+    + Attributes (array[RideShareETA], required)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+### Estimates [GET /mobility-data-repository/v1/rideshare/estimates{?start_lat,start_lng,end_lat,end_lng,operator}]
+
+This query will return a list of the nearest bikeshare locations from a particular location, within the radius and system specified. 
+
++ Parameters
+    + start_lat: `42.360954` (number, required) - the latitude of the trip origin. 
+    + start_lng: `-71.101483` (number, required) - the longitude of the trip origin.
+    + end_lat: `42.360954` (number, required) - the latitude of the trip destination. 
+    + end_lng: `-71.101483` (number, required) - the longitude of the trip destination.
+    + operator (enum, optional) - The name of the rideshare network operator.
+        + Members
+            + HUBWAY
+            + CITIBIKE
+
++ Response 200 (application/json)
+
+    An array of rideshare service estimates for the given location pairs.
+
+    + Attributes (array[RideShareEstimate], required)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+# Group User
+
+## Token Validation [/profile/v3/token_validation]
+
+
+### Validate ID Token [GET /profile/v3/token_validation]
+
+This query will validate if the given id_token is valid. 
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+ 
++ Response 200
+
++ Response 401 (text/plain)
+
+        Unauthorized access due to authentication errors.
+
+## Stored Locations [/profile/v3/places]
+
+
+### Retrieve stored places [GET /profile/v3/places]
+
+This query will return a list of places stored by the user. 
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+ 
++ Response 200 (application/json)
+
+    An array of stored places of the user.
+
+    + Attributes (array[StoredPlace], optional)
+    
++ Response 401
+
+        Unauthorized.
+        
+### Add place [POST /profile/v3/places]
+
+This query will add a new stored place for the user. 
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+    
+    + Attributes (StoredPlace)
+
++ Response 200 (application/json)
+
+    An array of stored places of the user, including the newly added one.
+
+    + Attributes (array[StoredPlace], optional)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.       
+
+
+### Remove stored place [DELETE /profile/v3/places{?place_id}]
+
+This query will remove a stored place for the user. 
+
++ Parameters
+    + place_id: `21341234-2sdff-2152345` (string, required) - the unique Google Place id for the place to be removed.
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+            
++ Response 200 (application/json)
+
+    An array of stored places of the user, with the provided one removed.
+
+    + Attributes (array[StoredPlace], optional)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+
+## Stored Vehicles [/profile/v3/vehicles]
+
+
+### Retrieve stored vehicles [GET /profile/v3/vehicles]
+
+This query will return a list of vehicles stored by the user.
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+            
++ Response 200 (application/json)
+
+    An array of stored vehicles of the user.
+
+    + Attributes (array[StoredVehicle], optional)
+        
++ Response 401
+
+        Unauthorized.
+
+### Add vehicles [POST /profile/v3/vehicles]
+
+This query will add a new stored vehicle for the user.
+    
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+            
+    + Attributes (StoredVehicle)
+
++ Response 200 (application/json)
+
+    An array of stored vehicles of the user.
+
+    + Attributes (array[StoredVehicle], optional)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error. 
+        
+### Remove stored vehicles [DELETE /profile/v3/vehicles{?id}]
+
+This query will remove a stored vehicle for the user. 
+
++ Parameters
+    + id: `21341234-2sdff-2152345` (string, required) - the unique id for the vehicle to be removed.
+    
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+            
++ Response 200 (application/json)
+
+    An array of stored vehicles of the user, with the provided one removed.
+
+    + Attributes (array[StoredVehicle], optional)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
+## Stored Memberships [/profile/v3/memberships]
+
+
+### Retrieve stored memberships [GET /profile/v3/memberships{?user_id}]
+
+This query will return a list of memberships stored by the user. 
+
++ Parameters
+    + user_id: `21341234-2sdff-2152345` (string, required) - the unique id for the user.
+
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+            
++ Response 200 (application/json)
+
+    An array of stored memberships of the user.
+
+    + Attributes (array[StoredMembership], optional)
+
++ Response 401
+
+        Unauthorized.
+        
+### Add membership [POST /profile/v3/memberships{?user_id}]
+
+This query will add a new membership record for the user. 
+
++ Parameters
+    + user_id: `21341234-2sdff-2152345` (string, required) - the unique id for the user.
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+            
+    + Attributes (StoredMembership, required)
+            
++ Response 200 (application/json)
+
+    An array of stored memberships of the user with the addition.
+
+    + Attributes (array[StoredMembership], optional)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
+### Remove stored membership [DELETE /profile/v3/memberships{?id,user_id}]
+
+This query will remove a stored membership for the user. 
+
++ Parameters
+    + id: `21341234-2sdff-2152345` (string, required) - the unique id for the membership object to be removed.
+    + user_id: `auth0|2asdfcdasv345` (string, required) - the unique id for the user that owns the membership.
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+            
++ Response 200 (application/json)
+
+    An array of stored memberships of the user with the deletion.
+
+    + Attributes (array[StoredMembership], optional)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+ 
+
+### Get supported membership types [GET /profile/v3/memberships/types{?lat,lng}]
+
+This query returns all supported membership types serving the location specified by the lat/lng value. If no lat/lng provided, it returns all supported membership types.
+
++ Parameters
+    + lat: `42.195` (number, optional) - the latitude of the user's point of interest for membership informaion.
+    + lng: `-122.123` (number, optional) - the longitude of the user's point of interest for membership informaion.
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+            
++ Response 200 (application/json)
+
+    An array of supported membership types.
+
+    + Attributes (array[StoredMembershipType], optional) 
+    
++ Response 401
+
+        Unauthorized.   
+
+## Stored Mode Preferences [/profile/v3/mode_preferences]
+
+
+### Retrieve stored mode preferences [GET /profile/v3/mode_preferences]
+
+This query will return a set of mode preferences stored by the user. 
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+        
++ Response 200 (application/json)
+
+    The stored mode preferences of the user.
+
+    + Attributes (StoredModePreference, optional)
+    
++ Response 401 (text/plain)
+
+        Unauthorized access due to authentication errors.
+        
+### Retrieve available modes [GET /profile/v3/mode_preferences/availability]
+
+This query will return a list of modes available to the user. 
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+            
++ Response 200 (application/json)
+
+    + Attributes
+        + modes (array[string], optional) - an array of available transportation modes for the user.
+        + memberships (array[string], optional) - an array of stored membership types owned by the user.
+
++ Response 401 (text/plain)
+
+        Unauthorized access due to authentication errors.
+        
+### Set mode preference [POST /profile/v3/mode_preferences{?mode,preference}]
+
+This query will update the mode preference for the user. 
+
++ Parameters
+    + mode: `walk` (enum, required) - the name for the mode.
+        + Members
+            + walk
+            + cycle
+            + drive
+            + transit
+            + rideshare
+            + carshare
+            + bikeshare
+    + preference: `1` (enum, required) - the preference value for the mode.
+        + Members
+            + 0 - never
+            + 1 - minimal
+            + 2 - sometimes
+            + 3 - less
+            + 4 - more
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+            
++ Response 200 (application/json)
+
+    The stored mode preferences of the user with the edit.
+
+    + Attributes (StoredModePreference, optional)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.     
+        
+### Remove stored mode preferences [DELETE /profile/v3/mode_preferences]
+
+This query will remove stored mode preferences for the user. 
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+            
++ Response 200 
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+
+        
+## Routing Request History [/profile/v3/history]
+
+
+### Retrieve stored requests [GET /profile/v3/history/request{?time_ub,count}]
+
+This query will return a list of recent routing requests stored by the user. 
+            
++ Parameters
+    + time_ub: `4294967295` (number, optional) - the upperbound (most recent) on the timestamps of requests returned. The time specified as Unix time, or seconds since midnight, January 1, 1970 UTC.
+    + count: `10` (number, optional) - the maximum number of requests returned in the result. 
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+
++ Response 200 (application/json)
+
+    An array of stored requests of the user that meet the search criteria.
+
+    + Attributes (array[StoredRequest], optional)
+        
++ Response 401
+
+        Unauthorized.
+        
+### Add request record [POST /profile/v3/history/request]
+
+This query will add a new request record. 
+
++ Request (application/json)
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+            
+    + Attributes (StoredRequest, required)
+
++ Response 200 (application/json)
+
+    The request object being added.
+
+    + Attributes (StoredRequest, optional)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
+### Remove stored requests [DELETE /profile/v3/history/request{?request_id}]
+
+This query will remove a stored request record for the user, as well as all the related responses and selections. 
+
++ Parameters
+    + request_id: `21341234-2sdff-2152345` (string, required) - the unique id for the request record to be removed.
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+            
++ Response 200
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
+### Retrieve stored responses [GET /profile/v3/history/response{?request_id,response_id}]
+
+This query will return the response generated for the request.  
+
++ Parameters
+    + request_id: `21341234-2sdff-2152345` (number, optional) - the id for the request whose responses should be retrieved. If specified then the response id parameter will be ignored.
+    + response_id: `21341234-2sdff-2152345` (number, optional) - the id for the response to be retrieved. 
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+
++ Response 200 (application/json)
+
+    An array of stored responses previously generated by Mobi API that meet the search criteria.
+
+    + Attributes (array[StoredResponse], optional)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
+### Retrieve stored selections [GET /profile/v3/history/selection{?request_id}]
+
+This query will return the route selection user made for the request.  
+
++ Parameters
+    + request_id: `21341234-2sdff-2152345` (number, required) - the id for the request whose selections should be retrieved.
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+
++ Response 200 (application/json)
+
+    An array of stored selections made for the specified request.
+
+    + Attributes (array[StoredSelection], optional)
+        
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
+### Add selection [POST /profile/v3/history/selection{?request_id,response_id,route_id}]
+
+This query will add a new selection record for the specified request. 
+
++ Parameters
+    + request_id: `21341234-2sdff-2152345` (number, required) - the id for the request whose selections should be recorded.
+    + response_id: `21341234-2sdff-2152345` (number, optional) - the id for the response whose selections should be recorded. 
+    + route_id: `21341234-2sdff-2152345` (string, required) - the id for the route selected by the user.
+
++ Request
+    + Headers
+    
+            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
+
++ Response 200 (application/json)
+    
+    The selection object being created for this query.
+
+    + Attributes (StoredSelection, optional)
+        
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+
+
+## Data Structures
+
+### Problem
++ origin (OriginDestination, required) - the origin of the planning problem.
++ destination (OriginDestination, required) - the destination of the planning problem.
++ current (Location, optional) - the current location of the user. Different from the origin and destination fields, no timing information is required for current location: the planner will use the current timestamp for it.
++ flexible_ordering (boolean, required) - specifies if the ordering of goals can be modified by the planner.
++ activities (array[Goal], required) - the set of goals the user wants to achieve.
++ profile (Profile, optional) - the profile of the user.
++ agents (array[Agent], optional) - the set of agents involved in the planning problem
++ mode (AllowedProblemMode, optional) - the planner mode used for this problem.
+
+### AllowedProblemMode (enum[string])
++ RIDESHARE
++ MARRIOTT
++ AIRBNB
++ BOOKING
++ TRIPADVISOR
++ DISNEY
++ EXPEDIA
++ YANDEX
++ CONCUR
++ HERTZ
++ WTMC
++ DEEM
++ EHI
++ BESTWESTERN
++ IHG
++ FOURSEASONS
+
+### Solution
++ id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the solution object.
++ `problem_id`: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the problem object of this solution.
++ cost: `10` (number, required) - the monetary cost of all activities in this solution object. In other words, this is the amount the user will spend on the activities in the plan.
++ activities (array[Activity], required) - contains an array of activities enabled by this solution.
++ locations (array[TimedLocation], required) - contains an array of locations used by this solution.
++ agents (array[Agent], optional) - the set of agents involved in the plan, and the Ids of their activities. Only ac
+
+### SolutionSpec
++ candidates_evaluated: 1200000 (number, optional) - the number of candidate solutions evaluated during planning.
++ response_time: 890 (number, required) - the computation time for the solution, in milliseconds.
++ total_revenue: 20 (number, required) - the total revenue for the plan in this solution, in dollars.
++ increased_revenue: 5 (number, required) - the increased revenue for the plan in this solution, in dollars.
++ rental_car_revenue: 5 (number, required) - the rental car revenue for the plan in this solution, in dollars.
++ rideshare_revenue: 5 (number, required) - the rideshare transportation revenue for the plan in this solution, in dollars, if all travel segments are in rideshare.
++ average_walking: 20 (number, required) - the average walking time per POI, in minutes.
++ average_waiting: 5 (number, required) - the average waiting time per POI, in minutes.
++ endpoints_used: 2 (number, required) - the number of endpoints used to support this planning process.
+
+### Display
++ `display_whole_polyline`: true (boolean, optional) - if true, the polyline for the entire solution is recommended to be displayed in the background when each day's plan is being presented.
+
+### Profile
++ user_id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, optional) - the unique identifier for the user.
++ user_type (enum, optional) - the type of the user.
+    + Members
+        + LEISURE_TRAVELLER
+        + BUSINESS_TRAVELLER
++ name: `Take Mobi` (string, optional) - the name for the user.
++ avatar: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%402x.png` (string, optional) - the link to the avatar icon for the user.
++ available_modes (array, optional) - the set of travel modes available to the user.
+    - (enum)
+        - DRIVE
+        - BIKE
+        - WALK
+        - TRANSIT
+        - BIKESHARE
+        - CARSHARE
+        - TAXI
+        - UBER
+        - LYFT
++ `mode_preferences` (array[ModePreference], optional) - the set of user preferences over different modes of transportation.
++ preferences (array[Preference], optional) - the set of user preferences over different categories of activities.
++ `price_tolerance` (number, optional) - a value between 0.0 and 5.0 that describes the user's acceptance of high price POIs. 5.0 mean the use has the highest tolerance, while 0.0 means the user has low tolerance and is more sensitive to price.
+
+### ModePreference
++ mode (AllowedModePreferenceCategory, required) - the mode of transportation covered by this preference object.
++ included (boolean, required) - if this mode of transportation is allowed to be used in the travel plan.
++ preference (number, required) - a float number between 0 and 5, representing how much the person the likes using this mode (5 being most while 0 being least).
+
+### AllowedModePreferenceCategory (enum[string])
++ DRIVE
++ BIKE
++ WALK
++ TRANSIT
++ BIKESHARE
++ CARSHARE
++ TAXI
++ UBER
++ LYFT
+
+### Preference
++ category (AllowedPreferenceCategory, required) - the category of activities covered by this preference object.
++ included (boolean, required) - if activities in this category should be added to the plan.
++ `plan_objective` (enum, optional) - the objective of the plan. It will trigger different configuration of the planner. EXPLORATION means that the requested categories of activities will be put together, ranked and the top ones will be satisfied. While in NEEDS mode, the top ones in each category will be met by the resulting plan. 
+    + Members
+        + EXPLORATION
+        + NEEDS
++ `minimum_rating` (number, optional) - the minimum rating for an activity in this category to be considered by the planner.
++ places: `Starbucks`,`Wagamama` (array[string], optional) - preferred place names in this category, in free-form text. 
++ types: `ASIAN`,`AMERICAN` (array[string], optional) - preferred types of activities in this category, in free-form text.
++ selection (CandidateGoal, optional) - an existing selection in this category.
+
+### AllowedPreferenceCategory (enum[string])
++ ACCOMMODATION
++ SPA
++ DINING
++ EXPERIENCE
++ ATTRACTION
++ SHOPPING
++ ENTERTAINMENT
++ TOUR
++ EVENT
++ PARK
++ RENTALCAR
++ FLIGHT
++ CHARACTER
++ RAIL
++ PARKING
++ THINGSTODO
++ CONTEXT
++ TRIPPURPOSE
+
+### Agent
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the agent.
++ name: `Take Mobi` (string, optional) - the name for the agent.
++ origin (TimedLocation, optional) - the origin of this agent. If not specified, will use the one from the planning problem.
++ destination (TimedLocation, optional) - the destination of this agent. If not specified, will use the one from the planning problem.
++ current (TimedLocation, optional) - the current location of this agent. If not specified, will use the one from the planning problem.
++ goals: `c2a21058-bb2f-46ff-9328-857c868a7fcc`,`df54ee42-35b2-4884-a6a8-e8f935b98bd5`,`a1111c8c-c720-46c3-8534-2fcdd730040d` (array[string], optional) - the list of Ids of goals that belongs to this agent (in other words, the agent will only execute goals specified in this list, and ignore others in the planning problem). If not specified, all goals in the planning problem will be included. 
+
+
+### Activity
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the activity.
++ `event_id`: `35b2-4884` (string, optional) - a unique identifier for the corresponding calendar event.
++ `user_id`: `a1111c8c` (string, optional) - a unique identifier for the user that this event belongs to.
++ name: `Drive to 745 Atlantic Ave` (string, required) - the name of the activity.
++ description: `Drive to 745 Atlantic Ave` (string, optional) - the description of the activity.
++ `start_loc`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the start location of the activity.
++ `start_lat`: `42.195` (number, required) - the latitude of the start location of the activity.
++ `start_lng`: `-122.00` (number, required) - the longitude of the start location of the activity.
++ `scheduled_start_time`: `1513728314` (number, required) - the scheduled start time of this activity, in Unix time (seconds).
++ `end_loc`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the end location of the activity.
++ `end_lat`: `42.195` (number, required) - the latitude of the end location of the activity.
++ `end_lng`: `-122.00` (number, required) - the longitude of the end location of the activity.
++ `scheduled_end_time`: `1513728314` (number, required) - the scheduled end time of this activity, in Unix time (seconds).
++ `is_goal`: `false` (boolean, required) - if this activity represents a goal in the input problem (otherwise it is a traversal).
++ `explanations` (array[string], optional) - a set of text that explains the rationale behind the selection of this activity.
++ duration: `151` (number, required) - the duration of this activity, in seconds.
++ distance: `200` (number, required) - the distance of travel in this activity, in meters.
++ `tags` (RouteTags, optional) - a set of qualitative evaluation for the route.
++ mode (enum, optional) - the traversal mode of this activity.
+    + Members
+        + WALK
+        + BIKE
+        + DRIVE
+        + TRANSIT
+        + TAXI
+        + DELIVERY
++ source: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, optional) - the id of the input problem goal from which this activity is generated for.
++ polyline: `42.363937,-71.099098,42.364159,-71.09948,42.364296,-71.099701,42.364471,-71.100006,42.364674,-71.100334,42.365234,-71.10128` (string, optional) - a polyline representation of the trajectory of this activity.
++ relaxation (ActivityTemporalRelaxation, optional) - relaxation required for this activity to make the plan temporally feasible.
++ status (enum, optional) - the execution status of this activity.
+    + Members
+        + SCHEDULED
+        + STARTED
+        + COMPLETED
+        + EXPIRED
++ category (AllowedPreferenceCategory, optional) - the category of this activity, or the POI it is taking place at.
++ images (object, optional) - links to images to be used for this activity.
+    + small: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%402x.png` (string, optional) - link to the small image.
+    + medium: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%403x.png` (string, optional) - link to the medium size image.
++ types (array, optional) - an array of the types of the activity. It follows the place types defined for Google's Place API: https://developers.google.com/places/supported_types. 
+    - (enum)
+        + spa
+        + restaurant
+        + lodging
+        + meeting
+        + experience
++ reservation (ActivityReservation, optional) - specify if this activity has an existing reservation.  
++ availability (array[ActivityAvailability], optional) - specify the availability of this activity, in or outside the current scheduled time windows.  
+
+### ActivityReservation
++ duration (number, optional) - duration of the reservation, in seconds.
++ start_time (number, optional) - start time of the reservation, in Unix timestamp of seconds.
++ end_time (number, optional) - end time of the reservation, in Unix timestamp of seconds.
+
+### ActivityAvailability
++ duration (number, optional) - duration of the activity if this availability window is selected, in seconds.
++ start_time (number, optional) - start time of the available window, in Unix timestamp of seconds.
++ end (number, optional) - end time of the available window, in Unix timestamp of seconds.
+        
+### ActivityTemporalRelaxation
++ duration (TemporalRelaxation, optional) - relaxation applied to the duration of the activity.
++ start (TemporalRelaxation, optional) - relaxation applied to the start time of the activity.
++ end (TemporalRelaxation, optional) - relaxation applied to the end time of the activity.
+
+### TemporalRelaxation
++ `episode_id`: `1644652a-19df-4a29-be03-38bb0fc34dbb` (string, required) - the id of the episode being relaxed in the planning problem.
++ `is_lb_relaxed`: `true` (boolean, required) - if the lower bound of the episode is relaxed.
++ `is_ub_relaxed`: `false` (boolean, required) - if the upper bound of the episode is relaxed.
++ `original_earliest`: `1519763040` (number, optional) - the original earliest time.
++ `relaxed_earliest`: `1519763020` (number, optional) - the relaxed earliest time.
++ `original_latest`: `1519763040` (number, optional) - the original latest time.
++ `relaxed_latest`: `1519763050` (number, optional) - the relaxed latest time.
++ `original_lb`: `360` (number, optional) - the original lower bound of the duration.
++ `relaxed_lb`: `300` (number, optional) - the relaxed lower bound of the duration.
++ `original_ub`: `360` (number, optional) - the original upper bound of the duration.
++ `relaxed_ub`: `400` (number, optional) - the relaxed upper bound of the duration.
+
+### Location
++ name: `Mary Chung, 464 Massachusetts Ave` (string, required) - the name of the location.
++ address: `464 Massachusetts Ave` (string, optional) - the address of the location.
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the location. It is location dependent, in that if the same location appears multiple times in the problem, the id will be the same.
++ lat: `42.35031` (number, required) - the latitude of the location.
++ lng: `-71.0571` (number, required) - the longitude of the location.
++ `time_zone`: `America/New_York` (string, required) - contains the time zone of this location. The value is the name of the time zone as defined in the [IANA Time Zone Database](http://www.iana.org/time-zones).
++ photo: `https://lh5.googleusercontent.com/p/AF1QipMckTTCJlA7LhbwA8AgJmCCK-P4ta0SP5uqVnWJ=w408-h306-k-no` (string, optional) - a link to a representative image of the location.
+
+### TimedLocation
++ name: `Mary Chung` (string, required) - the name of the location.
++ address: `464 Massachusetts Ave` (string, optional) - the address of the location.
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the location.
++ lat: `42.35031` (number, required) - the latitude of the location.
++ lng: `-71.0571` (number, required) - the longitude of the location.
++ `arrival_timestamp`: `1519765200` (number, optional) - the desired arrival timestamp.
++ `departure_timestamp`: `1519765200` (number, optional) - the desired departure timestamp.
++ relaxable: `true` (boolean, optional) - if the desired time of departure/arrival is relaxable.
++ `time_zone`: `America/New_York` (string, required) - contains the time zone of this location. The value is the name of the time zone as defined in the [IANA Time Zone Database](http://www.iana.org/time-zones).
+    
+### OriginDestination
++ name: `Mary Chung` (string, required) - the name of the location.
++ address: `464 Massachusetts Ave` (string, optional) - the address of the location.
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the location.
++ lat: `42.35031` (number, required) - the latitude of the location.
++ lng: `-71.0571` (number, required) - the longitude of the location.
++ `arrival_timestamp`: `1519765200` (number, optional) - the desired arrival timestamp.
++ `departure_timestamp`: `1519765200` (number, optional) - the desired departure timestamp.
++ relaxable: `true` (boolean, optional) - if the desired time of departure/arrival is relaxable.
++ `time_zone`: `America/New_York` (string, required) - contains the time zone of this location. The value is the name of the time zone as defined in the [IANA Time Zone Database](http://www.iana.org/time-zones).
++ `allowed_modes` (array, required) - specify the allowed modes for leaving from the origin or arriving at the destination.
+    - (enum)
+        + DRIVE
+        + BIKE
+        + WALK
+        + TRANSIT
+        + PARK
+        + TAXI
+        + BIKESHARE
+        + CARSHARE
+        + BLACKCAR
+        + UBER
+        + LYFT
+        + ZIPCAR
+        + MAVEN
+        
+### Goal
++ id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the goal object.
++ name: `Lunch` (string, required) - the name of the goal.
++ source: `a1111c8c` (string, optional) - the id of the calendar event from which this goal is generated from.
++ candidates (array[CandidateGoal], required) - an array of candidates that encodes the alternatives for this goal.
++ duration: `180` (number, optional) - the desired duration of this candidate in seconds.
++ `start_constraint_type` (enum, optional) - the type of timing constraint for the start at this goal location. If NOT_APPLICABLE, the arrival timestamp of each candidate goal is ignored
+    + Members
+        + `AT`
+        + `NOT_LATER_THAN`
+        + `NOT_EARLIER_THAN`
+        + `NOT_APPLICABLE`
++ `end_constraint_type` (enum, optional) - the type of timing constraint for the end from this goal location. If NOT_APPLICABLE, the departure timestamp of each candidate goal is ignored
+    + Members
+        + `AT`
+        + `NOT_LATER_THAN`
+        + `NOT_EARLIER_THAN`
+        + `NOT_APPLICABLE`
++ optional: `true` (boolean, required) - specify if the goal can be dropped from the user's plan.
++ `allowed_incoming_modes` (array, required) - specify the allowed incoming modes for going to this activity.
+    - (enum)
+        + DRIVE
+        + BIKE
+        + WALK
+        + TRANSIT
+        + PARK
+        + TAXI
+        + BIKESHARE
+        + CARSHARE
+        + BLACKCAR
+        + UBER
+        + LYFT
+        + ZIPCAR
+        + MAVEN
++ `allowed_outgoing_modes` (array, required) - specify the allowed outgoing modes for leaving from this activity.
+    - (enum)
+        + DRIVE
+        + BIKE
+        + WALK
+        + TRANSIT
+        + PARK
+        + TAXI
+        + BIKESHARE
+        + CARSHARE
+        + BLACKCAR
+        + UBER
+        + LYFT
+        + ZIPCAR
+        + MAVEN
++ relaxable: `true` (boolean, required) - if the desired time of duration/departure/arrival is relaxable.
++ category (enum, optional) - the category of this activity.
+    + Members
+        + `FLIGHT`
+        + `RAIL`
+        + `OTHER`
+        + `ACCOMMODATION`
+        + `EXPERIENCE`
+        + `ATTRACTION`
+        
+### CandidateGoal
++ name: `Cambridge` (string, required) - the name of the candidate goal.
++ address: `Cambridge, MA 02138, USA` (string, required) - the address of the candidate goal location.
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the candidate goal.
++ lat: `42.35031` (number, required) - the latitude of the location.
++ lng: `-71.0571` (number, required) - the longitude of the location.
++ index: `12` (number, required) - unique index number for the candidate.
++ preferred: `false` (boolean, required) - specifies if the candidate is preferred by the user.
++ `arrival_timestamp`: `1519765200` (number, optional) - the desired arrival timestamp, used in conjunction with the `start_constraint_type` property of its parent Goal object.
++ `departure_timestamp`: `1519765200` (number, optional) - the desired departure timestamp, used in conjunction with the `end_constraint_type` property of its parent Goal object.
++ `time_zone`: `America/New_York` (string, required) - contains the time zone of this location. The value is the name of the time zone as defined in the [IANA Time Zone Database](http://www.iana.org/time-zones).
++ types (array, optional) - an array of the types of the activity. It follows the place types defined for Google's Place API: https://developers.google.com/places/supported_types. 
+    - (enum)
+        + spa
+        + restaurant
+        + lodging
+        + meeting
+        + experience
++ images (object, optional) - links to images to be used for this activity.
+    + small: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%402x.png` (string, optional) - link to the small image.
+    + medium: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%403x.png` (string, optional) - link to the medium size image.
++ origin (Location, optional) - the origin of the candidate. Use when the start and end locations of the candidate are different (such as flight, tour, etc.).
++ destination (Location, optional) - the destination of the candidate. Use when the start and end locations of the candidate are different (such as flight, tour, etc.).
++ categories (array[string], optional) - the collection of all categories this candidate may belong to.
+
+### POIDomain
++ destination: `Los Angeles, CA` (string, required) - the name of the destination metro that these POIs belond to.
++ `destination_photo`: `Cambridge` (string, required) - the link to a photo of the destination.
++ pois (array[CandidateGoal], required) - a list of candidate POIs in the destination
+
+### Conflict
++ assignments (array[Assignment], required) - an array of assignments that cannot be satisfied at the same time.
+f
+### Assignment
++ name: `pizza` (string, required) - the name of the variable.
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier for the variable.
++ value: `Riverside Pizza Restaurant & Bar-6` (string, required) - the assignment value.
++ `value_id`: `9e671401-9994-4d8c-bf7e-e74cef5bfddd` (string, required) - the unique identifier for the assignment.
++ description: `Riverside Pizza Restaurant & Bar-6 for pizza` (string, optional) - the description of the assignment.
+
+### Constraint
++ episode_id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the episode that this constraint applies to.
++ duration: `150` (number, optional) - the duration of time set by the constraint.
++ timestamp: `150` (number, optional) - the time point set by the constraint.
++ type (enum, required) - specifies if the constraint applies to the lower or upper bounds.
+    + Members
+        + LB
+        + UB
+
+### RoutingSolutionSpec
++ candidates_evaluated: 1200000 (number, optional) - the number of candidate solutions evaluated during routing.
++ remaining_routes: 20 (number, required) - the number of preferred routes found after multi-objective filtering.
++ response_time: 890 (number, required) - the computation time for the solution, in milliseconds.
++ endpoints_used: 2 (number, required) - the number of endpoints used to support this planning process.
+
+### MultiRoutingQuery
++ locations (array[RoutingLocation], required) - an array of locations used in the routing query.
++ segments (array[RoutingSegment], required) - an array of required routing segments, defined over pairs of locations.
+
+### MultiRoutingSummaryResult
++ results (array[RoutingSegmentSummaryResult], required) - an array of routing results for each segment from the routing query.
+
+### MultiRoutingPathResult
++ results (array[RoutingSegmentPathResult], required) - an array of routing results for each segment from the routing query.
+
+### RoutingLocation
++ id: `132` (string, required) - a unique identifier for the routing location.
++ lat: `42.35031` (number, required) - the latitude of the routing location.
++ lng: `-71.0571` (number, required) - the longitude of the routing location.
++ `arrival_time`: `1519765200` (number, required) - the desired arrival time at the routing location, specified as Unix time, or seconds since midnight, January 1, 1970 UTC.
++ `departure_time`: `1519765200` (number, required) - the desired departure time from the routing location, specified as Unix time, or seconds since midnight, January 1, 1970 UTC.
+
+### RoutingSegment
++ id: `3477be9a-aa62-47f1-a846-793608d1d589` (string, required) - a unique identifier for the routing segment.
++ source: `1` (string, required) - the id for the source location of this routing segment.
++ destination: `1` (string, required) - the id for the destination location of this routing segment.
++ modes: `TRANSIT` (string, required) - The travel modes requested for the multi-to-multi query. You can include multiple mode names, separated by the comma character `,`, such as `TRANSIT,BIKE`. Allowed values are DRIVE, BIKE, WALK, TRANSIT, TAXI, UBER, LYFT and BLACKCAR.
+
+   
+### RoutingSegmentSummaryResult
++ segment (RoutingSegment, required) - the routing segment this route applies to.
++ mode: `TRANSIT` (string, required) - The travel mode for this segment.
++ availability: false (boolean, required) - If valid routing result has been found for this segment.
++ duration: 120 (number, required) - The duration of the route found for this segment.
++ cost: 2.75 (number, required) - The cost of the route found for this segment, in USD.
+
+
+### RoutingSegmentPathResult
++ segment (RoutingSegment, required) - the routing segment this route applies to.
++ mode: `TRANSIT` (string, required) - The travel mode for this segment.
++ availability: false (boolean, required) - If valid routing result has been found for this segment.
++ duration: 120 (number, required) - The duration of the route found for this segment.
++ cost: 2.75 (number, required) - The cost of the route found for this segment, in USD.
++ polyline: `qmpaGnq|pLl@z@fA}AdAaAr@e@p@_@`I}CHCl_@}NzNwFHEj@SNG{AwIaQubAwBkL_CuMfHuCLEnDsAvDmAwBkLQiAGa@KiAQy@OoACg@HqEHq@LaDN}CFwA@{@r@{ElAkGdB}LXwBi@UiCcASlAj@T` (string, required) - an encoded polyline representation of the path. See https://developers.google.com/maps/documentation/utilities/polylinealgorithm for more details.
+
+
+### Route
++ id: `1e182ed2-2a9c-45ce-806f-29970a785b1c` (string, required) - a unique identifier for this route.
++ description: `Drive And Walk` (string, required) - a textual description for the route.
++ segments (array[Segment], optional) - contains an array of segments denoting information about each separate activity of the route.
++ `departure_time`: `1482289608` (number, optional) - The actual time of departure for this route, specified as Unix time, or seconds since midnight, January 1, 1970 UTC.
++ `arrival_time`: `1482299608` (number, optional) - The actual time of arrival for this route, specified as Unix time, or seconds since midnight, January 1, 1970 UTC.
++ time: `831` (number, required) - indicates the total duration of this route in seconds.
++ distance: `2792` (number, required) - indicates the total distance of this route in meters.
++ `walking_time`: `35` (number, required) - indicates the total walking duration of this route in seconds.
++ `walking_distance`: `31` (number, required) - indicates the total walking distance of this route in meters.
++ `biking_time`: `0` (number, required) - indicates the total biking duration of this route in seconds.
++ `biking_distance`: `0` (number, required) - indicates the total biking distance of this route in meters.
++ `driving_time`: `556` (number, required) - indicates the total driving duration of this route in seconds.
++ `driving_distance`: `2761` (number, required) - indicates the total driving distance of this route in meters.
++ cost: `30.92` (number, required) - the cost of the route, including fuel, parking, transit, bikeshare, carshare and rideshare, in USD.
++ `mobi_score`: `0` (number, optional) - The mobi score for this route.
++ co2: `0` (number, optional) - The estimated amount of green house gas emitted by this trip (in grams).
++ calories: `0` (number, optional) - The estimated amount of calories consumed by this trip.
++ `is_awesome`: `false` (boolean, optional) - if the route is determined to be `awesome` in some dimension by the backend.
++ `mobi_identifier`: `parkandwalk` (string, optional) - a textual description for the mode of the route.
++ `tags` (RouteTags, optional) - a set of qualitative evaluation for the route.
+
+### Segment
++ index: 3 (number, required) - the sequence index for this activity (starts from 1).
++ description: `Drive to 745 Atlantic Ave` (string, required) - a textual instruction for this activity.
++ type (enum, required) - the travel mode of this activity.
+    + Members
+        + DRIVE
+        + BIKE
+        + WALK
+        + TRANSIT
+        + PARK
+        + TAXI
+        + BIKESHARE
+        + CARSHARE
+        + UBER
+        + LYFT
+        + MINNIEVAN
+        + PAYMENT
+        + RESERVE
+        + CHECKIN
+        + CHECKOUT
+        + WAIT
+        + DUMMY
+        + OTHER
++ cost: `0.928` (number, required) - indicates the cost of the activity in USD.
++ distance: `2792` (number, required) - indicates the distance covered by this activity until the next activity in meters.
++ co2: `0` (number, optional) - The estimated amount of green house gas emitted by this activity (in grams).
++ calories: `0` (number, optional) - The estimated amount of calories consumed by this activity.
++ `from_location` (Location, required) - the location where the segment begins.
++ `to_location` (Location, required) - the location where the segment ends.
++ lb: `556` (number, required) - contains the minimum time required to perform the activity, until the next activity.
++ ub: `556` (number, required) - contains the maximum time required to perform the activity, until the next activity.
++ `start_time`: `1482289608` (number, required) - the time this activity begins, specified as Unix time, or seconds since midnight, January 1, 1970 UTC.
++ `end_time`: `1482289608` (number, required) - the time this activity ends, specified as Unix time, or seconds since midnight, January 1, 1970 UTC.
++ parking (ParkingLocation, optional) - contains mode information for parking activities.
++ transit (TransitTripEstimate, optional) - contains mode information for transit activities (mostly compatible with Google Direction API's [TransitDetails](https://developers.google.com/maps/documentation/directions/intro#TransitDetails) object).
++ carshare (CarShareLocation, optional) - contains mode information for carshare activities (mostly compatible with Zipcar API's [Location](https://developer.zipcar.com/documentation/locations) object).
++ bikeshare (BikeShareStation, optional) - contains mode information for bikeshare activities (mostly compatible with the General Bikeshare Feed Specification [GBFS](https://github.com/NABSA/gbfs) station information and status format).
++ rideshare (RideShareEstimate, optional) - contains mode information for rideshare activities.
++ controllable (boolean, optional) - specify if the duration of this segment is controllable.
++ path (Path, optional) - the trajectory of this segment.
+
+### Path
++ distance: `100` (number, optional) - The length of this path (in meters).
++ time: `10` (number, optional) - The current time of traversing this path (in seconds).
++ mean_time: `15` (number, optional) - The mean time of traversing this path (in seconds).
++ uncongested_time: `18` (number, optional) - The uncongested time of traversing this path (in seconds).
++ is_estimated: `false` (boolean, optional) - If the time and polyline of this path is estimated (in seconds).
++ type (enum, required) - the travel mode of this path.
+    + Members
+        + CAR
+        + BIKE
+        + FOOT
+        + TRANSIT
++ polyline: `qmpaGnq|pLl@z@fA}AdAaAr@e@p@_@`I}CHCl_@}NzNwFHEj@SNG{AwIaQubAwBkL_CuMfHuCLEnDsAvDmAwBkLQiAGa@KiAQy@OoACg@HqEHq@LaDN}CFwA@{@r@{ElAkGdB}LXwBi@UiCcASlAj@T` (string, optional) - contains a single points object that holds an encoded polyline representation of the path.
++ instructions (array[string], optional) - contains a list of instructions for traversing this path.
+
+### ParkingLocation
++ listing_id: `Central-Parking` (string, required) - a unique listing id of the parking location, provided by the data supplier.
++ price (object, optional) - a set of equations for calculating parking fees in different situations.
+    + hour: `10` (number, optional) - hourly rate.
+    + day: `150` (number, optional) - daily rate.
++ `max_duration`: `7200` (number, optional) - max duration that a vehicle can be parked here (in seconds).
++ operator (object, optional) - the company/agency that operates the parking facility.
+    + name: `Icon Parking` (string, required) - the name of the parking operator.
+    + url: `http://www.iconparkingsystems.com/` (string, optional) - URL for the parking operator.
+    + phone: `877-727-5464` (string, optional) - phone number of the parking operator.
++ capacity: `200` (number, optional) - number of spaces in the parking lot.
++ available_spaces: `100` (number, optional) - the number of available spaces currently at the parking location.
++ charger: `false` (boolean, optional) - whether the location has charging facility.
++ street: `false` (boolean, optional) - whether the location is an on-street location.
++ indoor: `false` (boolean, optional) - whether the location is an in-door location.
++ rating: `4.5` (number, optional) - the rating of this parking location.
++ reviews: `15` (number, optional) - number of reviews for this parking location.
++ phone: `123-456-7890` (string, optional) - the phone number of this parking location.
++ photos (object, optional) - a set of image URLs for the parking location.
+    + desktop: `http://media.zipcar.com/images/model-image?model_id=155321731` (string, optional) - URL for the location's image.
+    + mobile: `http://media.zipcar.com/images/model-image?model_id=155321731&mode=med` (string, optional) - URL for the location's mobile image.
+    + thumb: `http://media.zipcar.com/images/model-image?model_id=155321731&mode=thumb` (string, optional) - URL for the location's thumbnail image.
++ hours (object, optional) - a set of operation hours of this location in different situations.
+    + weekday: `9am-4pm` (string, optional) - weekday hours.
+    + weekend: `closed` (string, optional) - weekend hours.
++ instructions: `Enter from the building entrance` (string, optional) - instructions for accessing this parking location.
+
+### CarShareLocation (Location)
++ `location_id`: `96117` (string, required) - unique ID for this location.
++ `num_vehicles`: `4` (number, required) - the number of vehicles at the location.
++ `num_vehicles_available`: `4` (number, required) - the number of vehicles available at the location.
++ `lowest_hourly_rate`: `4` (number, required) - the number of vehicles at the location.
++ `lowest_daily_rate`: `40` (number, required) - the number of vehicles available at the location.
++ operator (enum, optional) - the company/agency that operates the carshare network.
+    + Members
+        + MAVEN
+        + ZIPCAR
+
+
+### CarShareVehicle (Location)
++ `vehicle_id`: `1991624603` (string, required) - a unique carshare network ID for this vehicle.
++ `home_location_id`: `123314` (string, optional) - a unique carshare network ID for the home location of this vehicle.
++ make: `Nissan` (string, optional) - the make for the vehicle.
++ model: `Sentra` (string, optional) - the model for the vehicle.
++ style: `Sedan` (string, optional) - the body style of the vehicle, such as "5-door", "Sedan", etc.
++ year: `2005` (number, optional) - the model year of the vehicle.
++ rate (object, optional) - a set of rate of the vehicle in different situations.
+    + hour: `10` (number, optional) - hourly rate.
+    + day: `150` (number, optional) - daily rate.
++ currency: `USD` (string, optional) - the currency code for the rate.
++ actions (object, optional) - a set of links to get more information or reserve the vehicle.
+    + book: `http://www.zipcar.com/?mobile_p=0&utm_source=partner&utm_medium=api&utm_campaign=partner_app&utm_content=version1` (string, optional) - the URL to carry out the booking action.
++ photos (object, optional) - a set of image URLs for the vehicle.
+    + desktop: `http://media.zipcar.com/images/model-image?model_id=155321731` (string, optional) - URL for the vehicle's image.
+    + mobile: `http://media.zipcar.com/images/model-image?model_id=155321731&mode=med` (string, optional) - URL for the vehicle's mobile image.
+    + thumb: `http://media.zipcar.com/images/model-image?model_id=155321731&mode=thumb` (string, optional) - URL for the vehicle's thumbnail image.
++ operator (enum, optional) - the company/agency that operates the carshare network.
+    + Members
+        + MAVEN
+        + ZIPCAR
+
+### BikeShareStation (Location)
++ `station_id`: `3` (string, required) - unique identifier of the station.
++ num_bikes_available: `7` (number, required) - number of bikes available for rental.
++ num_bikes_disabled: `7` (number, required) - number of bikes disabled.
++ num_docks_available: `8` (number, required) - number of docks accepting bike returns.
++ num_docks_disabled: `8` (number, required) - number of docks disabled.
++ system (enum, required) - the bikeshare system.
+    + Members
+        + HUBWAY
+        + CITIBIKE
+
+
+### RideShareETA (Location)
++ `product_id`: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier representing a specific product.
++ time: `180` (number, required) - ETA for the rideshare product (in seconds).
++ operator (enum, required) - the company/agency that operates the rideshare network.
+    + Members
+        + UBER
+        + LYFT
+
+### RideShareEstimate
++ name: `uberX` (string, required) - display name of product
++ `product_id`: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier representing a specific product.
++ distance: `6170` (number, required) - expected trip distance (in meters).
++ duration: `1080` (number, required) - expected trip duration (in seconds).
++ `low_estimate`: `25` (number, required) - lower bound of the estimated price.
++ `high_estimate`: `33` (number, required) - upper bound of the estimated price.
++ currency: `USD` (string, required) - ISO 4217 currency code.
++ operator (enum, required) - the company/agency that operates the rideshare network.
+    + Members
+        + UBER
+        + LYFT
+
+### TransitTripEstimate
++ `from_stop` (TransitStation, required) - the departure stop.
++ `to_stop` (TransitStation, required) - the arrival stop.
++ `departure_time` (number, required) - departure times for this activity. The time is specified as Unix time, or seconds since midnight, January 1, 1970 UTC.
++ `arrival_time` (object, required) - arrival times for this activity. The time is specified as Unix time, or seconds since midnight, January 1, 1970 UTC.
++ headsign: `Dudley` (string, optional) - specifies the direction in which to travel on this line, as it is marked on the vehicle or at the departure stop. This will often be the terminus station.
++ `num_stops`: `10` (number, optional) -  contains the number of stops in this step, counting the arrival stop, but not the departure stop.
++ agencies (array[TransitAgency], optional) - contains an array of TransitAgency objects that each provide information about the operator of the line.
++ route (TransitRoute, required) - the transit route of this transit trip.
++ `is_updated` : `false` (boolean, required) - indicate if the departure and arrival times are updated values from the agency's GTFS-Realtime feed.
+
+### TransitRoute
++ `route_id`: `701` (string, required)
++ `route_long_name`: `CT1` (string, required) - contains the full name of this transit line.
++ `route_short_name`: `CT1` (string, optional) - contains the short name of this transit line.
++ `route_type`: `0` (number, required) - contains the type of the route. See Google's GTFS [route_type](https://developers.google.com/transit/gtfs/reference/routes-file) documentation for a complete list of supported values.
+
+### TransitAgency
++ name: `MBTA` (string, required) - the name of the transit agency
++ url: `http://http://www.mbta.com/` (string, required) - URL for the transit agency
++ phone: `1-617-222-3200` (string, optional) - phone number of the transit agency
+
+### TransitStation (Location)
++ `stop_name`: `Boylston - Outbound` (string, required) - the GTFS-compatible name for the stop (not unique).
++ `stop_id`: `70159` (string, required) - the GTFS-compatible unique identifier for the stop.
++ `parent_station_id`: `place-boyls` (string, optional) - The GTFS-compatible unique identifier for the parent station associated with the stop. It can be empty if stop does not have an associated parent station.
++ `time_zone`: `America/New_York` (string, optional) - contains the time zone of this station. The value is the name of the time zone as defined in the [IANA Time Zone Database](http://www.iana.org/time-zones).
++ agency (TransitAgency, required) - The agency that operates this stop.
+
+### TransitRoutePrediction
++ `route_id`: `Red` (string, required) - the unique GTFS-compatible identifier for the route.
++ `trip_id`: `33225219` (string, required) - the unique GTFS-compatible identifier for the trip.
++ `route_name`: `Red Line` (string, required) - the human-readable name for the route.
++ `route_type`: `1` (number, optional) - contains the type of the route. See Google's GTFS [route_type](https://developers.google.com/transit/gtfs/reference/routes-file) documentation for a complete list of supported values.
++ `direction_id`: `1` (number, optional) - 0 or 1. the GTFS-compatible identifier for the travel direction.
++ `trip_headsign`: `Alewife` (string, required) - the text that identifies the trip's destination to passengers.
++ `pre_dt`: `1459276951` (number, optional) - predicted departure time at the stop for the trip, in epoch time.
++ `pre_arr`: `1498053851` (number, optional) - predicted arrival time at the stop for the trip, in epoch time.
++ `last_update`: `1498053851` (number, optional) - the time when the arrival information was received. If the value is 'null', it means that the returned arrival information comes from the time table (instead of real-time update from the transit agency).
+
+### TransitVehicleLocation
++ `route_id`: `Red` (string, required) - the unique GTFS-compatible identifier for the route.
++ `route_name`: `Red Line` (string, required) - the human-readable name for the route.
++ `route_type`: `0` (number, optional) - contains the type of the route. See Google's GTFS [route_type](https://developers.google.com/transit/gtfs/reference/routes-file) documentation for a complete list of supported values.
++ `direction_id`: `0` (number, optional) - 0 or 1. the GTFS-compatible identifier for the travel direction.
++ `trip_headsign`: `Ashmont` (string, optional) - the text that identifies the trip's destination to passengers.
++ latitude: `42.35524` (number, required) - the GTFS-compatible latitude of the vehicle.
++ longitude: `-71.06018` (number, required) - the GTFS-compatible longitude of the vehicle.
++ bearing: `135` (number, optional) - the GTFS-compatable bearing of the vehicle. This can be the compass bearing, or
+the direction towards the next stop or intermediate location.
+
+### RouteTags
++ positive_tags (array[string], optional) - contains an array of string denoting positive information about the route.
++ negative_tags (array[string], optional) - contains an array of string denoting negative information about the route.
+
+### Address
++ street: `70 Pacific St` (string, optional) - the name of the location's street.
++ city: `Cambridge` (string, optional) - the name of the location's city.
++ `region_name`: `Massachusetts` (string, optional) - the name of the location's region, such as its state or province.
++ `postal_code`: `02139` (string, optional) - the location's postal code.
++ `country_code`: `US` (string, optional) - the ISO code for the location's country.
+
+### StoredPlace
++ place_id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique Google Place Id for the place.
++ tag: `work` (string, required) - the tag for the place specified by the user.
++ address: `77 Massachusetts Ave, Cambridge, Massachusetts, United States` (string, required) - the fully qualified address of the place.
++ lat: `42.0` (string, required) - the latitude of the place.
++ lon: `-125.0` (string, required) - the longitude of the place.
++ description: `day office in the main building` (string, required) - a more detailed textual description for the place.
+
+### StoredVehicle
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, optional) - a unique identifier for the vehicle.
++ name: `family` (string, required) - the personalized name for the vehicle.
++ make: `Hyundai` (string, required) - the make of the vehicle.
++ model: `Elantra` (string, required) - the model of the vehicle.
++ style: `Sedan` (string, required) - the style of the vehicle.
++ year: `2015` (number, required) - the model year of the vehicle.
+
+### StoredMembership
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, optional) - a unique identifier for the user's membership.
++ name: `Zipcar EVP 50` (string, optional) - the name for the membership.
++ `membership_id`: `134098-0925t3249085` (string, required) - the membership id/number assigned by the provider.
++ `mobi_type` (AllowedMembershipType, required) - internal mobi type identifier for the membership.
++ provider: `Zipcar` (string, optional) - the provider who sells the membership.
++ `provider_type` (enum, optional) - the type of service offered by the provider.
+    + Members
+        + TRANSIT
+        + RIDESHARE
+        + BIKESHARE
+        + CARSHARE
++ description: `An annual zipcar membership with 10% discount on each rental` (string, optional) - a more detailed textual description for the membership.
++ expiration: `4294967295` (number, required) - the expiration time of the membership (in unix time by seconds).
+
+### AllowedMembershipType (enum[string])
++ UBER - "Uber Member", Uber Member (UBER, null).
++ LYFT - "Lyft Member", Lyft Member (LYFT, null).
++ ENTERPRISE - "Enterprise Member", Enterprise Rent-A-Car Member (ENTERPRISE, null).
++ MAVEN - "Maven Member", Maven Member (MAVEN, null).
++ ZIPCAROCCASIONAL - "Zipcar Occational Driving Plan", Zipcar Occational Driving Plan (ZIPCAR, null).
++ ZIPCARMONTHLY - "Zipcar Monthly Driving Plan", Zipcar Monthly Driving Plan (ZIPCAR, null).
++ ZIPCAREVP50 - "Zipcar EVP50 Plan", Zipcar extra value plan at $50/month cost (ZIPCAR, null).
++ ZIPCAREVP75 - "Zipcar EVP75 Plan", Zipcar extra value plan at $75/month cost (ZIPCAR, null).
++ ZIPCAREVP125 - "Zipcar EVP125 Plan", Zipcar extra value plan at $125/month cost (ZIPCAR, null).
++ ZIPCAREVP250 - "Zipcar EVP250 Plan", Zipcar extra value plan at $250/month cost (ZIPCAR, null).
++ METROCARD - "MetroCard", the transit card used by MTA (MTA, New York).
++ UNLIMITEDRIDEMETROCARD - "Unlimited Ride MetroCard", the unlimited transit card used by MTA (MTA, New York).
++ MTAEXPRESSBUSPLUS - "Express Bus Plus", the unlimited express bus pass used by MTA (MTA, New York).
++ MTAREDUCEDFAREELIGIBLE - "MTA Reduced Fare Eligible", if you are eligible for MTA reduced fare (MTA, New York).
++ LIRRPASS - "LIRR Pass", the weekly or monthly tickets on LIRR (MTA, New York).
++ LIRRREDUCEDFAREELIGIBLE - "LIRR Reduced Fare Eligible", if you are eligible for LIRR Senior/Disabled & Medicare discount. See http://web.mta.info/lirr/about/TicketInfo/ for details (MTA, New York).
++ MNRPASS - "Metro-North Pass", the weekly or monthly tickets on MNR (MTA, New York).
++ MNRREDUCEDFAREELIGIBLE - "Metro-North Reduced Fare Eligible", if you are eligible for MNR Seniors/Disabled Persons/Medicare discount. See http://web.mta.info/mnr/html/fares.htm for details (MTA, New York).
++ MNRCHILDFAREELIGIBLE - "Metro-North Child Fare Eligible", if you are eligible for MNR child fare discount. See http://web.mta.info/mta/fares/MNRValueTables_rev2.html for details (MTA, New York).
++ PATHPASS - "PATH Pass", the daily, weekly or monthly SmartLink Pass on PATH (PATH, New York).
++ PATHREDUCEDFAREELIGIBLE - "PATH Reduced Fare Eligible", if you are eligible for PATH Senior discount. See https://www.panynj.gov/path/fares.html for details (PATH, New York).
++ NJTRANSITINTRASTATEPASS - "NJ Transit Intrastate Bus Pass", the intrastate bus pass is valid for rides between local routes within New Jersey only (NJTRANSIT, New York).
++ NJTRANSITINTERSTATEPASS - "NJ Transit Interstate Bus Pass", the interstate bus pass is valid for rides between New Jersey and New York City or Philadelphia, PA . It may also be used for local rides within New Jersey (NJTRANSIT, New York).
++ NJTRANSITINTRACOMMUTERPASS - "NJ Transit Intracommuter Bus Pass", the intracommuter bus pass is valid for rides on bus routes between U.S. Highways 9 & 18 from Jersey City, Weehawken, Hoboken, or Newark (NJTRANSIT, New York).
++ NJTRANSITRAILPASS - "NJ Transit Rail Pass", the weekly or monthly pass on NJ Transit rail services (NJTRANSIT, New York).
++ NJTRANSITHBLIGHTRAILPASS - "NJ Transit Hudson-Bergen Light Rail Pass", the monthly pass on Hudson-Bergen Light Rail (NJTRANSIT, New York).
++ NJTRANSITNEWARKLIGHTRAILPASS - "NJ Transit Newark Light Rail Pass", the monthly pass on Newark Light Rail (NJTRANSIT, New York).
++ NJTRANSITRIVERLINEPASS - "NJ Transit River Line Pass", the monthly pass on NJ Transit River Line (NJTRANSIT, New York).
++ NJTRANSITREDUCEDFAREELIGIBLE - "NJ Transit Reduced Fare Eligible", if you are eligible for NJ Transit Senior Citizens & Customers with Disabilities fare discount. See http://www.njtransit.com/ti/ti_servlet.srv?hdnPageAction=BusTicketsTo for details (NJTRANSIT, New York).
++ NJTRANSITSTUDENTFAREELIGIBLE - "NJ Transit Student Fare Eligible", if you are eligible for NJ Transit student fare discount. See http://www.njtransit.com/ti/ti_servlet.srv?hdnPageAction=BusTicketsTo for details (NJTRANSIT, New York).
++ NJTRANSITCHILDFAREELIGIBLE - "NJ Transit Child Fare Eligible", if you are eligible for NJ Transit child fare discount. See http://www.njtransit.com/ti/ti_servlet.srv?hdnPageAction=BusTicketsTo for details (NJTRANSIT, New York).
++ TAPCARD - "TAP card", the contactless transit card used by many transit agencies in Metro LA (LACMTA, Los Angeles).
++ LAMETROMONTHLYPASS - "LA Metro 30-day Pass", the monthly pass for subway and local bus rides (LACMTA, Los Angeles).
++ LAMETROZONE1MONTHLYPASS - "LA Metro 30-day Zone 1 Pass", the monthly pass for subway, local and express bus rides (LACMTA, Los Angeles).
++ LAMETRODISCOUNTELIGIBLE - "LA Metro Discount Eligible", if you are eligible for LA Metro discount. See https://www.metro.net/riding/fares/ for details (LACMTA, Los Angeles).
++ LAMETROSTUDENTDISCOUNTELIGIBLE - "LA Metro Student Discount Eligible", if you are eligible for LA Metro student discount. See https://www.metro.net/riding/fares/ for details (LACMTA, Los Angeles).
++ CTAPASS - "CTA Pass", Unlimited Ride Passes (CTA, Chicago).
++ CTAREDUCEDFAREELIGIBLE - "CTA Reduced Fare Eligible", if you are eligible for CTA discount. See https://www.transitchicago.com/reduced-fare-programs/ for details (CTA, Chicago).
++ CTASTUDENTFAREELIGIBLE - "CTA Student Fare Eligible", if you are eligible for CTA student discount. See https://www.transitchicago.com/students/ for details (CTA, Chicago).
++ CHARLIECARD - "Charlie Card", the contactless transit card used by MBTA (MBTA, Boston, MA).
++ LINKPASS - "LinkPass", the daily/weekly/monthly pass for local subway and bus rides (MBTA, Boston, MA).
++ LINKPASSLOCALBUS - "Local Bus Pass", the monthly pass for local bus rides only (MBTA, Boston, MA).
++ MBTACRPASS*X - "Commuter Rail Pass Zone X", the monthly pass for commuter rail services. X should be replaced by number 0-10 representing the valid zones. Zone 0 is Zone 1A by MBTA specification (MBTA, Boston). 
++ MBTACRINTERZONEPASS*X - "Commuter Rail Intrazone Pass Zone X", the monthly pass for commuter rail services between Zone 1~10 (not including 1A). X should be replaced by number 1-10 representing the valid zones (MBTA, Boston). 
++ CLIPPERCARD - "Clipper Card", the contactless transit card used by many transit agencies in the bay area (CALTRAIN, San Francisco, CA).
++ CTMONTHLYPASS*X - "Caltrain Monthly Pass Zone X" the monthly pass for Caltrain. X should be replaced by number 1-6 representing the valid zones (Caltrain, SF Bay Area).
++ CTDISCOUNTELIGIBLE - "Caltrain Discount Eligible", if you are eligible for Caltrain discount. See http://www.caltrain.com/Fares/tickettypes.html for details (CALTRAIN, San Francisco, CA).
++ MUNIMOBILE - "Muni Mobile App", the mobile ticketing app for SFMTA (SFMTA, San Francisco, CA).
++ MUNIMONTHLYPASS - "Muni Monthly Pass", the monthly pass for SFMTA buses (SFMTA, San Francisco, CA).
++ SFMTADISCOUNTELIGIBLE - "SFMTA Discount Eligible", if you are eligible for SFMTA discount. See https://www.sfmta.com/getting-around/transit/fares-passes for details (SFMTA, San Francisco, CA).
++ ACTRANSITDISCOUNTELIGIBLE - "AC Transit Discount Eligible", if you are eligible for AC Transit discount. See http://www.actransit.org/rider-info/fares-tickets-passes/ for details (ACTRANSIT, San Francisco, CA).
++ ACTRANSITLOCALPASS - "AC Transit Local Monthly Pass", the monthly pass for local bus rides only (ACTRANSIT, San Francisco, CA).
++ ACTRANSITTRANSBAYPASS - "AC Transit Transbay Monthly Pass", the monthly pass for local and transbay bus rides (ACTRANSIT, San Francisco, CA).
++ BARTDISCOUNTELIGIBLE - "BART Discount Eligible", if you are eligible for BART discount. See https://www.bart.gov/tickets for details (BART, San Francisco, CA).
++ VTAMONTHLYPASS - "VTA Monthly Pass", the monthly pass for VTA services (VTA, San Francisco, CA).
++ VTAANNUALPASS - "VTA Monthly Pass", the annual pass for VTA services (VTA, San Francisco, CA).
++ VTADISCOUNTELIGIBLE - "VTA Annual Pass", if you are eligible for VTA discount. See http://www.vta.org/getting-around/fares for details (VTA, San Francisco, CA).
++ VTAYOUTHDISCOUNTELIGIBLE - "VTA Youth Discount Eligible", if you are eligible for VTA youth discount. See http://www.vta.org/getting-around/fares for details (VTA, San Francisco, CA).
++ SOUNDTRANSITYOUTHFARE - "Sound Transit Youth Fare Eligible", if you are eligible for the youth discount on Sound Transit service. See https://www.soundtransit.org/ride-with-us/how-to-pay/fares for details (SOUNDTRANSIT, Seattle).
++ SOUNDTRANSITREDUCEDFARE - "Sound Transit Reduced Fare Eligible", if you are eligible for reduced fare on Sound Transit service. See https://www.soundtransit.org/ride-with-us/how-to-pay/fares for details (SOUNDTRANSIT, Seattle).
++ SOUNDTRANSITLOWINCOMEFARE - "Sound Transit Low Income Fare Eligible", if you are eligible for the low income fare on Sound Transit service. See https://www.soundtransit.org/ride-with-us/how-to-pay/fares for details (SOUNDTRANSIT, Seattle).
++ KINGCOUNTYMETROYOUTHFARE - "King County Metro Transit Youth Fare Eligible", if you are eligible for the youth discount on King County Metro Transit service. See https://kingcounty.gov/depts/transportation/metro/fares-orca/what-to-pay.aspx for details (KINGCOUNTYMETROTRANSIT, Seattle).
++ KINGCOUNTYMETROREDUCEDFARE - "King County Metro Transit Reduced Fare Eligible", if you are eligible for reduced fare on King County Metro Transit service. See https://kingcounty.gov/depts/transportation/metro/fares-orca/what-to-pay.aspx for details (KINGCOUNTYMETROTRANSIT, Seattle).
++ KINGCOUNTYMETROLOWINCOMEFARE - "King County Metro Transit Low Income Fare Eligible", if you are eligible for low income fare on King County Metro service. See https://kingcounty.gov/depts/transportation/metro/fares-orca/what-to-pay.aspx for details (KINGCOUNTYMETROTRANSIT, Seattle).
++ WASHINGTONSTATEFERRYYOUTHFARE - "Washington State Ferry Youth Fare Eligible", if you are eligible for the youth discount for Washington State Ferry. See http://www.wsdot.wa.gov/Ferries/infodesk/fareinfo.htm for details. (WASHINGTONSTATEFERRY, Seattle).
++ WASHINGTONSTATEFERRYREDUCEDFARE - "Washington State Ferry Reduced Fare Eligible", if you are eligible for reduced fare on Washington State Ferry service. See http://www.wsdot.wa.gov/Ferries/infodesk/fareinfo.htm for details. (WASHINGTONSTATEFERRY, Seattle).
++ METROSAINTLOUISREDUCEDFAREELIGIBLE - "St. Louis, MO Metro Transit Reduced Fare Eligible", if you are eligible for reduced fare on St. Louis, MO Metro Transit service (METROTRANSITSAINTLOUIS, St. Louis, MO).
++ METROSAINTLOUISDAYPASS - "St. Louis, MO Metro Transit Day Pass", St. Louis, MO Metro Transit Day Pass (METROTRANSITSAINTLOUIS, St. Louis, MO).
++ METROSAINTLOUISWEEKLYPASS - "St. Louis, MO Metro Transit Weekly Pass", St. Louis, MO Metro Transit Weekly Pass (METROTRANSITSAINTLOUIS, St. Louis, MO).
++ METROSAINTLOUISMONTHLYPASS - "St. Louis, MO Metro Transit Monthly Pass", St. Louis, MO Metro Transit Monthly Pass (METROTRANSITSAINTLOUIS, St. Louis, MO).
++ METROSAINTLOUISSEMESTERPASS - "St. Louis, MO Metro Transit Semester Pass", St. Louis, MO Metro Transit Semester Pass (METROTRANSITSAINTLOUIS, St. Louis, MO).
++ RTCSNVRESIDENTIALELIGIBLE - "RTCSNV Residential Discount Eligible", if you are eligible for the residential discount for RTCSNV (RTCSNV, Las Vegas, NV).
++ RTCSNVDISCOUNTELIGIBLE - "RTCSNV Discount Eligible", if you are eligible for the reduced fare for RTCSNV (RTCSNV, Las Vegas, NV).
++ RTCSNVPASS - "RTCSNV Pass", the ride pass for RTCSNV (RTCSNV, Las Vegas, NV).
++ AATAPASS - "AATA Pass", 30-day or 1-day passes for AATA service (AATA, Ann Arbor, MI).
++ AATAREDUCEDFAREELIGIBLE - "AATA Reduced Fare Eligible", if you are eligible for reduced fare on AATA service. See https://www.theride.org/Fares-Passes for more details (AATA, Ann Arbor, MI).
++ AATAFREERIDEELIGIBLE - "AATA Free Ride Eligible", if you are eligible for free ride on AATA service. See http://www.theride.org/Fares-Passes for more details (AATA, Ann Arbor, MI).
++ CITIBIKE24 - "CitiBike 24-Hour Pass", CitiBike 24-Hour Pass (CITIBIKE, New York, NY).
++ CITIBIKE72 - "CitiBike 72-Hour Pass", CitiBike 72-Hour Pass (CITIBIKE, New York, NY).
++ CITIBIKEANNUAL - "CitiBike Annual Membership", CitiBike Annual Membership (CITIBIKE, New York, NY).
++ METROBIKESHAREFLEX - "Metro BikeShare Flex Pass", Metro BikeShare Flex Pass (LAMETROBIKESHARE, Los Angeles, CA).
++ METROBIKESHAREMONTHLY - "Metro BikeShare Monthly Pass", Metro BikeShare Monthly Pass (LAMETROBIKESHARE, Los Angeles, CA).
++ DIVVYBIKES24 - "Divvy BikeShare Explorer Pass", Divvy BikeShare Explorer Pass (DIVVYBIKES, Chicago, IL).
++ DIVVYBIKESANNUAL - "Divvy BikeShare Annual Membership", Divvy BikeShare Annual Membership (DIVVYBIKES, Chicago, IL).
++ HOUSTONBCYCLEANNUAL - "Houston BCycle Annual Membership", Houston BCycle Annual Membership (HOUSTONBCYCLE, Houston, TX).
++ HOUSTONBCYCLEMONTHLY - "Houston BCycle Monthly Membership", Houston BCycle Monthly Membership (HOUSTONBCYCLE, Houston, TX).
++ CAPITALBIKESHARE24 - "Capital Bikeshare 24-Hour Pass", Capital Bikeshare 24-Hour Pass (CAPITALBIKESHARE, Washington, D.C.).
++ CAPITALBIKESHARE72 - "Capital Bikeshare 3-Day Pass", Capital Bikeshare 3-Day Pass (CAPITALBIKESHARE, Washington, D.C.).
++ CAPITALBIKESHAREMONTHLY - "Capital Bikeshare 30-Day Pass", Capital Bikeshare 30-Day Pass (CAPITALBIKESHARE, Washington, D.C.).
++ CAPITALBIKESHAREANNUAL - "Capital Bikeshare Annual Membership", Capital Bikeshare Annual Membership (CAPITALBIKESHARE, Washington, D.C.).
++ INDEGODAY - "Indego Day Pass", Indego Day Pass (INDEGOBIKESHARE, Philadelphia, PA).
++ INDEGO30 - "Indego Monthly Pass", Indego Monthly Pass (INDEGOBIKESHARE, Philadelphia, PA).
++ INDEGO365 - "Indego Annual Pass", Indego Annual Pass (INDEGOBIKESHARE, Philadelphia, PA).
++ INDEGOFLEX - "Indego Flex Pass", Indego Flex Pass (INDEGOBIKESHARE, Philadelphia, PA).
++ RELAYBIKESHAREMONTHLY - "Relay BikeShare Monthly Pass", Metro BikeShare Monthly Pass (RELAYBIKESHARE, Atlanta, GA).
++ RELAYBIKESHAREANNUAL - "Relay BikeShare Annual Pass", Relay BikeShare Annual Pass (RELAYBIKESHARE, Atlanta, GA).
++ BLUEBIKES24 - "Bluebikes 24-Hour Pass", Bluebikes 24-Hour Pass (BLUEBIKES, Boston, MA).
++ BLUEBIKES72 - "Bluebikes 72-Hour Pass", Bluebikes 72-Hour Pass (BLUEBIKES, Boston, MA).
++ BLUEBIKESLOWINCOME - "Bluebikes Low-Income Program", Bluebikes Low-Income Program, See https://www.thehubway.com/pricing/boston-bikes-membership for more details (BLUEBIKES, Boston, MA).
++ BLUEBIKESMONTHLY - "Bluebikes Monthly Membership", Bluebikes Monthly Membership (BLUEBIKES, Boston, MA).
++ BLUEBIKESANNUAL - "Bluebikes Annual Membership", Bluebikes Annual Membership (BLUEBIKES, Boston, MA).
++ FORDGOBIKEANNUAL - "Ford GoBike Annual Membership", Ford GoBike Annual Membership (FORDGOBIKE, San Francisco, CA).
++ FORDGOBIKE24 - "Ford GoBike 24-Hour Pass", Ford GoBike 24-Hour Pass (FORDGOBIKE, San Francisco, CA).
++ FORDGOBIKELOWINCOME - "Ford GoBike Low Income Pass", Ford GoBike Low Income Pass (FORDGOBIKE, San Francisco, CA).
++ GRIDBIKESHAREWEEKLY - "Grid Bike Share 7-Day Pass", Grid Bike Share 7-Day Pass (GRIDBIKESHARE, Phoenix, AZ).
++ GRIDBIKESHAREMONTHLY - "Grid Bike Share Monthly Plan", Grid Bike Share Monthly Plan (GRIDBIKESHARE, Phoenix, AZ).
++ GRIDBIKESHAREMONTHLYPLUS - "Grid Bike Share Monthly Plus", Grid Bike Share Monthly Plus (GRIDBIKESHARE, Phoenix, AZ).
++ GRIDBIKESHARESTUDENT - "Grid Bike Share Student Plan", Grid Bike Share Student Plan (GRIDBIKESHARE, Phoenix, AZ).
++ NICERIDEMN24 - "Nice Ride Minnesota Day Pass", Nice Ride Minnesota Day Pass (NICERIDEMN, Minneapolis, MN).
++ NICERIDEMNANNUAL - "Nice Ride Minnesota Annual Membership", Nice Ride Minnesota Annual Membership (NICERIDEMN, Minneapolis, MN).
++ JUMPSANDIEGOBOOST - "Jump San Diego Boost Plan", Jump San Diego Boost Plan (JUMPSANDIEGO, San Diego, CA).
++ COASTBIKESHAREMONTHLY - "Coast Bike Share Monthly Plan", Coast Bike Share Monthly Plan (COASTBIKESHARE, Tampa, FL).
++ COASTBIKESHAREANNUAL - "Coast Bike Share Annual Plan", Coast Bike Share Annual Plan (COASTBIKESHARE, Tampa, FL).
++ COASTBIKESHARESTUDENTANNUAL - "Coast Bike Share Annual Student Plan", Coast Bike Share Annual Student Plan (COASTBIKESHARE, Tampa, FL).
++ COASTBIKESHARESTUDENTMONTHLY - "Coast Bike Share Monthly Student Plan", Coast Bike Share Monthly Student Plan (COASTBIKESHARE, Tampa, FL).
++ COASTBIKESHAREMONTHLYPLUS - "Coast Bike Share Monthly Plus Plan", Coast Bike Share Monthly Plus Plan (COASTBIKESHARE, Tampa, FL).
++ DENVERBCYCLE24 - "Denver Bcycle 24-HR Pass", Denver Bcycle 24-HR Pass (DENVERBCYCLE, Denver, CO).
++ DENVERBCYCLE72 - "Denver Bcycle 3-Day Pass", Denver Bcycle 3-Day Pass (DENVERBCYCLE, Denver, CO).
++ DENVERBCYCLEMONTHLY - "Denver Bcycle Monthly Pass", Denver Bcycle Monthly Pass (DENVERBCYCLE, Denver, CO).
++ DENVERBCYCLEANNUAL - "Denver Bcycle Annual Pass", Denver Bcycle Annual Pass (DENVERBCYCLE, Denver, CO).
++ DENVERBCYCLEFLEX - "Denver Bcycle Flex Pass", Denver Bcycle Flex Pass (DENVERBCYCLE, Denver, CO).
++ DENVERBCYCLEANNUALSUBSIDIZED - "Denver Bcycle Annual Subsidized Pass", Denver Bcycle Annual Subsidized Pass (DENVERBCYCLE, Denver, CO).
++ CHARLOTTEBCYCLE24 - "Charlotte B-cycle Day Pass", Charlotte B-cycle Day Pass (CHARLOTTEBCYCLE, Charlotte, NC).
++ CHARLOTTEBCYCLEMONTHLY - "Charlotte B-cycle Monthly Membership", Charlotte B-cycle Monthly Membership (CHARLOTTEBCYCLE, Charlotte, NC).
++ CHARLOTTEBCYCLEANNUAL - "Charlotte B-cycle Annual Membership", Charlotte B-cycle Annual Membership (CHARLOTTEBCYCLE, Charlotte, NC).
++ JUICEBIKESHAREMONTHLYBASIC - "Juice Bike Share Annual Membership", Juice Bike Share Annual Membership (JUICEBIKESHARE, Orlando, FL).
++ JUICEBIKESHAREMONTHLYPLUS - "Juice Bike Share 24-Hour Pass", Juice Bike Share 24-Hour Pass (JUICEBIKESHARE, Orlando, FL).
++ JUICEBIKESHARESTUDENTANNUAL - "Juice Bike Share Low Income Pass", Juice Bike Share Low Income Pass (JUICEBIKESHARE, Orlando, FL).
++ SANANTONIOBCYCLE24 - "San Antonio Bike Share Day Pass", San Antonio Bike Share Day Pass (SANANTONIOBCYCLE, San Antonio, TX).
++ SANANTONIOBCYCLEMONTHLY - "San Antonio Bike Share Monthly Membership", San Antonio Bike Share Monthly Membership (SANANTONIOBCYCLE, San Antonio, TX).
++ SANANTONIOBCYCLEANNUAL - "San Antonio Bike Share Annual Membership", San Antonio Bike Share Annual Membership (SANANTONIOBCYCLE, San Antonio, TX).
++ BIKETOWNMONTHLY - "BIKETOWN Monthly Membership", BIKETOWN Monthly Membership (BIKETOWNBIKESHARE, Portland, OR).
++ BIKETOWNANNUAL - "BIKETOWN Annual Membership", BIKETOWN Annual Membership (BIKETOWNBIKESHARE, Portland, OR).
++ BIKETOWNLOWINCOME - "BIKETOWN FOR ALL", BIKETOWN Low Income Membership (BIKETOWNBIKESHARE, Portland, OR).
++ CINCYREDBIKE24 - "Cincinnati Red Bike 24-Hour Pass", Cincinnati Red Bike 24-Hour Pass (CINCYREDBIKE, Cincinnati, OH).
++ CINCYREDBIKEMONTHLY - "Cincinnati Red Bike Monthly Pass", Cincinnati Red Bike Monthly Pass (CINCYREDBIKE, Cincinnati, OH).
++ CINCYREDBIKEANNUAL - "Cincinnati Red Bike Annual Pass", Cincinnati Red Bike Annual Pass (CINCYREDBIKE, Cincinnati, OH).
++ RTCBIKESHARE24 - "RTC Bike Share 24-Hour Pass", RTC Bike Share 24-Hour Pass (RTCBIKESHARE, Las Vegas, NV).
++ RTCBIKESHAREMONTHLY - "RTC Bike Share Monthly Membership", RTC Bike Share Monthly Membership (RTCBIKESHARE, Las Vegas, NV).
++ KANSASCITYBCYCLE24 - "Kansas City B-cycle 24-Hour Pass", Kansas City B-cycle 24-Hour Pass (KANSASCITYBCYCLE, Kansas City, MO).
++ KANSASCITYBCYCLEWEEKLY - "Kansas City B-cycle Weekly Pass", Kansas City B-cycle Weekly Pass (KANSASCITYBCYCLE, Kansas City, MO).
++ KANSASCITYBCYCLEMONTHLY - "Kansas City B-cycle Monthly Pass", Kansas City B-cycle Monthly Pass (KANSASCITYBCYCLE, Kansas City, MO).
++ KANSASCITYBCYCLEANNUAL - "Kansas City B-cycle Annual Membership", Kansas City B-cycle Annual Membership (KANSASCITYBCYCLE, Kansas City, MO).
+
+### StoredMembershipType
++ name: `Zipcar EVP 50` (string, required) - the name for the membership type.
++ type (AllowedMembershipType, required) - internal mobi type identifier for the membership.
++ provider: `Zipcar` (string, required) - the provider who sells and supports the membership.
++ `provider_type` (enum, required) - the type of service offered by the provider.
+    + Members
+        + TRANSIT
+        + RIDESHARE
+        + BIKESHARE
+        + CARSHARE
++ description: `An annual zipcar membership with 10% discount on each rental` (string, optional) - a more detailed textual description for the membership.
++ zones (array[TransitZone], optional) - transit zones that are covered by this membership. If present, the memberhsip type is formed by `Type*ZoneId`.
++ metro: `Boston` (string, optional) - the name of the metro this membership can be used.
++ lat: `42.195` (number, optional) - the latitude of the center of the membership's metro area.
++ lng: `-122.1234` (number, optional) - the longitude of the center of the membership's metro area.
+
+### TransitZone
++ `zone_id`: `0` (string, required) - the id for this transit zone.
++ `display_name`: `1A` (string, required) - the display name of the transit zone.
+
+### StoredRequest
++ `request_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the request.
++ origin: `42.50471,-71.19562` (string, required) - a comma separated string that encodes the coordinates of the trip origin.
++ `origin_id`: `ChIJrTLr-GyuEmsRBfy61i59si0` (string, required) - The Google Place ID for the origin location.
++ `origin_name`: `MIT` (string, required) - The name of the origin location.
++ `origin_address`: `77 Mass Ave` (string, required) - The address of the origin location.
++ destination: `42.44303,-71.22896` (string, required) - a comma separated string that encodes the coordinates of the trip destination.
++ `destination_id`: `ChIJrTLr-GyuEmsRBfy61i59si0` (string, required) - The Google Place Id for the destination.
++ `destination_name`: `MIT` (string, required) - The name of the destination location.
++ `destination_address`: `77 Mass Ave` (string, required) - The address of the destination location.
++ `departure_time`: `1482289608` (number, required) - the departure time specified by the user (in unix time by seconds).
++ `arrival_time`: `1482289608` (number, required) - the arrival time specified by the user (in unix time by seconds).
++ modes: `parkandwalk,parkandride,parkandbikeshare` (string, required) - the intermodal mode(s) requested for the trip, separated by the comma character `,`.
++ memberships: `charliecard,linkpass,metrocard` (string, required) - the transit cards, passes, bikeshare or carshare or rideshare memberships held by the users, separated by the comma character `,`.
++ accessible: `false` (boolean, required) - if any transit route included in the trip must be accessible, as requested by the user.
++ timestamp: `1482289608` (number, optional) - the timestamp when the request was created (in unix time by seconds).
+
+### StoredResponse
++ `request_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the request.
++ `response_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the response.
++ `route_count`: `3` (string, required) - number of routes generated in the response.
++ `bucket_name`: `routing-responses-dev` (string, required) - the name of the S3 bucket where the response object is stored.
++ `key_name`: `ypbluesky@gmail.com/65555e68-582e-4086-a765-11ceee23d6e7.json` (string, required) - the key to the response object.
++ timestamp: `1482289608` (number, required) - the timestamp when the response was computed (in unix time by seconds).
+
+### StoredSelection
++ `request_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the request.
++ `response_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the response.
++ `route_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the route.
++ timestamp: `1482289608` (number, required) - the timestamp when the selection was made (in unix time by seconds).
+
+### StoredModePreference
++ walk: `0` (number, required) - the preference over walking.
++ cycle: `0` (number, required) - the preference over bicycling.
++ drive: `0` (number, required) - the preference over driving.
++ transit: `0` (number, required) - the preference over public transit.
++ rideshare: `0` (number, required) - the preference over rideshare (uber, lyft).
++ carshare: `0` (number, required) - the preference over carshare (zipcar, maven).
++ bikeshare: `0` (number, required) - the preference over rideshare (Hubway, CitiBike).
+
+### ActivityStatusUpdates
++ updates (array[ActivityStatusUpdate], required) - an array of activity status update objects.
+
+### ActivityStatusUpdate
++ `activity_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the activity.
++ status (enum, required) - internal mobi type identifier for the status of the activity.
+    + Members
+        + SCHEDULED - the activity has been scheduled but has not been executed.
+        + STARTED - the activity has started but not yet completed.
+        + COMPLETED - the execution of this activity has completed.
+
+### ActivityTimingUpdates
++ updates (array[ActivityTimingUpdate], required) - an array of activity timing update objects.
+
+### ActivityTimingUpdate
++ `activity_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the activity.
++ `start_time`: 1513725841 (number, optional) - the start time of the event, in Linux time of seconds.
++ `end_time`: 1513728841 (number, optional) - the actual end time of the event, in Linux time of seconds.
++ `duration`: 1513728250841 (number, optional) - the actual duration of the event, in seconds.
