@@ -690,7 +690,7 @@ Retrieve all compatible contexts given the specified planning problem mode.
 + Response 200 (application/json)
 
     + Attributes 
-        + contexts (array[CandidateGoal], required) - a list of solution objects found for the problem.
+        + contexts (array[CandidateItem], required) - a list of solution objects found for the problem.
 
 + Response 400
 
@@ -2115,13 +2115,13 @@ This query will add a new selection record for the specified request.
 ## Data Structures
 
 ### Problem
-+ origin (OriginDestination, required) - the origin of the planning problem.
-+ destination (OriginDestination, required) - the destination of the planning problem.
++ origin (OriginDestinationItem, required) - the origin of the planning problem.
++ destination (OriginDestinationItem, required) - the destination of the planning problem.
 + current (Location, optional) - the current location of the user. Different from the origin and destination fields, no timing information is required for current location: the planner will use the current timestamp for it.
 + flexible_ordering (boolean, required) - specifies if the ordering of goals can be modified by the planner.
-+ activities (array[Goal], required) - the set of goals the user wants to achieve.
++ activities (array[GoalItem], required) - the set of goals the user wants to achieve.
 + profile (Profile, optional) - the profile of the user.
-+ agents (array[Agent], optional) - the set of agents involved in the planning problem
++ agents (array[AgentItem], optional) - the set of agents involved in the planning problem
 + mode (AllowedProblemMode, optional) - the planner mode used for this problem.
 
 ### AllowedProblemMode (enum[string])
@@ -2148,7 +2148,7 @@ This query will add a new selection record for the specified request.
 + cost: `10` (number, required) - the monetary cost of all activities in this solution object. In other words, this is the amount the user will spend on the activities in the plan.
 + activities (array[Activity], required) - contains an array of activities enabled by this solution.
 + locations (array[TimedLocation], required) - contains an array of locations used by this solution.
-+ agents (array[Agent], optional) - the set of agents involved in the plan, and the Ids of their activities. Only ac
++ agents (array[AgentItem], optional) - the set of agents involved in the plan, and the Ids of their activities. Only ac
 
 ### SolutionSpec
 + candidates_evaluated: 1200000 (number, optional) - the number of candidate solutions evaluated during planning.
@@ -2213,7 +2213,7 @@ This query will add a new selection record for the specified request.
 + `minimum_rating` (number, optional) - the minimum rating for an activity in this category to be considered by the planner.
 + places: `Starbucks`,`Wagamama` (array[string], optional) - preferred place names in this category, in free-form text. 
 + types: `ASIAN`,`AMERICAN` (array[string], optional) - preferred types of activities in this category, in free-form text.
-+ selection (CandidateGoal, optional) - an existing selection in this category.
++ selection (CandidateItem, optional) - an existing selection in this category.
 
 ### AllowedPreferenceCategory (enum[string])
 + ACCOMMODATION
@@ -2235,13 +2235,13 @@ This query will add a new selection record for the specified request.
 + CONTEXT
 + TRIPPURPOSE
 
-### Agent
+### AgentItem
 + id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the agent.
 + name: `Take Mobi` (string, optional) - the name for the agent.
-+ origin (TimedLocation, optional) - the origin of this agent. If not specified, will use the one from the planning problem.
-+ destination (TimedLocation, optional) - the destination of this agent. If not specified, will use the one from the planning problem.
-+ current (TimedLocation, optional) - the current location of this agent. If not specified, will use the one from the planning problem.
-+ goals: `c2a21058-bb2f-46ff-9328-857c868a7fcc`,`df54ee42-35b2-4884-a6a8-e8f935b98bd5`,`a1111c8c-c720-46c3-8534-2fcdd730040d` (array[string], optional) - the list of Ids of goals that belongs to this agent (in other words, the agent will only execute goals specified in this list, and ignore others in the planning problem). If not specified, all goals in the planning problem will be included. 
++ origin (OriginDestinationItem, optional) - the origin of this agent. If not specified, will use the one from the planning problem.
++ destination (OriginDestinationItem, optional) - the destination of this agent. If not specified, will use the one from the planning problem.
++ current (Location, optional) - the current location of this agent. If not specified, will use the one from the planning problem.
++ activities: `c2a21058-bb2f-46ff-9328-857c868a7fcc`,`df54ee42-35b2-4884-a6a8-e8f935b98bd5`,`a1111c8c-c720-46c3-8534-2fcdd730040d` (array[string], optional) - the list of Ids of goals that belongs to this agent (in other words, the agent will only execute goals specified in this list, and ignore others in the planning problem). If not specified, all goals in the planning problem will be included. 
 
 
 ### Activity
@@ -2342,7 +2342,7 @@ This query will add a new selection record for the specified request.
 + relaxable: `true` (boolean, optional) - if the desired time of departure/arrival is relaxable.
 + `time_zone`: `America/New_York` (string, required) - contains the time zone of this location. The value is the name of the time zone as defined in the [IANA Time Zone Database](http://www.iana.org/time-zones).
     
-### OriginDestination
+### OriginDestinationItem
 + name: `Mary Chung` (string, required) - the name of the location.
 + address: `464 Massachusetts Ave` (string, optional) - the address of the location.
 + id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the location.
@@ -2368,11 +2368,11 @@ This query will add a new selection record for the specified request.
         + ZIPCAR
         + MAVEN
         
-### Goal
+### GoalItem
 + id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the goal object.
 + name: `Lunch` (string, required) - the name of the goal.
 + source: `a1111c8c` (string, optional) - the id of the calendar event from which this goal is generated from.
-+ candidates (array[CandidateGoal], required) - an array of candidates that encodes the alternatives for this goal.
++ candidates (array[CandidateItem], required) - an array of candidates that encodes the alternatives for this goal.
 + duration: `180` (number, optional) - the desired duration of this candidate in seconds.
 + `start_constraint_type` (enum, optional) - the type of timing constraint for the start at this goal location. If NOT_APPLICABLE, the arrival timestamp of each candidate goal is ignored
     + Members
@@ -2427,7 +2427,7 @@ This query will add a new selection record for the specified request.
         + `EXPERIENCE`
         + `ATTRACTION`
         
-### CandidateGoal
+### CandidateItem
 + name: `Cambridge` (string, required) - the name of the candidate goal.
 + address: `Cambridge, MA 02138, USA` (string, required) - the address of the candidate goal location.
 + id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the candidate goal.
@@ -2455,7 +2455,7 @@ This query will add a new selection record for the specified request.
 ### POIDomain
 + destination: `Los Angeles, CA` (string, required) - the name of the destination metro that these POIs belond to.
 + `destination_photo`: `Cambridge` (string, required) - the link to a photo of the destination.
-+ pois (array[CandidateGoal], required) - a list of candidate POIs in the destination
++ pois (array[CandidateItem], required) - a list of candidate POIs in the destination
 
 ### Conflict
 + assignments (array[Assignment], required) - an array of assignments that cannot be satisfied at the same time.
