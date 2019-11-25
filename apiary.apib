@@ -2115,6 +2115,7 @@ This query will add a new selection record for the specified request.
 ## Data Structures
 
 ### Problem
++ id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the problem object.
 + origin (OriginDestinationItem, required) - the origin of the planning problem.
 + destination (OriginDestinationItem, required) - the destination of the planning problem.
 + current (Location, optional) - the current location of the user. Different from the origin and destination fields, no timing information is required for current location: the planner will use the current timestamp for it.
@@ -2250,16 +2251,17 @@ This query will add a new selection record for the specified request.
 + `user_id`: `a1111c8c` (string, optional) - a unique identifier for the user that this event belongs to.
 + name: `Drive to 745 Atlantic Ave` (string, required) - the name of the activity.
 + description: `Drive to 745 Atlantic Ave` (string, optional) - the description of the activity.
-+ `start_loc`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the start location of the activity.
-+ `start_lat`: `42.195` (number, required) - the latitude of the start location of the activity.
-+ `start_lng`: `-122.00` (number, required) - the longitude of the start location of the activity.
-+ `scheduled_start_time`: `1513728314` (number, required) - the scheduled start time of this activity, in Unix time (seconds).
-+ `end_loc`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the end location of the activity.
-+ `end_lat`: `42.195` (number, required) - the latitude of the end location of the activity.
-+ `end_lng`: `-122.00` (number, required) - the longitude of the end location of the activity.
-+ `scheduled_end_time`: `1513728314` (number, required) - the scheduled end time of this activity, in Unix time (seconds).
-+ `is_goal`: `false` (boolean, required) - if this activity represents a goal in the input problem (otherwise it is a traversal).
++ category (AllowedPreferenceCategory, optional) - the category of this activity, or the POI it is taking place at.
++ goal: `Hotel` (string, optional) - the corresponding goal name (from the input problem, if applicable) of the activity.
 + `explanations` (array[string], optional) - a set of text that explains the rationale behind the selection of this activity.
++ `start_loc`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the start location of the activity.
++ `end_loc`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the end location of the activity.
++ types (array[string], optional) - an array of the type tags of the activity.
++ images (object, optional) - links to images to be used for this activity.
+    + small: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%402x.png` (string, optional) - link to the small image.
+    + medium: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%403x.png` (string, optional) - link to the medium size image.
++ `scheduled_start_time`: `1513728314` (number, required) - the scheduled start time of this activity, in Unix time (seconds).  
++ `scheduled_end_time`: `1513728314` (number, required) - the scheduled end time of this activity, in Unix time (seconds).
 + duration: `151` (number, required) - the duration of this activity, in seconds.
 + distance: `200` (number, required) - the distance of travel in this activity, in meters.
 + `tags` (RouteTags, optional) - a set of qualitative evaluation for the route.
@@ -2271,26 +2273,9 @@ This query will add a new selection record for the specified request.
         + TRANSIT
         + TAXI
         + DELIVERY
-+ source: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, optional) - the id of the input problem goal from which this activity is generated for.
 + polyline: `42.363937,-71.099098,42.364159,-71.09948,42.364296,-71.099701,42.364471,-71.100006,42.364674,-71.100334,42.365234,-71.10128` (string, optional) - a polyline representation of the trajectory of this activity.
 + relaxation (ActivityTemporalRelaxation, optional) - relaxation required for this activity to make the plan temporally feasible.
-+ status (enum, optional) - the execution status of this activity.
-    + Members
-        + SCHEDULED
-        + STARTED
-        + COMPLETED
-        + EXPIRED
-+ category (AllowedPreferenceCategory, optional) - the category of this activity, or the POI it is taking place at.
-+ images (object, optional) - links to images to be used for this activity.
-    + small: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%402x.png` (string, optional) - link to the small image.
-    + medium: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%403x.png` (string, optional) - link to the medium size image.
-+ types (array, optional) - an array of the types of the activity. It follows the place types defined for Google's Place API: https://developers.google.com/places/supported_types. 
-    - (enum)
-        + spa
-        + restaurant
-        + lodging
-        + meeting
-        + experience
++ source: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, optional) - the id of the input problem goal from which this activity is generated for.
 + reservation (ActivityReservation, optional) - specify if this activity has an existing reservation.  
 + availability (array[ActivityAvailability], optional) - specify the availability of this activity, in or outside the current scheduled time windows.  
 
@@ -2303,7 +2288,8 @@ This query will add a new selection record for the specified request.
 + duration (number, optional) - duration of the activity if this availability window is selected, in seconds.
 + start_time (number, optional) - start time of the available window, in Unix timestamp of seconds.
 + end (number, optional) - end time of the available window, in Unix timestamp of seconds.
-        
+
+
 ### ActivityTemporalRelaxation
 + duration (TemporalRelaxation, optional) - relaxation applied to the duration of the activity.
 + start (TemporalRelaxation, optional) - relaxation applied to the start time of the activity.
@@ -2323,12 +2309,17 @@ This query will add a new selection record for the specified request.
 + `relaxed_ub`: `400` (number, optional) - the relaxed upper bound of the duration.
 
 ### Location
-+ name: `Mary Chung, 464 Massachusetts Ave` (string, required) - the name of the location.
-+ address: `464 Massachusetts Ave` (string, optional) - the address of the location.
 + id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the location. It is location dependent, in that if the same location appears multiple times in the problem, the id will be the same.
++ name: `Mary Chung, 464 Massachusetts Ave` (string, required) - the name of the location.
 + lat: `42.35031` (number, required) - the latitude of the location.
 + lng: `-71.0571` (number, required) - the longitude of the location.
 + `time_zone`: `America/New_York` (string, required) - contains the time zone of this location. The value is the name of the time zone as defined in the [IANA Time Zone Database](http://www.iana.org/time-zones).
++ `address_line1`: `464 Massachusetts Ave` (string, optional) - first line of the address for the location.
++ `address_line2`: `Unit 233` (string, optional) - second line of the address for the location.
++ `city`: `Cambridge` (string, optional) - city of the address for the location.
++ `state_province`: `Massachusetts` (string, optional) - state or province for the location.
++ `postal_code`: `02139` (string, optional) - postal code for the location.
++ `country`: `USA` (string, optional) - country of the location.
 + photo: `https://lh5.googleusercontent.com/p/AF1QipMckTTCJlA7LhbwA8AgJmCCK-P4ta0SP5uqVnWJ=w408-h306-k-no` (string, optional) - a link to a representative image of the location.
 
 ### TimedLocation
@@ -2367,26 +2358,23 @@ This query will add a new selection record for the specified request.
         + LYFT
         + ZIPCAR
         + MAVEN
-        
+
+   
 ### GoalItem
 + id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the goal object.
 + name: `Lunch` (string, required) - the name of the goal.
 + source: `a1111c8c` (string, optional) - the id of the calendar event from which this goal is generated from.
-+ candidates (array[CandidateItem], required) - an array of candidates that encodes the alternatives for this goal.
-+ duration: `180` (number, optional) - the desired duration of this candidate in seconds.
-+ `start_constraint_type` (enum, optional) - the type of timing constraint for the start at this goal location. If NOT_APPLICABLE, the arrival timestamp of each candidate goal is ignored
++ category (enum, optional) - the category of this activity.
     + Members
-        + `AT`
-        + `NOT_LATER_THAN`
-        + `NOT_EARLIER_THAN`
-        + `NOT_APPLICABLE`
-+ `end_constraint_type` (enum, optional) - the type of timing constraint for the end from this goal location. If NOT_APPLICABLE, the departure timestamp of each candidate goal is ignored
-    + Members
-        + `AT`
-        + `NOT_LATER_THAN`
-        + `NOT_EARLIER_THAN`
-        + `NOT_APPLICABLE`
+        + `FLIGHT`
+        + `RAIL`
+        + `OTHER`
+        + `ACCOMMODATION`
+        + `EXPERIENCE`
+        + `ATTRACTION`
+        + `TOUR`
 + optional: `true` (boolean, required) - specify if the goal can be dropped from the user's plan.
++ `candidate_information` (CandidateInformation, required) - specify the candidate information known by the user for the goal.
 + `allowed_incoming_modes` (array, required) - specify the allowed incoming modes for going to this activity.
     - (enum)
         + DRIVE
@@ -2417,55 +2405,81 @@ This query will add a new selection record for the specified request.
         + LYFT
         + ZIPCAR
         + MAVEN
-+ relaxable: `true` (boolean, required) - if the desired time of duration/departure/arrival is relaxable.
-+ category (enum, optional) - the category of this activity.
++ duration: `180` (number, optional) - the desired duration of this candidate in seconds.
++ `start_constraint_type` (enum, optional) - the type of timing constraint for the start at this goal location. If NOT_APPLICABLE, the arrival timestamp of each candidate goal is ignored
     + Members
-        + `FLIGHT`
-        + `RAIL`
-        + `OTHER`
-        + `ACCOMMODATION`
-        + `EXPERIENCE`
-        + `ATTRACTION`
-        
+        + `AT`
+        + `NOT_LATER_THAN`
+        + `NOT_EARLIER_THAN`
+        + `NOT_APPLICABLE`
++ `end_constraint_type` (enum, optional) - the type of timing constraint for the end from this goal location. If NOT_APPLICABLE, the departure timestamp of each candidate goal is ignored
+    + Members
+        + `AT`
+        + `NOT_LATER_THAN`
+        + `NOT_EARLIER_THAN`
+        + `NOT_APPLICABLE` 
++ relaxable: `true` (boolean, required) - if the desired time of duration/departure/arrival is relaxable.
+
+
+### CandidateInformation
++ candidates (array[CandidateItem], optional) - an array of candidates that encodes the alternatives for this goal. Mutually exclusive with selection and search field.
++ selection (CandidateItem, optional) - one candidate that has been selected for this goal. Mutually exclusive with candidates and search field.
++ search (SearchItem, optional) - encodes the search criteria for the planner to identify valid candidates for fulfilling the goal (no candidates is known to the user). Mutually exclusive with candidates and search field.
+
+
+### SearchItem
++ origin (Location, optional) - the origin of the search criteria. Use when the start location are relevant to the search results (such as flight, rail, tour, etc.).
++ destination (Location, optional) - the destination of the search criteria. Use when the end location are relevant to the search results (such as flight, rail, tour, etc.).
++ `earliest_departure_timestamp`: `1519765200` (number, optional) - the lowerbound for the desired departure timestamp.
++ `latest_departure_timestamp`: `1519765200` (number, optional) - the upperbound for the desired departure timestamp.
++ `earliest_arrival_timestamp`: `1519765200` (number, optional) - the lowerbound for the desired arrival timestamp.
++ `latest_arrival_timestamp`: `1519765200` (number, optional) - the upperbound for the desired arrival timestamp.
++ `max_connections`: `10` (number, optional) - the maximum number of connections. Use for transportation related search (such as flight and rail).
++ `preferred_carriers` (array[string], optional) - a list of preferred carriers. Use for transportation related search (such as flight and rail).
++ `max_duration`: `3600` (number, optional) - the maximum duration (in seconds). Use for tour related search.
+
+
 ### CandidateItem
-+ name: `Cambridge` (string, required) - the name of the candidate goal.
-+ address: `Cambridge, MA 02138, USA` (string, required) - the address of the candidate goal location.
-+ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the candidate goal.
-+ lat: `42.35031` (number, required) - the latitude of the location.
-+ lng: `-71.0571` (number, required) - the longitude of the location.
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the candidate.
++ `poi_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, optional) - a unique identifier, usually from the data source, for the candidate.
 + index: `12` (number, required) - unique index number for the candidate.
++ name: `Cambridge` (string, required) - the name of the candidate goal.
 + preferred: `false` (boolean, required) - specifies if the candidate is preferred by the user.
-+ `arrival_timestamp`: `1519765200` (number, optional) - the desired arrival timestamp, used in conjunction with the `start_constraint_type` property of its parent Goal object.
-+ `departure_timestamp`: `1519765200` (number, optional) - the desired departure timestamp, used in conjunction with the `end_constraint_type` property of its parent Goal object.
-+ `time_zone`: `America/New_York` (string, required) - contains the time zone of this location. The value is the name of the time zone as defined in the [IANA Time Zone Database](http://www.iana.org/time-zones).
-+ types (array, optional) - an array of the types of the activity. It follows the place types defined for Google's Place API: https://developers.google.com/places/supported_types. 
-    - (enum)
-        + spa
-        + restaurant
-        + lodging
-        + meeting
-        + experience
 + images (object, optional) - links to images to be used for this activity.
     + small: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%402x.png` (string, optional) - link to the small image.
     + medium: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%403x.png` (string, optional) - link to the medium size image.
++ location (Location, optional) - the location of the candidate.
++ `start_timestamp`: `1519765200` (number, optional) - the start timestamp of the candidate, used in conjunction with the `start_constraint_type` property of its parent Goal object.
++ `end_timestamp`: `1519765200` (number, optional) - the end timestamp of the candidate, used in conjunction with the `end_constraint_type` property of its parent Goal object.
 + origin (Location, optional) - the origin of the candidate. Use when the start and end locations of the candidate are different (such as flight, tour, etc.).
 + destination (Location, optional) - the destination of the candidate. Use when the start and end locations of the candidate are different (such as flight, tour, etc.).
-+ categories (array[string], optional) - the collection of all categories this candidate may belong to.
++ `departure_timestamp`: `1519765200` (number, optional) - the departure timestamp from the origin location, used when physical movement is involved (such as flight, rail, tour, etc.).
++ `arrival_timestamp`: `1519765200` (number, optional) - the arrival timestamp at the destination location, used when physical movement is involved (such as flight, rail, tour, etc.).
++ `transportation` (Transportation, optional) - the arrival timestamp at the destination location, used when physical movement is involved (such as flight, rail, tour, etc.).
+
+
+### Transportation
++ `segments` (array[TransportationSegment], optional) - a list of transportation segments, such as a list of flights, multiple train rides.
+
+
+### TransportationSegment
++ `type` (enum, optional) - the type of transportation modes used by the segment.
+    + Members
+        + `FLIGHT`
+        + `TRAIN`
++ origin: `BOS` (string, required) - the code (Airport or Train Station) for the departure location of the segment.
++ destination: `SFO` (string, required) - the code (Airport or Train Station) for the arrival location of the segment.
++ `departure_timestamp`: `1519765200` (number, required) - the departure timestamp from the origin.
++ `arrival_timestamp`: `1519765200` (number, required) - the arrival timestamp at the destination.
++ `carrier_code`: `UA` (string, optional) - the code of the air or train carrier.
++ `number`: `UA` (string, optional) - the number of the flight or train.
+
 
 ### POIDomain
 + destination: `Los Angeles, CA` (string, required) - the name of the destination metro that these POIs belond to.
 + `destination_photo`: `Cambridge` (string, required) - the link to a photo of the destination.
 + pois (array[CandidateItem], required) - a list of candidate POIs in the destination
 
-### Conflict
-+ assignments (array[Assignment], required) - an array of assignments that cannot be satisfied at the same time.
-f
-### Assignment
-+ name: `pizza` (string, required) - the name of the variable.
-+ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier for the variable.
-+ value: `Riverside Pizza Restaurant & Bar-6` (string, required) - the assignment value.
-+ `value_id`: `9e671401-9994-4d8c-bf7e-e74cef5bfddd` (string, required) - the unique identifier for the assignment.
-+ description: `Riverside Pizza Restaurant & Bar-6 for pizza` (string, optional) - the description of the assignment.
 
 ### Constraint
 + episode_id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the episode that this constraint applies to.
