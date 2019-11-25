@@ -150,7 +150,7 @@ Given a solution, calculate preferred alternative activities for one inside the 
 
     + Attributes
         + alternatives (array[Activity], optional) - a set of alternative activities for the one specified in the solution.
-        + locations (array[TimedLocation], optional) - a set of location objects referred by the alternative activities.
+        + locations (array[Location], optional) - a set of location objects referred by the alternative activities.
 
 + Response 400
 
@@ -289,6 +289,7 @@ Given a solution and a traversal activity, calculate preferred alternative trans
 
     + Attributes
         + alternatives (array[Activity], optional) - a set of alternative transportation activities for the one specified in the solution.
+        + locations (array[Location], optional) - a set of location objects referred by the transportation activities.
     
 + Response 400
 
@@ -1152,7 +1153,7 @@ Update the current state of the user and update the user's planning problem.
 
 + Request (application/json)
 
-    + Attributes (TimedLocation, required)
+    + Attributes (Location, required)
 
 + Response 200 (application/json)
 
@@ -1204,7 +1205,7 @@ Replan the current planning problem and get solution.
 
 + Request (application/json)
 
-    + Attributes (TimedLocation, required)
+    + Attributes (Location, required)
 
 + Response 200 (application/json)
 
@@ -2148,7 +2149,7 @@ This query will add a new selection record for the specified request.
 + `problem_id`: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the problem object of this solution.
 + cost: `10` (number, required) - the monetary cost of all activities in this solution object. In other words, this is the amount the user will spend on the activities in the plan.
 + activities (array[Activity], required) - contains an array of activities enabled by this solution.
-+ locations (array[TimedLocation], required) - contains an array of locations used by this solution.
++ locations (array[Location], required) - contains an array of locations used by this solution.
 + agents (array[AgentItem], optional) - the set of agents involved in the plan, and the Ids of their activities. Only ac
 
 ### SolutionSpec
@@ -2322,17 +2323,6 @@ This query will add a new selection record for the specified request.
 + `country`: `USA` (string, optional) - country of the location.
 + photo: `https://lh5.googleusercontent.com/p/AF1QipMckTTCJlA7LhbwA8AgJmCCK-P4ta0SP5uqVnWJ=w408-h306-k-no` (string, optional) - a link to a representative image of the location.
 
-### TimedLocation
-+ name: `Mary Chung` (string, required) - the name of the location.
-+ address: `464 Massachusetts Ave` (string, optional) - the address of the location.
-+ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the location.
-+ lat: `42.35031` (number, required) - the latitude of the location.
-+ lng: `-71.0571` (number, required) - the longitude of the location.
-+ `arrival_timestamp`: `1519765200` (number, optional) - the desired arrival timestamp.
-+ `departure_timestamp`: `1519765200` (number, optional) - the desired departure timestamp.
-+ relaxable: `true` (boolean, optional) - if the desired time of departure/arrival is relaxable.
-+ `time_zone`: `America/New_York` (string, required) - contains the time zone of this location. The value is the name of the time zone as defined in the [IANA Time Zone Database](http://www.iana.org/time-zones).
-    
 ### OriginDestinationItem
 + name: `Mary Chung` (string, required) - the name of the location.
 + address: `464 Massachusetts Ave` (string, optional) - the address of the location.
