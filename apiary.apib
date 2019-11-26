@@ -2147,7 +2147,7 @@ This query will add a new selection record for the specified request.
 ### Solution
 + id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the solution object.
 + `problem_id`: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the problem object of this solution.
-+ cost: `10` (number, required) - the monetary cost of all activities in this solution object. In other words, this is the amount the user will spend on the activities in the plan.
++ price (Price, required) - the monetary cost of all activities in this solution object. In other words, this is the amount the user will spend on the activities in the plan.
 + activities (array[Activity], required) - contains an array of activities enabled by this solution.
 + locations (array[Location], required) - contains an array of locations used by this solution.
 + agents (array[AgentItem], optional) - the set of agents involved in the plan, and the Ids of their activities. Only ac
@@ -2248,16 +2248,16 @@ This query will add a new selection record for the specified request.
 
 ### Activity
 + id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the activity.
-+ `event_id`: `35b2-4884` (string, optional) - a unique identifier for the corresponding calendar event.
++ `calendar_id`: `35b2-4884` (string, optional) - a unique identifier for the corresponding calendar event.
 + `user_id`: `a1111c8c` (string, optional) - a unique identifier for the user that this event belongs to.
 + name: `Drive to 745 Atlantic Ave` (string, required) - the name of the activity.
 + description: `Drive to 745 Atlantic Ave` (string, optional) - the description of the activity.
 + category (AllowedPreferenceCategory, optional) - the category of this activity, or the POI it is taking place at.
 + goal: `Hotel` (string, optional) - the corresponding goal name (from the input problem, if applicable) of the activity.
 + `explanations` (array[string], optional) - a set of text that explains the rationale behind the selection of this activity.
-+ `start_loc`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the start location of the activity.
-+ `end_loc`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the end location of the activity.
-+ types (array[string], optional) - an array of the type tags of the activity.
++ `has_alternatives`: `true` (boolean, optional) - a boolean flag indicating if alternatives are available for the activity.
++ `start_location`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the start location of the activity.
++ `end_location`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the end location of the activity.
 + images (object, optional) - links to images to be used for this activity.
     + small: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%402x.png` (string, optional) - link to the small image.
     + medium: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%403x.png` (string, optional) - link to the medium size image.
@@ -2265,7 +2265,9 @@ This query will add a new selection record for the specified request.
 + `scheduled_end_time`: `1513728314` (number, required) - the scheduled end time of this activity, in Unix time (seconds).
 + duration: `151` (number, required) - the duration of this activity, in seconds.
 + distance: `200` (number, required) - the distance of travel in this activity, in meters.
-+ `tags` (RouteTags, optional) - a set of qualitative evaluation for the route.
++ transportation (Transportation, optional) - the transportation option details, if applicable to the activity.
++ types (array[string], optional) - an array of the type tags of the activity.
++ tags (RouteTags, optional) - a set of qualitative evaluation for the route.
 + mode (enum, optional) - the traversal mode of this activity.
     + Members
         + WALK
@@ -2276,7 +2278,8 @@ This query will add a new selection record for the specified request.
         + DELIVERY
 + polyline: `42.363937,-71.099098,42.364159,-71.09948,42.364296,-71.099701,42.364471,-71.100006,42.364674,-71.100334,42.365234,-71.10128` (string, optional) - a polyline representation of the trajectory of this activity.
 + relaxation (ActivityTemporalRelaxation, optional) - relaxation required for this activity to make the plan temporally feasible.
-+ source: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, optional) - the id of the input problem goal from which this activity is generated for.
++ source (Source, optional) - the source of the content for this activity. Could be the Ids of the input problem goal from which this activity is generated for, or the raw content from third party API queries.
++ price (Price, optional) - the price of this activity, if applicable.
 + reservation (ActivityReservation, optional) - specify if this activity has an existing reservation.  
 + availability (array[ActivityAvailability], optional) - specify the availability of this activity, in or outside the current scheduled time windows.  
 
@@ -2309,6 +2312,24 @@ This query will add a new selection record for the specified request.
 + `original_ub`: `360` (number, optional) - the original upper bound of the duration.
 + `relaxed_ub`: `400` (number, optional) - the relaxed upper bound of the duration.
 
+### Source
++ `goal_id`: `1644652a-19df-4a29-be03-38bb0fc34dbb` (string, required) - the id of the GoalItem.
++ `candidate_id`: `1644652a-19df-4a29-be03-38bb0fc34dbb` (string, required) - the id of the CandidateItem.
++ `raw_content` (string, required) - the json object returned from third-party APIs.
+
+### Price
++ `amount`: `360` (number, required) - the amount of the price.
++ `currency`: `USD` (enum, required) - the currency code for the price.
+    + Members
+        + USD
+        + JPY
+        + CNY
+        + EUR
+        + AUD
+        + HKD
+        + GBP
+        + CAD
+        
 ### Location
 + id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the location. It is location dependent, in that if the same location appears multiple times in the problem, the id will be the same.
 + name: `Mary Chung, 464 Massachusetts Ave` (string, required) - the name of the location.
@@ -2352,8 +2373,8 @@ This query will add a new selection record for the specified request.
    
 ### GoalItem
 + id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the goal object.
++ calendar_id: `a1111c8c` (string, optional) - the id of the calendar event from which this goal is generated from.
 + name: `Lunch` (string, required) - the name of the goal.
-+ source: `a1111c8c` (string, optional) - the id of the calendar event from which this goal is generated from.
 + category (enum, optional) - the category of this activity.
     + Members
         + `FLIGHT`
@@ -2434,6 +2455,7 @@ This query will add a new selection record for the specified request.
 + `poi_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, optional) - a unique identifier, usually from the data source, for the candidate.
 + index: `12` (number, required) - unique index number for the candidate.
 + name: `Cambridge` (string, required) - the name of the candidate goal.
++ price (Price, optional) - the price of the candidate goal, if applicable.
 + preferred: `false` (boolean, required) - specifies if the candidate is preferred by the user.
 + images (object, optional) - links to images to be used for this activity.
     + small: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%402x.png` (string, optional) - link to the small image.
