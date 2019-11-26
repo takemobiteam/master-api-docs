@@ -2277,7 +2277,7 @@ This query will add a new selection record for the specified request.
         + TAXI
         + DELIVERY
 + polyline: `42.363937,-71.099098,42.364159,-71.09948,42.364296,-71.099701,42.364471,-71.100006,42.364674,-71.100334,42.365234,-71.10128` (string, optional) - a polyline representation of the trajectory of this activity.
-+ relaxation (ActivityTemporalRelaxation, optional) - relaxation required for this activity to make the plan temporally feasible.
++ relaxation (Relaxation, optional) - relaxation required for this activity to make the plan temporally feasible.
 + source (Source, optional) - the source of the content for this activity. Could be the Ids of the input problem goal from which this activity is generated for, or the raw content from third party API queries.
 + price (Price, optional) - the price of this activity, if applicable.
 + reservation (ActivityReservation, optional) - specify if this activity has an existing reservation.  
@@ -2294,23 +2294,28 @@ This query will add a new selection record for the specified request.
 + end (number, optional) - end time of the available window, in Unix timestamp of seconds.
 
 
-### ActivityTemporalRelaxation
-+ duration (TemporalRelaxation, optional) - relaxation applied to the duration of the activity.
-+ start (TemporalRelaxation, optional) - relaxation applied to the start time of the activity.
-+ end (TemporalRelaxation, optional) - relaxation applied to the end time of the activity.
+### Relaxation
++ duration (DurationRelaxationObject, optional) - relaxation applied to the duration of the activity.
++ start (InstantRelaxationObject, optional) - relaxation applied to the start time of the activity.
++ end (InstantRelaxationObject, optional) - relaxation applied to the end time of the activity.
 
-### TemporalRelaxation
+### DurationRelaxationObject
 + `episode_id`: `1644652a-19df-4a29-be03-38bb0fc34dbb` (string, required) - the id of the episode being relaxed in the planning problem.
-+ `is_lb_relaxed`: `true` (boolean, required) - if the lower bound of the episode is relaxed.
-+ `is_ub_relaxed`: `false` (boolean, required) - if the upper bound of the episode is relaxed.
-+ `original_earliest`: `1519763040` (number, optional) - the original earliest time.
-+ `relaxed_earliest`: `1519763020` (number, optional) - the relaxed earliest time.
-+ `original_latest`: `1519763040` (number, optional) - the original latest time.
-+ `relaxed_latest`: `1519763050` (number, optional) - the relaxed latest time.
++ `is_lb_relaxed`: `true` (boolean, required) - if the lower bound of the duration is relaxed.
++ `is_ub_relaxed`: `false` (boolean, required) - if the upper bound of the duration is relaxed.
 + `original_lb`: `360` (number, optional) - the original lower bound of the duration.
 + `relaxed_lb`: `300` (number, optional) - the relaxed lower bound of the duration.
 + `original_ub`: `360` (number, optional) - the original upper bound of the duration.
 + `relaxed_ub`: `400` (number, optional) - the relaxed upper bound of the duration.
+
+### InstantRelaxationObject
++ `episode_id`: `1644652a-19df-4a29-be03-38bb0fc34dbb` (string, required) - the id of the episode being relaxed in the planning problem.
++ `is_earliest_relaxed`: `true` (boolean, required) - if the earliest allowed time of the instant is relaxed.
++ `is_latest_relaxed`: `false` (boolean, required) - if the latest allowed time of the instant is relaxed.
++ `original_earliest`: `1519763040` (number, optional) - the original earliest allowed time.
++ `relaxed_earliest`: `1519763020` (number, optional) - the relaxed earliest allowed time.
++ `original_latest`: `1519763040` (number, optional) - the original latest allowed time.
++ `relaxed_latest`: `1519763050` (number, optional) - the relaxed latest allowed time.
 
 ### Source
 + `goal_id`: `1644652a-19df-4a29-be03-38bb0fc34dbb` (string, required) - the id of the GoalItem.
