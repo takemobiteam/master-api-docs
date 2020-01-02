@@ -48,12 +48,7 @@ Create a new planning problem and find the best solution for the current problem
   
 + Response 200 (application/json)
 
-    + Attributes
-        + solution (Solution, optional) - the solution object for the problem.
-        + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
-        + destination (Location, optional) - the representative location of this plan.
-        + display (Display, optional) - any recommended configurations for displaying this solutions.
-        
+    + Attributes (SolutionResponse, required)
     
 + Response 400
 
@@ -83,12 +78,7 @@ Replan with the new activity provided in the payload, and all activities in the 
   
 + Response 200 (application/json)
 
-    + Attributes
-        + solution (Solution, optional) - the solution object for the problem.
-        + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
-        + destination (Location, optional) - the representative location of this plan.
-        + display (Display, optional) - any recommended configurations for displaying this solutions.
-        
+    + Attributes (SolutionResponse, required)
     
 + Response 400
 
@@ -102,42 +92,6 @@ Replan with the new activity provided in the payload, and all activities in the 
 
         Internal Server Error.
 
-
-## Create Micro Planning Problem [/mobility-planner/demo/v2/problem/micro{?user_id}]
-
-Create a micro planning problem and find the best solution for it. A micro planning problem shares the same structure with a whole day planning problem, 
-but the time span is usually within an hour and both the start and end locations are inside a park. It is used for generating additional activities for guests when they
-have a small gap between two activities. Currently the types of POIs that can be included in this micro plan are ATTRACTION and ENTERTAINMENT.
-
-+ Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
-
-### POST
-
-+ Request (application/json)
-
-    + Attributes (Problem, required)
-  
-+ Response 200 (application/json)
-
-    + Attributes
-        + solution (Solution, optional) - the solution object for the micro planning problem.
-        + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
-        + destination (Location, optional) - the representative location of this plan.
-        + display (Display, optional) - any recommended configurations for displaying this solutions.
-        
-    
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
 
 ## Next Best Solution [/mobility-planner/demo/v2/next-solution{?user_id}]
 
@@ -150,12 +104,8 @@ Find the next best solution for the current problem.
   
 + Response 200 (application/json)
 
-    + Attributes
-        + solution (Solution, optional) - the solution object for the problem.
-        + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
-        + destination (Location, optional) - the representative location of this plan.
-        + display (Display, optional) - any recommended configurations for displaying this solutions.
-    
+    + Attributes (SolutionResponse, required)
+
 + Response 400
 
         Bad Request.
@@ -220,10 +170,68 @@ Given the alternative activity for one in the existing solution, calculate a new
   
 + Response 200 (application/json)
 
+    + Attributes (SolutionResponse, required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Alternative Timeslots [/mobility-planner/demo/v2/alternative-timeslot{?user_id,problem_id,solution_id,activity_id}]
+
+Given a solution, calculate feasible alternative timeslots for one of its activities.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem
+    + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution.
+    + activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity whose alternative timeslots will be calculated.
+
+### GET
+  
++ Response 200 (application/json)
+
     + Attributes
-        + solution (Solution, optional) - the solution object for the problem.
-        + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
-        + destination (Location, optional) - the representative location of this plan.
+        + results (array[array[number]], optional) - a list of alternative timeslots (in [lowerbound, upperbound] format) for the activity in the solution.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Select Alternative Timeslot and Replan [/mobility-planner/demo/v2/alternative-timeslot{?user_id,problem_id,solution_id,activity_id,earliest_time,latest_time}]
+
+Given the alternative timeslot for an activity, calculate a new plan.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem.
+    + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that this alternative should apply to.
+    + activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity that this alternative will replace.
+    + earliest_time: `1577997127` (number, required) - the earliest start time for the specified activity.
+    + latest_time: `1577997127` (number, required) - the latest start time for the specified activity. It could be the same as the earliest time,
+
+### POST
+  
++ Response 200 (application/json)
+
+    + Attributes (SolutionResponse, required)
     
 + Response 400
 
@@ -290,10 +298,7 @@ Given the additional activity between the two specified ones, calculate a new pl
   
 + Response 200 (application/json)
 
-    + Attributes
-        + solution (Solution, optional) - the solution object for the problem.
-        + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
-        + destination (Location, optional) - the representative location of this plan.
+    + Attributes (SolutionResponse, required)
     
 + Response 400
 
@@ -360,10 +365,7 @@ Given the alternative transportation activity for one in the existing solution, 
   
 + Response 200 (application/json)
 
-    + Attributes
-        + solution (Solution, optional) - the solution object for the problem.
-        + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
-        + destination (Location, optional) - the representative location of this plan.
+    + Attributes (SolutionResponse, required)
     
 + Response 400
 
@@ -394,11 +396,7 @@ Given an activity from the existing solution but with an updated schedule (start
   
 + Response 200 (application/json)
 
-    + Attributes
-        + solution (Solution, optional) - the solution object for the problem.
-        + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
-        + destination (Location, optional) - the representative location of this plan.
-        + display (Display, optional) - any recommended configurations for displaying this solutions.
+    + Attributes (SolutionResponse, required)
     
 + Response 400
 
@@ -427,11 +425,7 @@ Remove the specified activity in the existing solution, and calculate a new plan
   
 + Response 200 (application/json)
 
-    + Attributes
-        + solution (Solution, optional) - the solution object for the problem.
-        + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
-        + destination (Location, optional) - the representative location of this plan.
-        + display (Display, optional) - any recommended configurations for displaying this solutions.
+    + Attributes (SolutionResponse, required)
     
 + Response 400
 
@@ -460,8 +454,7 @@ Insert a new conflict of one temporal constraint and find the next best solution
   
 + Response 200 (application/json)
 
-    + Attributes
-        + solution (Solution, optional) - the solution object for the problem.
+    + Attributes (SolutionResponse, required)
     
 + Response 400
 
@@ -2179,6 +2172,13 @@ This query will add a new selection record for the specified request.
 + BESTWESTERN
 + IHG
 + FOURSEASONS
+
+### SolutionResponse
++ solution (Solution, optional) - the solution object for the problem.
++ spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
++ destination (Location, optional) - the representative location of this plan.
++ display (Display, optional) - any recommended configurations for displaying this solutions.
++ explanations (array[string], optional) - explanations for why no solution could be found by the planner.
 
 ### Solution
 + id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the solution object.
