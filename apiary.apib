@@ -38,7 +38,7 @@ Other cities can be added by request.
 Create a new planning problem and find the best solution for the current problem.
 
 + Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique for the user creating the planning problem.
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
 
 ### POST
 
@@ -63,18 +63,81 @@ Create a new planning problem and find the best solution for the current problem
         Internal Server Error.
 
 
-## Replan With Additional Activity [/mobility-planner/demo/v2/problem/new-activity{?user_id}]
+## Replan With Modified Activity [/mobility-planner/demo/v2/problem/modified-activity{?user_id,problem_id,activity_id}]
 
-Replan with the new activity provided in the payload, and all activities in the original problem.
+Replan with the modified version (provided in the payload) of an existing activity in the original problem, and all other activities in the original problem.
 
 + Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique for the user created the planning problem.
+    + `user_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user created the planning problem.
+    + `problem_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the original planning problem.
+    + `activity_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity that the modified one will replace.
 
 ### POST
 
 + Request (application/json)
 
     + Attributes (GoalItem, required)
+  
++ Response 200 (application/json)
+
+    + Attributes (SolutionResponse, required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Replan With Additional Activity [/mobility-planner/demo/v2/problem/new-activity{?user_id,problem_id}]
+
+Replan with the new activity provided in the payload, and all activities in the original problem.
+
++ Parameters
+    + `user_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user created the planning problem.
+    + `problem_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the original planning problem.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (GoalItem, required)
+  
++ Response 200 (application/json)
+
+    + Attributes (SolutionResponse, required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Replan Transportation Option [/mobility-planner/demo/v2/problem/transportation{?user_id}]
+
+Replan with new transportation options connecting the origin and destination. Currently we support flights and rental cars (real location but the inventory and pricing are estimated). Will be adding trains and buses and possible intermodal options between them.
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user created the planning problem.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
   
 + Response 200 (application/json)
 
