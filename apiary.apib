@@ -31,6 +31,92 @@ Other cities can be added by request.
 * DELETE - Deletes a resource
 
 
+# Group Bluesky
+
+## Get All Supported Tags - Also Known as Plan Profile Domain [/mobility-planner/demo/v2/profile/domain{?mode,context}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this profile domain.
+    + context (string, optional) - the context used for this profile domain.
+
+### GET
+
+Retrieve allowed tags (profile options) given the planning problem mode and context.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + domains (array[Preference], optional) - a list of preference options allowed for different categories of preferences.
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get All Supported Destinations - Also Known as Plan Contexts [/mobility-planner/demo/v2/domain/contexts{?mode}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+
+### GET
+
+Retrieve all supported destinations (compatible contexts) given the specified planning problem mode.
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + contexts (array[CandidateItem], required) - a list of solution objects found for the problem.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Recommended Destinations - Also Known as Candidate Contexts [/mobility-planner/demo/v2/problem/contexts]
+
+### POST
+
+Retrieve recommended destinations (contexts) given the selected tags in the profile encoded in the problem.
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + contexts (array[CandidateItem], required) - a list of recommended destinations.
+        + scores (array[number], required) - a list of scores indicating the preference over the destinations (the higher the better).
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
 # Group Planning
 
 ## Create Problem [/mobility-planner/demo/v2/problem{?user_id}]
