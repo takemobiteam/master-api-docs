@@ -60,6 +60,34 @@ Retrieve allowed tags (profile options) given the planning problem mode and cont
 
         Internal Server Error.
 
+## Get Recommended Tags [/mobility-planner/demo/v2/profile/domain/recommendation{?mode,context}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this profile domain.
+    + context (string, optional) - the context used for this profile domain.
+
+### GET
+
+Retrieve recommended tags (profile options) given the planning problem mode and context. Up to 20 (10 experience, 5 dining and 5 accommodation) 
+at the moment but we can adjust that total number and distribution. 
+
++ Response 200 (application/json)
+
+    + Attributes
+        + recommendations (array[RecommendedAttribute], optional) - a list of recommended preference options.
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
 
 ## Get All Supported Destinations - Also Known as Plan Contexts [/mobility-planner/demo/v2/domain/contexts{?mode}]
 
@@ -101,8 +129,42 @@ Retrieve recommended destinations (contexts) given the selected tags in the prof
 + Response 200 (application/json)
 
     + Attributes 
-        + contexts (array[CandidateItem], required) - a list of recommended destinations.
-        + scores (array[number], required) - a list of matching count for each category of POIs at the recommended destinations (the higher the better).
+        + contexts (array[string], required) - a list of recommended destination names.
+        + scores (array[number], required) - a list of matching count for each category of POIs at the recommended destinations (the higher the better). Also includes `SATISFIED_SELECTIONS` and `UNSATISFIED_SELECTIONS`
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Recommended POIs for Destination [/mobility-planner/demo/v2/problem/pois{?context}]
+
++ Parameters
+    + context (string, required) - the selected context for recommended POIs.
+
+### POST
+
+Retrieve recommended POIs for the specified context given the selected tags in the profile encoded in the problem.
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + pois 
+            + DINING (array[CandidateItem], required) - a list of recommended dining POIs (up to 10).
+            + EXPERIENCE (array[CandidateItem], required) - a list of recommended experience POIs (up to 10).
+            + ACCOMMODATION (array[CandidateItem], required) - a list of recommended accommodation POIs (up to 10).
 
 + Response 400
 
@@ -2321,6 +2383,8 @@ This query will add a new selection record for the specified request.
 + BESTWESTERN
 + IHG
 + FOURSEASONS
++ ZOLA
++ AMEX
 
 ### SolutionResponse
 + solution (Solution, optional) - the solution object for the problem.
@@ -3228,3 +3292,8 @@ the direction towards the next stop or intermediate location.
 + `start_time`: 1513725841 (number, optional) - the start time of the event, in Linux time of seconds.
 + `end_time`: 1513728841 (number, optional) - the actual end time of the event, in Linux time of seconds.
 + `duration`: 1513728250841 (number, optional) - the actual duration of the event, in seconds.
+
+### RecommendedAttribute
++ name: `Sights & Landmarks` (string, required) - the name of the recommended attribute.
++ source: `Places` (string, required) - the source type of the recommended attribute.
++ category: `EXPERIENCE` (string, required) - the category of POIs this attribute applies to.
