@@ -181,12 +181,9 @@ Retrieve recommended POIs for the specified context given the selected tags in t
 
 # Group Planning
 
-## Create Problem [/mobility-planner/demo/v2/problem{?user_id}]
+## Create Problem [/mobility-planner/demo/v2/problem]
 
 Create a new planning problem and find the best solution for the current problem.
-
-+ Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
 
 ### POST
 
@@ -211,12 +208,12 @@ Create a new planning problem and find the best solution for the current problem
         Internal Server Error.
 
 
-## Replan With Modified Activity [/mobility-planner/demo/v2/problem/modified-activity{?user_id,problem_id,activity_id}]
+## Replan With Modified Activity [/mobility-planner/demo/v2/problem/modified-activity{?session_id,problem_id,activity_id}]
 
 Replan with the modified version (provided in the payload) of an existing activity in the original problem, and all other activities in the original problem.
 
 + Parameters
-    + `user_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user created the planning problem.
+    + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
     + `problem_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the original planning problem.
     + `activity_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity that the modified one will replace.
 
@@ -243,12 +240,12 @@ Replan with the modified version (provided in the payload) of an existing activi
         Internal Server Error.
 
 
-## Replan With Additional Activity [/mobility-planner/demo/v2/problem/new-activity{?user_id,problem_id}]
+## Replan With Additional Activity [/mobility-planner/demo/v2/problem/new-activity{?session_id,problem_id}]
 
 Replan with the new activity provided in the payload, and all activities in the original problem.
 
 + Parameters
-    + `user_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user created the planning problem.
+    + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
     + `problem_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the original planning problem.
 
 ### POST
@@ -274,12 +271,12 @@ Replan with the new activity provided in the payload, and all activities in the 
         Internal Server Error.
 
 
-## Replan Transportation Option [/mobility-planner/demo/v2/problem/transportation{?user_id}]
+## Replan Transportation Option [/mobility-planner/demo/v2/problem/transportation{?session_id}]
 
 Replan with new transportation options connecting the origin and destination. Currently we support flights and rental cars (real location but the inventory and pricing are estimated). Will be adding trains and buses and possible intermodal options between them.
 
 + Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user created the planning problem.
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
 
 ### POST
 
@@ -304,12 +301,12 @@ Replan with new transportation options connecting the origin and destination. Cu
         Internal Server Error.
 
 
-## Next Best Solution [/mobility-planner/demo/v2/next-solution{?user_id}]
+## Next Best Solution [/mobility-planner/demo/v2/next-solution{?session_id}]
 
 Find the next best solution for the current problem.
 
 + Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
 
 ### GET
   
@@ -330,12 +327,12 @@ Find the next best solution for the current problem.
         Internal Server Error.
 
 
-## Get Alternative Activities [/mobility-planner/demo/v2/alternative-activity{?user_id,problem_id,solution_id,activity_id,max_number}]
+## Get Alternative Activities [/mobility-planner/demo/v2/alternative-activity{?session_id,problem_id,solution_id,activity_id,max_number}]
 
 Given a solution, calculate preferred alternative activities for one inside the solution.
 
 + Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
     + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem
     + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that alternatives should apply to.
     + activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity that calculated alternatives will replace.
@@ -362,12 +359,12 @@ Given a solution, calculate preferred alternative activities for one inside the 
         Internal Server Error.
 
 
-## Select Alternative Activity and Replan [/mobility-planner/demo/v2/alternative-activity{?user_id,replan,problem_id,solution_id,activity_id}]
+## Select Alternative Activity and Replan [/mobility-planner/demo/v2/alternative-activity{?session_id,replan,problem_id,solution_id,activity_id}]
 
 Given the alternative activity for one in the existing solution, calculate a new plan.
 
 + Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
     + replan: `false` (boolean, required) - a boolean value. If set to true, the planner will try to find the best plan for the alternative activity, without preserving the existing selections.
     + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem.
     + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that this alternative should apply to.
@@ -396,12 +393,12 @@ Given the alternative activity for one in the existing solution, calculate a new
         Internal Server Error.
 
 
-## Get Alternative Timeslots [/mobility-planner/demo/v2/alternative-timeslot{?user_id,problem_id,solution_id,activity_id}]
+## Get Alternative Timeslots [/mobility-planner/demo/v2/alternative-timeslot{?session_id,problem_id,solution_id,activity_id}]
 
 Given a solution, calculate feasible alternative timeslots for one of its activities.
 
 + Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
     + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem
     + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution.
     + activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity whose alternative timeslots will be calculated.
@@ -426,12 +423,12 @@ Given a solution, calculate feasible alternative timeslots for one of its activi
         Internal Server Error.
 
 
-## Select Alternative Timeslot and Replan [/mobility-planner/demo/v2/alternative-timeslot{?user_id,problem_id,solution_id,activity_id,earliest_time,latest_time}]
+## Select Alternative Timeslot and Replan [/mobility-planner/demo/v2/alternative-timeslot{?session_id,problem_id,solution_id,activity_id,earliest_time,latest_time}]
 
 Given the alternative timeslot for an activity, calculate a new plan.
 
 + Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
     + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem.
     + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that this alternative should apply to.
     + activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity that this alternative will replace.
@@ -457,12 +454,12 @@ Given the alternative timeslot for an activity, calculate a new plan.
         Internal Server Error.
 
 
-## Get Candidate Activities For Insertion [/mobility-planner/demo/v2/additional-activity{?user_id,problem_id,solution_id,preceding_activity_id,succeeding_activity_id,max_number}]
+## Get Candidate Activities For Insertion [/mobility-planner/demo/v2/additional-activity{?session_id,problem_id,solution_id,preceding_activity_id,succeeding_activity_id,max_number}]
 
 Given a solution, calculate preferred activities that can be added between the two specified activities.
 
 + Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
     + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem
     + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that alternatives should apply to.
     + preceding_activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity that represents the start of the time gap.
@@ -490,12 +487,12 @@ Given a solution, calculate preferred activities that can be added between the t
         Internal Server Error.
 
 
-## Select Additional Activity and Replan [/mobility-planner/demo/v2/additional-activity{?user_id,problem_id,solution_id,preceding_activity_id,succeeding_activity_id}]
+## Select Additional Activity and Replan [/mobility-planner/demo/v2/additional-activity{?session_id,problem_id,solution_id,preceding_activity_id,succeeding_activity_id}]
 
 Given the additional activity between the two specified ones, calculate a new plan.
 
 + Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
     + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem.
     + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that alternatives should apply to.
     + preceding_activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity that represents the start of the time gap.
@@ -525,12 +522,12 @@ Given the additional activity between the two specified ones, calculate a new pl
         
 
 
-## Get Alternative Transportation [/mobility-planner/demo/v2/alternative-transportation{?user_id,problem_id,solution_id,activity_id}]
+## Get Alternative Transportation [/mobility-planner/demo/v2/alternative-transportation{?session_id,problem_id,solution_id,activity_id}]
 
 Given a solution and a traversal activity, calculate preferred alternative transportation for it.
 
 + Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
     + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem
     + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that alternatives should apply to.
     + activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the traversal activity that calculated alternative transportation will replace.
@@ -557,12 +554,12 @@ Given a solution and a traversal activity, calculate preferred alternative trans
 
 
 
-## Select Alternative Transportation and Replan [/mobility-planner/demo/v2/alternative-transportation{?user_id,problem_id,solution_id,activity_id,alternative_activity_id}]
+## Select Alternative Transportation and Replan [/mobility-planner/demo/v2/alternative-transportation{?session_id,problem_id,solution_id,activity_id,alternative_activity_id}]
 
 Given the alternative transportation activity for one in the existing solution, calculate a new plan.
 
 + Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
     + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem.
     + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that this alternative should apply to.
     + activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the transportation activity that this alternative will replace.
@@ -590,12 +587,12 @@ Given the alternative transportation activity for one in the existing solution, 
 
         Internal Server Error.
 
-## Reschedule Activity [/mobility-planner/demo/v2/reschedule-activity{?user_id,problem_id,solution_id}]
+## Reschedule Activity [/mobility-planner/demo/v2/reschedule-activity{?session_id,problem_id,solution_id}]
 
 Given an activity from the existing solution but with an updated schedule (start/end times or duration), calculate a new plan.
 
 + Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
     + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem.
     + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that this rescheduling should apply to.
 
@@ -622,12 +619,12 @@ Given an activity from the existing solution but with an updated schedule (start
         Internal Server Error.
         
 
-## Remove Activity and Replan [/mobility-planner/demo/v2/activity{?user_id,problem_id,solution_id,activity_id}]
+## Remove Activity and Replan [/mobility-planner/demo/v2/activity{?session_id,problem_id,solution_id,activity_id}]
 
 Remove the specified activity in the existing solution, and calculate a new plan.
 
 + Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
     + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem.
     + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution this removal will apply to.
     + activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity to be removed.
@@ -650,12 +647,12 @@ Remove the specified activity in the existing solution, and calculate a new plan
 
         Internal Server Error.
 
-## Add Temporal Conflict and Replan [/mobility-planner/demo/v2/temporal-conflict{?user_id}]
+## Add Temporal Conflict and Replan [/mobility-planner/demo/v2/temporal-conflict{?session_id}]
 
 Insert a new conflict of one temporal constraint and find the next best solution for the current problem.
 
 + Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
 
 ### POST
 
@@ -679,7 +676,7 @@ Insert a new conflict of one temporal constraint and find the next best solution
 
         Internal Server Error.
 
-## Confirm Plan for Execution [/mobility-planner/demo/v2/solution{?problem_id,solution_id,user_id}]
+## Confirm Plan for Execution [/mobility-planner/demo/v2/solution{?problem_id,solution_id}]
 
 Confirm a solution for execution.
 
@@ -688,7 +685,6 @@ Confirm a solution for execution.
 + Parameters
     + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem created.
     + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution to confirm.
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user creating the planning problem.
 
 + Response 200 (application/json)
 
