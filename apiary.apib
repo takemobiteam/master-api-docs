@@ -240,9 +240,9 @@ Replan with the modified version (provided in the payload) of an existing activi
         Internal Server Error.
 
 
-## Replan With Additional Activity [/mobility-planner/demo/v2/problem/new-activity{?session_id,problem_id}]
+## Replan With Additional Activities [/mobility-planner/demo/v2/problem/new-activities{?session_id,problem_id}]
 
-Replan with the new activity provided in the payload, and all activities in the original problem.
+Replan with the new activities provided in the payload, and all activities in the original problem.
 
 + Parameters
     + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
@@ -252,7 +252,7 @@ Replan with the new activity provided in the payload, and all activities in the 
 
 + Request (application/json)
 
-    + Attributes (GoalItem, required)
+    + Attributes (array[GoalItem], required)
   
 + Response 200 (application/json)
 
