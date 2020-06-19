@@ -240,13 +240,44 @@ Replan with the modified version (provided in the payload) of an existing activi
         Internal Server Error.
 
 
-## Replan With Additional Activities [/mobility-planner/demo/v2/problem/new-activities{?session_id,problem_id}]
+## Replan With Additional Activities [/mobility-planner/demo/v2/problem/new-activities{?session_id}]
 
 Replan with the new activities provided in the payload, and all activities in the original problem.
 
 + Parameters
     + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
     + `problem_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the original planning problem.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (array[GoalItem], required)
+  
++ Response 200 (application/json)
+
+    + Attributes (SolutionResponse, required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Replan With New Recommendations [/mobility-planner/demo/v2/problem/new-recommendations{?session_id,time_windows}]
+
+Replan with the new activities provided in the payload, and also insert planner recommendations within the time windows specified.
+
++ Parameters
+    + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
+    + `time_windows`: `1592571002,1592657402,1592743802,1592830202` (string, required) - a list of comma separated epoch timestamps (in seconds) defining the time windows in which planner should insert recommendation: [t1,t2], [t3,t4] ...
 
 ### POST
 
@@ -2408,6 +2439,11 @@ This query will add a new selection record for the specified request.
 + average_walking: 20 (number, required) - the average walking time per POI, in minutes.
 + average_waiting: 5 (number, required) - the average waiting time per POI, in minutes.
 + endpoints_used: 2 (number, required) - the number of endpoints used to support this planning process.
++ subscription_level (enum, optional) - the level of subscription of the return itinerary.
+    + Members
+        + UNDER_SUBSCRIBED
+        + NORMAL
+        + OVER_SUBSCRIBED
 
 ### Display
 + `display_whole_polyline`: true (boolean, optional) - if true, the polyline for the entire solution is recommended to be displayed in the background when each day's plan is being presented.
@@ -2708,6 +2744,11 @@ This query will add a new selection record for the specified request.
 + name: `Cambridge` (string, required) - the name of the candidate goal.
 + price (Price, optional) - the price of the candidate goal, if applicable.
 + preferred: `false` (boolean, required) - specifies if the candidate is preferred by the user.
++ preference (enum, optional) - the type of timing constraint for the end from this goal location. If NOT_APPLICABLE, the departure timestamp of each candidate goal is ignored
+    + Members
+        + `MAYBE`
+        + `INTERESTED`
+        + `DEFINITELY`
 + images (object, optional) - links to images to be used for this activity.
     + small: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%402x.png` (string, optional) - link to the small image.
     + medium: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%403x.png` (string, optional) - link to the medium size image.
