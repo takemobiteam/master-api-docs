@@ -270,13 +270,42 @@ Replan with the new activities provided in the payload, and all activities in th
         Internal Server Error.
 
 
-## Replan With New Recommendations [/mobility-planner/demo/v2/problem/new-recommendations{?session_id,time_windows}]
+## Replan With New Recommendations [/mobility-planner/demo/v2/problem/new-recommendations{?session_id}]
 
-Replan with the new activities provided in the payload, and also insert planner recommendations within the time windows specified.
+Replan with the new activities provided in the payload, and also insert planner recommendations.
 
 + Parameters
     + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
-    + `time_windows`: `1592571002,1592657402,1592743802,1592830202` (string, required) - a list of comma separated epoch timestamps (in seconds) defining the time windows in which planner should insert recommendation: [t1,t2], [t3,t4] ...
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (array[GoalItem], required)
+  
++ Response 200 (application/json)
+
+    + Attributes (SolutionResponse, required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Replan With No Recommendation [/mobility-planner/demo/v2/problem/no-recommendation{?session_id}]
+
+Replan with the new activities provided in the payload, and also remove any inserted planner recommendations.
+
++ Parameters
+    + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
 
 ### POST
 
