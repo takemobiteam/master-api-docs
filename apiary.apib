@@ -101,7 +101,35 @@ Retrieve all supported destinations (compatible contexts) given the specified pl
 + Response 200 (application/json)
 
     + Attributes 
-        + contexts (array[CandidateItem], required) - a list of solution objects found for the problem.
+        + contexts (array[CandidateItem], required) - a list of context objects found for the mode.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get MAtched Candidate [/mobility-planner/demo/v2/domain/poi{?mode,id}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + mode (string, required) - the candidate id.
+
+### GET
+
+Retrieve the candidate item object matching the specified planning problem mode and candidate id.
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + poi (CandidateItem, required) - a candidate that fit the id.
 
 + Response 400
 
@@ -270,12 +298,13 @@ Replan with the new activities provided in the payload, and all activities in th
         Internal Server Error.
 
 
-## Replan With New Recommendations [/mobility-planner/demo/v2/problem/new-recommendations{?session_id}]
+## Replan With New Recommendations [/mobility-planner/demo/v2/problem/new-recommendations{?session_id,time_windows}]
 
-Replan with the new activities provided in the payload, and also insert planner recommendations.
+Replan with the new activities provided in the payload, and also insert saved places provided in previous iterations to the time windows provided (optional).
 
 + Parameters
     + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
+    + `time_windows`: `1594135800,1594137600,1594135800,1594137600` (string, optional) - pairs of timestamps (in seconds), separated by comma. If provided, curated activities will only be inserted into these time windows. If not provided, curated activities could be inserted into any part of the plan.
 
 ### POST
 
