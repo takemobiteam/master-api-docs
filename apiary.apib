@@ -2448,6 +2448,7 @@ This query will add a new selection record for the specified request.
 + activities (array[GoalItem], required) - the set of goals the user wants to achieve.
 + profile (Profile, optional) - the profile of the user.
 + agents (array[AgentItem], optional) - the set of agents involved in the planning problem
++ budget (Budget, optional) - the the budget that is available when solving for this problem.
 + mode (AllowedProblemMode, optional) - the planner mode used for this problem.
 
 ### AllowedProblemMode (enum[string])
@@ -2527,6 +2528,10 @@ This query will add a new selection record for the specified request.
 + `mode_preferences` (array[ModePreference], optional) - the set of user preferences over different modes of transportation.
 + preferences (array[Preference], optional) - the set of user preferences over different categories of activities.
 + `price_tolerance` (number, optional) - a value between 0.0 and 5.0 that describes the user's acceptance of high price POIs. 5.0 mean the use has the highest tolerance, while 0.0 means the user has low tolerance and is more sensitive to price.
+
+### Budget
++ price (array[Price], required) - the upper bound of spending of each currency for all activities. Only currencies that have a limit (e.g. AMEX_POINT) may need to be specified.
+
 
 ### ModePreference
 + mode (AllowedModePreferenceCategory, required) - the mode of transportation covered by this preference object.
