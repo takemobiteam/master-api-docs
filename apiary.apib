@@ -116,11 +116,11 @@ Retrieve all supported destinations (compatible contexts) given the specified pl
         Internal Server Error.
 
 
-## Get MAtched Candidate [/mobility-planner/demo/v2/domain/poi{?mode,id}]
+## Get Matched Candidate [/mobility-planner/demo/v2/domain/poi{?mode,id}]
 
 + Parameters
     + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
-    + mode (string, required) - the candidate id.
+    + id (string, required) - the candidate id.
 
 ### GET
 
@@ -1215,8 +1215,6 @@ ignored give the different mode combinations allowed (e.g. the choices of parkin
     + accessible: `true` (boolean, optional) - Specifies if any transit route included in the trip must be accessible (applies to both vehicles and stops).
         + Default: `false`
     + memberships (AllowedMembershipType, optional) - Specifies the user holds any transit cards, passes, bikeshare or carshare or rideshare memberships. You can include multiple membership names, separated by the comma character `,`, such as `BLUEBIKES24,UBER,LYFT`.
-    + `max_results`: `5`(integer, optional) - Specifies maximum number of routes to be returned in the response.
-        + Default: `25`
     + `duration_margin`: `5`(number, optional) - Specifies the maximum difference in the total durations of two routes in the response, when every other metrics of the routes being equal.
         + Default: `0`
     + `walkingtime_margin`: `5`(number, optional) - Specifies the maximum difference in the total walking durations of two routes in the response, when every other metrics of the routes being equal.
@@ -3432,7 +3430,7 @@ the direction towards the next stop or intermediate location.
 
 ### ActivitySelection
 + alternative_activities (array[AlternativeActivities], required) - alternative activities returned to the user (note: this field may contain multiple collections when a user requested alternative activities multiple times).
-+ selections: (array[string], required) - a collection of Ids representing the activities a user selected.
++ selections (array[string], required) - a collection of Ids representing the activities a user selected.
 
 ### AlternativeActivities
 + activitiy_id (string, required) - the Id of the activity where alternatives are presented.
