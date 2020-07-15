@@ -8,7 +8,7 @@ services. This page documents the second version of the API.
 
 Current version of Mobi API is running on:
 
-* https://api.takemobi.com/
+* https://api.takemobi.io/
 
 You will need to use https when querying the endpoints: http queries (on port 80) are not supported at the moment. 
 
@@ -763,6 +763,36 @@ Insert a new conflict of one temporal constraint and find the next best solution
 + Response 500
 
         Internal Server Error.
+        
+## Confirm Customer Activity Selection [/mobility-planner/demo/v2/activity-selections{?problem_id,solution_id}]
+
+Confirm the final activity selections by the customer. 
+
++ Parameters
+    + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem.
+    + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the original planning solution.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (ActivitySelection, required)
+        
++ Response 200 (application/json)
+
+        Success.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
 
 ## Confirm Plan for Execution [/mobility-planner/demo/v2/solution{?problem_id,solution_id}]
 
@@ -1157,7 +1187,7 @@ Check if the planning service is up and running.
 
 # Group Routing
 
-## Intermodal Routes [/intermodal/v1/routes/all{?origin,origin_name,destination,destination_name,waypoints,waypoint_arrival_times,waypoint_departure_times,modes,departure_time,arrival_time,duration_stay,accessible,memberships,max_results,duration_margin,walkingtime_margin,bikingtime_margin,cost_margin,save_response,street_parking,electric_charger,config,request_id}]
+## Intermodal Routes [/intermodal/v1/routes/all{?origin,origin_name,destination,destination_name,waypoints,waypoint_arrival_times,waypoint_departure_times,modes,departure_time,arrival_time,duration_stay,accessible,memberships,max_results,duration_margin,walkingtime_margin,bikingtime_margin,cost_margin,save_response,street_parking,electric_charger,config,return_polyline,request_id,max_results}]
 
 Compute best intermodal routes. The set of parameters accepted by different transportation modes are identical, though some may be 
 ignored give the different mode combinations allowed (e.g. the choices of parking providers will be ignored in transit only routes). 
@@ -1206,8 +1236,12 @@ ignored give the different mode combinations allowed (e.g. the choices of parkin
             + FORD   
     + `request_id`: `324-25sdfgsd-345364-sdgfdsfg` (string, optional) - A UUID for the routing request for future reference.
         + Default: ``
-    + `save_response`: `false` (boolean, optional) - Specifies if the results should be saved in the server for further analysis.
+    + `return_polyline`: `true` (boolean, optional) - Specifies if the `path` field of each routing option, which stores the polyline for the movement, should be included in the resposne.
+        + Default: `true`
+    + `save_response`: `false` (boolean, optional) - Specifies if the routing result should be cached in the server side for retrieval later. Note that even if the `return_polyline` field is set to false in the query, the server will cache the complete routing object with the `path` field.
         + Default: `false`
+    + `max_results`: `50` (number, optional) - Specifies the maximum number of routing options to be returned in the response.
+        + Default: `50`
 
 ### GET
 
@@ -1605,18 +1639,24 @@ Computing a new schedule for the plan by re-computing relaxations to the existin
 
 ### Stop Locations [GET /mobility-data-repository/v1/transit/stations{?lat,lng,radius}]
 
-This query will return a list of the nearest stops from a particular location, within the radius specified. 
+This query will return a list of the nearest transit stops from a particular location, within the radius specified. 
 
 + Parameters
     + lat: `42.360954` (number, required) - the latitude for location near which stops should be returned. 
     + lng: `-71.101483` (number, required) - the longitude for location near which stops should be returned.
     + radius: `1000` (number, optional) - the radius of search in meters.
 
++ Request
+    + Headers
+    
+            x-api-key: [valid_api_key_goes_here]
+
 + Response 200 (application/json)
 
     An array of transit stations found that meet the search requirements.
  
-    + Attributes (array[TransitStation], required)
+    + Attributes 
+        + results (array[TransitStation], required) - the set of transit stops.
     
 + Response 400
 
@@ -1632,26 +1672,23 @@ This query will return a list of the nearest stops from a particular location, w
 
 ### Arriving Vehicles [GET /mobility-data-repository/v1/transit/arrivals{?stop_id,agency}]
 
-This query will return predicted arrivals and departures in the next hour for a direction and route for a
-particular stop. 
+This query will return predicted arrivals and departures in the next hour for a particular transit stop. 
 
 + Parameters
     + stop_id: `70070` (string, required) - GTFS-compatible id value for the station whose predictions should be returned. 
-    + agency (enum, required) - The name of the transit agency returned from the stop location endpoint.
-        + Members
-            + MBTA - (Boston)
-            + AC Transit - (SF Bay Area)
-            + BART - (SF Bay Area)
-            + Caltrain - (SF Bay Area)
-            + VTA - (SF Bay Area)
-            + San Francisco Municipal Transportation Agency - (SF Bay Area)
-            + Metro - Los Angeles - (Los Angeles)
-            
+    + agency: 'MBTA' (string, required) - The Id of the transit agency returned from the stop location endpoint.
+
+ 
++ Request
+    + Headers
+    
+            x-api-key: [valid_api_key_goes_here]
+
+
 + Response 200 (application/json)
 
-    An array of arrival predictions for transit routes that serves this stop.
-
-    + Attributes (array[TransitRoutePrediction], required)
+    + Attributes 
+        + results (array[TransitRoutePrediction], required) - an array of arrival/departure predictions for the selected transit route.
 
 + Response 400
 
@@ -1664,6 +1701,7 @@ particular stop.
 + Response 500
 
         Internal Server Error.
+        
 
 ### Vehicle Positions [GET /mobility-data-repository/v1/transit/vehicles{?route_id,agency}]
 
@@ -1671,15 +1709,13 @@ This query will return the positions of vehicles operating on a transit route.
 
 + Parameters
     + route_id: `1345` (string, required) - GTFS-compatible id value for the route whose vehicle positions should be returned. 
-    + agency (enum, required) - The name of the transit agency returned from the routing endpoint.
-        + Members
-            + MBTA - (Boston)
-            + AC Transit - (SF Bay Area)
-            + BART - (SF Bay Area)
-            + Caltrain - (SF Bay Area)
-            + VTA - (SF Bay Area)
-            + San Francisco Municipal Transportation Agency - (SF Bay Area)
-            + Metro - Los Angeles - (Los Angeles)
+    + agency: 'MBTA' (string, required) - The Id of the transit agency returned from the stop location endpoint.
+
+
++ Request
+    + Headers
+    
+            x-api-key: [valid_api_key_goes_here]
             
 + Response 200 (application/json)
 
@@ -2678,6 +2714,7 @@ This query will add a new selection record for the specified request.
         + HKD
         + GBP
         + CAD
+        + AMEX_POINT
         
 ### Location
 + id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the location. It is location dependent, in that if the same location appears multiple times in the problem, the id will be the same.
@@ -3392,6 +3429,14 @@ the direction towards the next stop or intermediate location.
 + `start_time`: 1513725841 (number, optional) - the start time of the event, in Linux time of seconds.
 + `end_time`: 1513728841 (number, optional) - the actual end time of the event, in Linux time of seconds.
 + `duration`: 1513728250841 (number, optional) - the actual duration of the event, in seconds.
+
+### ActivitySelection
++ alternative_activities (array[AlternativeActivities], required) - alternative activities returned to the user (note: this field may contain multiple collections when a user requested alternative activities multiple times).
++ selections: (array[string], required) - a collection of Ids representing the activities a user selected.
+
+### AlternativeActivities
++ activitiy_id (string, required) - the Id of the activity where alternatives are presented.
++ alternative_activity_ids (array[string], required) - the Id of the alternative activities.
 
 ### RecommendedAttribute
 + name: `Sights & Landmarks` (string, required) - the name of the recommended attribute.
