@@ -389,6 +389,92 @@ Replan with new transportation options connecting the origin and destination. Cu
         Internal Server Error.
 
 
+## Replan With Existing Solution [/mobility-planner/demo/v2/problem/replan-with-solution{?problem_id,solution_id}]
+
+Replan a previously generated solution and get an updated one.
+
++ Parameters
+    + `problem_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the problem.
+    + `solution_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution.
+
+### POST
+  
++ Response 200 (application/json)
+
+    + Attributes (SolutionResponse, required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Checking Availability [/mobility-planner/demo/v2/problem/availability-checking]
+
+Evaluating the availability of activities in the provided solution.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (Solution, required)
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + updates (array[ActivityUpdate], optional) - the inventory or pricing updates for activities in the given solution.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Alternative Availability [/mobility-planner/demo/v2/problem/alternative-availability{?activity_id}]
+
+Getting alternative availability (on different timeslot) for the selected activity from the provided solution.
+
++ Parameters
+    + `activity_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity in the solution that alternatives should be looked for.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (Solution, required)
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + alternatives (array[Activity], optional) - a set of alternative availability for the provided activity.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
 ## Next Best Solution [/mobility-planner/demo/v2/next-solution{?session_id}]
 
 Find the next best solution for the current problem.
@@ -3435,6 +3521,11 @@ the direction towards the next stop or intermediate location.
 ### AlternativeActivities
 + activitiy_id (string, required) - the Id of the activity where alternatives are presented.
 + alternative_activity_ids (array[string], required) - the Id of the alternative activities.
+
+### ActivityUpdate
++ `activitiy_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the Id of the activity.
++ `updated_inventory`: `false` (boolean, required) - the updated inventory (false for no longer available).
++ `updated_price` (Price, optional) - the updated pricing for the activity (may remain the same as before).
 
 ### RecommendedAttribute
 + name: `Sights & Landmarks` (string, required) - the name of the recommended attribute.
