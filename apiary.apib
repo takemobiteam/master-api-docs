@@ -416,7 +416,7 @@ Replan a previously generated solution and get an updated one.
         Internal Server Error.
 
 
-## Checking Availability [/mobility-planner/demo/v2/problem/availability-checking]
+## Checking Availability [/mobility-planner/demo/v2/availability-checking]
 
 Evaluating the availability of activities in the provided solution.
 
@@ -444,7 +444,7 @@ Evaluating the availability of activities in the provided solution.
         Internal Server Error.
 
 
-## Alternative Availability [/mobility-planner/demo/v2/problem/alternative-availability{?activity_id}]
+## Alternative Availability [/mobility-planner/demo/v2/alternative-availability{?activity_id}]
 
 Getting alternative availability (on different timeslot) for the selected activity from the provided solution.
 
@@ -461,7 +461,152 @@ Getting alternative availability (on different timeslot) for the selected activi
 
     + Attributes
         + alternatives (array[Activity], optional) - a set of alternative availability for the provided activity.
-    
+        + locations (array[Location], optional) - relevant locations for the alternative activities.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Replan to Fix Availability Issue [/mobility-planner/demo/v2/replan-alternative-availability]
+
+Find an updated plan that fix all the availability issues in the current solution.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (Solution, required)
+  
++ Response 200 (application/json)
+
+    + Attributes (SolutionResponse, required)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+
+
+## Check Session Liveness [/mobility-planner/demo/v2/session-liveness{?session_id}]
+
+Check if there is an active session associated with the session_id (often within 15 minutes of last plan).
+
++ Parameters
+    + session_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user session.
+
+### GET
+
++ Response 200 (application/json)
+
+    + Attributes
+        + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning session.
+        + `result`: `false` (boolean, required) - a boolean flag indicating if the problem could be found in the backend.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+
+
+## Check Problem Liveness [/mobility-planner/demo/v2/problem-liveness{?problem_id}]
+
+Check there is a problem in the backend identifiable by the problem_id (often within 24 hours of the creation of the origin plan)
+
++ Parameters
+    + problem_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the problem.
+
+### GET
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + `problem_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem.
+        + `result`: `false` (boolean, required) - a boolean flag indicating if the problem could be found in the backend.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+
+## Restore Session By Problem [/mobility-planner/demo/v2/restore-session-by-problem{?problem_id}]
+
+Restore a previous planning session by reloading a previously created problem identifiable by the problem_id.
+
++ Parameters
+    + problem_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the problem.
+
+### POST
+  
++ Response 200 (application/json)
+
+    + Attributes (SolutionResponse, required)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Restore Session By Solution [/mobility-planner/demo/v2/restore-session-by-solution{?mode}]
+
+Restore a previous planning session by recreating the planning session and problem using the provided solution object and mode identifier.
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for filtering preference options in the profile.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (Solution, required) - a solution.
+  
++ Response 200 (application/json)
+
+    + Attributes (SolutionResponse, required)
+
 + Response 400
 
         Bad Request.
