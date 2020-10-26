@@ -235,6 +235,33 @@ Create a new planning problem and find the best solution for the current problem
 
         Internal Server Error.
 
+## Create Problem and Find Multiple Versions of Solution [/mobility-planner/demo/v2/problem/versions]
+
+Create a new planning problem, and find the best solutions of different variations (budget, luxury, points maximizer) for it.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+  
++ Response 200 (application/json)
+
+    + Attributes 
+        + versions (array[SolutionResponse], required) - a collection of different versions of itineraries created for the planning problem.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
 
 ## Replan With Modified Activity [/mobility-planner/demo/v2/problem/modified-activity{?session_id,problem_id,activity_id}]
 
@@ -905,6 +932,37 @@ Given the alternative transportation activity for one in the existing solution, 
 + Response 500
 
         Internal Server Error.
+        
+        
+## Get Recommended Activities [/mobility-planner/demo/v2/recommendation/activities{?session_id,problem_id,solution_id}]
+
+Get recommended activities for an existing itinerary and their preferred time windows.
+
++ Parameters
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
+    + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem.
+    + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that the recommendations should apply to.
+    
+### GET
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + `candidates` (array[RecommendationCandidate], optional) - a set of recommended activities for the present itinerary. 
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+        
 
 ## Reschedule Activity [/mobility-planner/demo/v2/reschedule-activity{?session_id,problem_id,solution_id}]
 
@@ -2714,6 +2772,9 @@ This query will add a new selection record for the specified request.
 + profile (Profile, optional) - the profile of the user.
 + agents (array[AgentItem], optional) - the set of agents involved in the planning problem
 + budget (Budget, optional) - the the budget that is available when solving for this problem.
++ curation (TripCuration, optional) - specifies if and when curated activities should be included in the itinerary.
++ recommendation (TripRecommendation, optional) - specifies if recommended activities should be included in the itinerary.
++ pace (TripPace, optional) - specifies the pace of the .
 + mode (AllowedProblemMode, optional) - the planner mode used for this problem.
 
 ### AllowedProblemMode (enum[string])
@@ -2743,6 +2804,7 @@ This query will add a new selection record for the specified request.
 + destination (Location, optional) - the representative location of this plan.
 + display (Display, optional) - any recommended configurations for displaying this solutions.
 + explanations (array[string], optional) - explanations for why no solution could be found by the planner.
++ theme: `Budget` (string, optional) - a descriptive theme for the solution.
 
 ### Solution
 + id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the solution object.
@@ -3112,6 +3174,21 @@ This query will add a new selection record for the specified request.
 + `destination_photo`: `Cambridge` (string, required) - the link to a photo of the destination.
 + pois (array[CandidateItem], required) - a list of candidate POIs in the destination
 
+### TripCuration
++ `curates_trip`: `false` (boolean, required) - specifies if curated activities could be included in the itinerary.
++ `time_windows` (array[string], required) - specifies a set of time windows in whiche curated activities could be included in the itinerary.
+
+### TripRecommendation
++ `included`: `false` (boolean, required) - specifies if recommended activities could be included in the itinerary.
+
+### TripPace
++ `activity_duration_multiplier`: `1.0` (number, optional) - specifies the multiplier to apply to the duration of activities.
++ `maximum_activities_per_day`: `3` (number, optional) - specifies the maximum number of experience activities in each day of the trip.
++ `minimum_break_between_activities`: `3600` (number, optional) - specifies the minimum break time (in seconds) between any experience activities in the trip.
+
+### RecommendationCandidate
++ candidate (CandidateItem, required) - the recommended POI
++ `time_windows` (array[string], required) - specifies a set of time windows in whiche the recommended POI could be included in the itinerary.
 
 ### Constraint
 + episode_id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the episode that this constraint applies to.
