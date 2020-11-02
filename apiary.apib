@@ -173,6 +173,34 @@ Retrieve recommended destinations (contexts) given the selected tags in the prof
         Internal Server Error.
 
 
+## Get Candidate Destination Trips - Also Known as Candidate Context Trips [/mobility-planner/demo/v2/problem/context-trips]
+
+### POST
+
+Retrieve candidate destination (context) trips given the selected tags in the profile, and trip origin/destination/dates encoded in the problem.
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + results (array[ContextTripCandidate], required) - a list of candidate destination trips.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
 ## Get Recommended POIs for Destination [/mobility-planner/demo/v2/problem/pois{?context}]
 
 + Parameters
@@ -3185,6 +3213,15 @@ This query will add a new selection record for the specified request.
 + `activity_duration_multiplier`: `1.0` (number, optional) - specifies the multiplier to apply to the duration of activities.
 + `maximum_activities_per_day`: `3` (number, optional) - specifies the maximum number of experience activities in each day of the trip.
 + `minimum_break_between_activities`: `3600` (number, optional) - specifies the minimum break time (in seconds) between any experience activities in the trip.
+
+### ContextTripCandidate
++ `context` (CandidateItem, required) - the destination of the trip.
++ `theme`: `Luxury` (string, required) - specifies the theme of the candidate trip.
++ `scheduled_start_time`: `1519765200` (number, required) - the desired start time for the trip, specified as Unix time, or seconds since midnight, January 1, 1970 UTC.
++ `scheduled_end_time`: `1519765200` (number, required) - the desired end time for the trip, specified as Unix time, or seconds since midnight, January 1, 1970 UTC.
++ `price` (array[Price], optional) - the estimated spending for the trip. May include multiple currencies (e.g. AMEX_POINTS and USD)
++ `pois` (array[string], optional) - a list of identifiers for the pre-selected POIs for the trip.
++ `explanations` (array[string], optional) - a list of explanations for the trip.
 
 ### RecommendationCandidate
 + candidate (CandidateItem, required) - the recommended POI
