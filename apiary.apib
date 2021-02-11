@@ -201,6 +201,35 @@ Retrieve candidate destination (context) trips given the selected tags in the pr
         Internal Server Error.
 
 
+
+## Get Candidate Destination Themes - Also Known as Candidate Context Themes [/mobility-planner/demo/v2/problem/context-themes]
+
+### POST
+
+Retrieve candidate destination (context) themes given the selected tags in the profile, and trip origin/destination/dates encoded in the problem.
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + results (array[ContextThemeCandidate], required) - a list of candidate destination trips.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
 ## Get Recommended POIs for Destination [/mobility-planner/demo/v2/problem/pois{?context}]
 
 + Parameters
@@ -221,6 +250,41 @@ Retrieve recommended POIs for the specified context given the selected tags in t
             + DINING (array[CandidateItem], required) - a list of recommended dining POIs (up to 10).
             + EXPERIENCE (array[CandidateItem], required) - a list of recommended experience POIs (up to 10).
             + ACCOMMODATION (array[CandidateItem], required) - a list of recommended accommodation POIs (up to 10).
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Get Recommended Themes of POIs for Destination [/mobility-planner/demo/v2/problem/pois{?context,merge_categories}]
+
++ Parameters
+    + context (string, required) - the selected context for recommended POIs.
+    + merge_categories (boolean, required) - if the different categories of POI themes should be merged into one in the response. Default is true. Please set to false if you only want POIs separated in categories.
+
+### POST
+
+Retrieve recommended POIs, separated in themes, for the specified context given the selected tags in the profile encoded in the problem.
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + pois 
+            + DINING (array[ThemedCandidateItem], required) - a list of recommended dining POIs (up to 10).
+            + EXPERIENCE (array[ThemedCandidateItem], required) - a list of recommended experience POIs (up to 10).
+            + ACCOMMODATION (array[ThemedCandidateItem], required) - a list of recommended accommodation POIs (up to 10).
 
 + Response 400
 
@@ -1311,6 +1375,34 @@ Retrieve allowed profile options given the planning problem mode and context.
 
     + Attributes
         + domains (array[Preference], optional) - a list of preference options allowed for different categories of preferences.
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Plan Profile Domain [/mobility-planner/demo/v2/profile/survey/suggestions]
+
+### POST
+
+Retrieve relevant survey category values given the requested category and previous user selections.
+
++ Request (application/json)
+
+    + Attributes (SurveySuggestionRequest, required)
+    
++ Response 200 (application/json)
+
+    + Attributes
+        + suggestions (array[string], optional) - a list of candidate keywords in the requested category for the user to pick.
             
 + Response 400
 
@@ -2936,6 +3028,11 @@ This query will add a new selection record for the specified request.
 + CONTEXT
 + TRIPPURPOSE
 
+### SurveySuggestionRequest
++ category: `activity` (string, required) - the name for the category of suggestions.
++ `previous_suggestions` (array[string], optional) - the list of previous user selections.
++ `session_id`: `123abc` (string, required) - the unique identifier for the user session.
+
 ### AgentItem
 + id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the agent.
 + name: `Take Mobi` (string, optional) - the name for the agent.
@@ -3222,6 +3319,16 @@ This query will add a new selection record for the specified request.
 + `price` (array[Price], optional) - the estimated spending for the trip. May include multiple currencies (e.g. AMEX_POINTS and USD)
 + `pois` (array[string], optional) - a list of identifiers for the pre-selected POIs for the trip.
 + `explanations` (array[string], optional) - a list of explanations for the trip.
+
+### ContextThemeCandidate
++ `contexts` (array[CandidateItem], required) - a collection of destinations that fit the theme.
++ `theme`: `Best Winter Destimation` (string, required) - specifies the theme of the candidate contexts.
+
+### ThemedCandidateItem
++ `theme`: `Best Italian` (string, required) - specifies the theme of the candidate POI collection.
++ `pois` (array[CandidateItem], optional) - a list of POI objects in this collection.
++ `types` (array[string], optional) - a list of type keywords for the POIs in this collection.
+
 
 ### RecommendationCandidate
 + candidate (CandidateItem, required) - the recommended POI
