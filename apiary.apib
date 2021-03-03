@@ -1,5 +1,5 @@
 FORMAT: 1A
-HOST: https://api.takemobi.com/
+HOST: https://api.takemobi.io/
 
 # The Mobi Travel Planning API
 
@@ -173,11 +173,67 @@ Retrieve recommended destinations (contexts) given the selected tags in the prof
         Internal Server Error.
 
 
+## Get Nearby Destination - Also Known as Nearby Candidate Contexts [/mobility-planner/demo/v2/problem/nearby-contexts]
+
+### POST
+
+Retrieve candidate destinations (contexts) given the selected destination in the request payload. Currently destinations within 100km will be returned
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + contexts (array[CandidateItem], required) - a list of nearby destination objects.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
 ## Get Candidate Destination Trips - Also Known as Candidate Context Trips [/mobility-planner/demo/v2/problem/context-trips]
 
 ### POST
 
 Retrieve candidate destination (context) trips given the selected tags in the profile, and trip origin/destination/dates encoded in the problem.
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + results (array[ContextTripCandidate], required) - a list of candidate destination trips.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Primary Destination Trips - Also Known as Primary Context Trips [/mobility-planner/demo/v2/problem/primary-context-trips]
+
+### POST
+
+Retrieve candidate destination (context) trips given the trip destination/dates encoded in the problem.
 
 + Request (application/json)
 
@@ -281,10 +337,10 @@ Retrieve recommended POIs, separated in themes, for the specified context given 
 + Response 200 (application/json)
 
     + Attributes 
-        + pois 
-            + DINING (array[ThemedCandidateItem], required) - a list of recommended dining POIs (up to 10).
-            + EXPERIENCE (array[ThemedCandidateItem], required) - a list of recommended experience POIs (up to 10).
-            + ACCOMMODATION (array[ThemedCandidateItem], required) - a list of recommended accommodation POIs (up to 10).
+        + results 
+            + DINING (array[ThemedCandidateItem], required) - a list of recommended dining POI themes.
+            + EXPERIENCE (array[ThemedCandidateItem], required) - a list of recommended experience POI themes.
+            + ACCOMMODATION (array[ThemedCandidateItem], required) - a list of recommended accommodation POI themes.
 
 + Response 400
 
@@ -890,6 +946,37 @@ Given the alternative timeslot for an activity, calculate a new plan.
 + Response 500
 
         Internal Server Error.
+        
+        
+## Get Available Timeslots [/mobility-planner/demo/v2/available-timeslots{?session_id}]
+
+Given a set of Candidate POIs, calculate available timeslots for them that would work for the current solution.
+
++ Parameters
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (array[GoalItem], required)
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + results (array[array[number]], optional) - a list of alternative timeslots (in [lowerbound, upperbound] format) for the activity in the solution.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
 
 
 ## Get Candidate Activities For Insertion [/mobility-planner/demo/v2/additional-activity{?session_id,problem_id,solution_id,preceding_activity_id,succeeding_activity_id,max_number}]
@@ -1389,7 +1476,7 @@ Retrieve allowed profile options given the planning problem mode and context.
         Internal Server Error.
         
 
-## Plan Profile Domain [/mobility-planner/demo/v2/profile/survey/suggestions]
+## Profile Survey Suggestions [/mobility-planner/demo/v2/profile/survey/suggestions]
 
 ### POST
 
@@ -1403,6 +1490,61 @@ Retrieve relevant survey category values given the requested category and previo
 
     + Attributes
         + suggestions (array[string], optional) - a list of candidate keywords in the requested category for the user to pick.
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+## Save Survey Response [/mobility-planner/demo/v2/profile/survey/response?{session_id}]
+
++ Parameters
+    + `session_id` (string, required) - a unique identifier for the user session.
+
+### POST
+
+Save survey response.
+
++ Request (application/json)
+
+    + Attributes (SurveyResponse, required)
+    
++ Response 200 (application/json)
+
+    + Attributes (SurveyResponse, required)
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Retrieve Survey Response [/mobility-planner/demo/v2/profile/survey/response?{session_id}]
+
++ Parameters
+    + `session_id` (string, required) - a unique identifier for the user session.
+
+### GET
+
+Retrieve previously saved survey responses.
+    
++ Response 200 (application/json)
+
+    + Attributes (SurveyResponses, required)
             
 + Response 400
 
@@ -3033,6 +3175,17 @@ This query will add a new selection record for the specified request.
 + `previous_suggestions` (array[string], optional) - the list of previous user selections.
 + `session_id`: `123abc` (string, required) - the unique identifier for the user session.
 
+### SurveyResponses
++ `id`: `123abc` (string, required) - the id for the survey responses.
++ `responses` (array[SurveyResponse], required) - the list of survey responses.
+
+### SurveyResponse
++ `response` (array[SurveyResponseElement], required) - the list of elements in a user survey response.
+
+### SurveyResponseElement
++ category: `activity` (string, required) - the name for the category of the response element.
++ as_text: `run` (string, required) - the text input from the user for the category.
+
 ### AgentItem
 + id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the agent.
 + name: `Take Mobi` (string, optional) - the name for the agent.
@@ -3319,6 +3472,8 @@ This query will add a new selection record for the specified request.
 + `price` (array[Price], optional) - the estimated spending for the trip. May include multiple currencies (e.g. AMEX_POINTS and USD)
 + `pois` (array[string], optional) - a list of identifiers for the pre-selected POIs for the trip.
 + `explanations` (array[string], optional) - a list of explanations for the trip.
++ `flights` (array[CandidateItem], optional) - a ranked list of recommended flight options for the trip.
++ `accommodations` (array[CandidateItem], optional) - a ranked list of recommended accommodation options for the trip.
 
 ### ContextThemeCandidate
 + `contexts` (array[CandidateItem], required) - a collection of destinations that fit the theme.
