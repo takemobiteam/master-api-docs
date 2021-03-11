@@ -3272,6 +3272,7 @@ This query will add a new selection record for the specified request.
 + `raw_content` (string, required) - the json object returned from third-party APIs.
 
 ### Price
++ category (AllowedPreferenceCategory, optional) - the category of this price object.
 + `amount`: `360` (number, required) - the amount of the price.
 + `currency`: `USD` (enum, required) - the currency code for the price.
     + Members
@@ -3428,6 +3429,7 @@ This query will add a new selection record for the specified request.
 + `departure_timestamp`: `1519765200` (number, optional) - the departure timestamp from the origin location, used when physical movement is involved (such as flight, rail, tour, etc.).
 + `arrival_timestamp`: `1519765200` (number, optional) - the arrival timestamp at the destination location, used when physical movement is involved (such as flight, rail, tour, etc.).
 + `transportation` (Transportation, optional) - the arrival timestamp at the destination location, used when physical movement is involved (such as flight, rail, tour, etc.).
++ recommendations (array[RecommendationExplanationItem], optional) - a list of explanation items on why this POI is good in different contexts (For you, for your trip, for the destination, etc.).
 
 
 ### Transportation
@@ -3488,6 +3490,14 @@ This query will add a new selection record for the specified request.
 ### RecommendationCandidate
 + candidate (CandidateItem, required) - the recommended POI
 + `time_windows` (array[string], required) - specifies a set of time windows in whiche the recommended POI could be included in the itinerary.
+
+### RecommendationExplanationItem
++ category (enum, required) - specifies the 'context' of the recommendation. Currently we support three types: for you, for your trip, and for the destination.
+    + Members
+        + FOR_YOU
+        + FOR_TRIP
+        + FOR_CONTEXT
++ `content`: `#2 of 1234 restaurants in New York` (string, required) - specifies the content of the reason for recommendation.
 
 ### Constraint
 + episode_id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the episode that this constraint applies to.
