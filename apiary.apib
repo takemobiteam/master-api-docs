@@ -320,7 +320,7 @@ Retrieve recommended POIs for the specified context given the selected tags in t
         Internal Server Error.
         
 
-## Get Recommended Themes of POIs for Destination [/mobility-planner/demo/v2/problem/pois{?context,merge_categories}]
+## Get Recommended Themes of POIs for Destination [/mobility-planner/demo/v2/problem/poi-recommendations{?context,merge_categories}]
 
 + Parameters
     + context (string, required) - the selected context for recommended POIs.
@@ -443,12 +443,13 @@ Replan with the modified version (provided in the payload) of an existing activi
         Internal Server Error.
 
 
-## Replan With Additional Activities [/mobility-planner/demo/v2/problem/new-activities{?session_id}]
+## Replan With Additional Activities [/mobility-planner/demo/v2/problem/new-activities{?session_id,activity_keyword}]
 
 Replan with the new activities provided in the payload, and all activities in the original problem.
 
 + Parameters
     + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
+    + `activity_keyword`: `DINNER` (string, optional) - a keyword that planner will use to filter which activity this new POI is applicable to. Currently only 'DINNER' and 'LUNCH' are supported.
 
 ### POST
 
@@ -917,7 +918,7 @@ Given a solution, calculate feasible alternative timeslots for one of its activi
         Internal Server Error.
 
 
-## Select Alternative Timeslot and Replan [/mobility-planner/demo/v2/alternative-timeslot{?session_id,problem_id,solution_id,activity_id,earliest_time,latest_time}]
+## Select Alternative Timeslot and Replan [/mobility-planner/demo/v2/alternative-timeslot{?session_id,problem_id,solution_id,activity_id,earliest_time,latest_time,activity_keyword}]
 
 Given the alternative timeslot for an activity, calculate a new plan.
 
@@ -928,6 +929,7 @@ Given the alternative timeslot for an activity, calculate a new plan.
     + activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity that this alternative will replace.
     + earliest_time: `1577997127` (number, required) - the earliest start time for the specified activity.
     + latest_time: `1577997127` (number, required) - the latest start time for the specified activity. It could be the same as the earliest time,
+    + `activity_keyword`: `DINNER` (string, optional) - a keyword that planner will use to filter which activity this new POI is applicable to. Currently only 'DINNER' and 'LUNCH' are supported.
 
 ### POST
   
@@ -3231,6 +3233,12 @@ This query will add a new selection record for the specified request.
 + price (Price, optional) - the price of this activity, if applicable.
 + reservation (ActivityReservation, optional) - specify if this activity has an existing reservation.  
 + availability (array[ActivityAvailability], optional) - specify the availability of this activity, in or outside the current scheduled time windows.  
++ spec (ActivitySpec, optional) - provide more details on the specification of this activity.
+
+### ActivitySpec
++ curated: `true` (boolean, optional) - a boolean flag indicating if the activity was picked by the planner instead of the request.
++ `planner_scheduled`: `true` (boolean, optional) - a boolean flag indicating if the schedule of this activity was picked by the planner instead of the request.
++ `satisfied_filters` (array[string], optional) - specify the filters satisfied by this activity.  
 
 ### ActivityReservation
 + duration (number, optional) - duration of the reservation, in seconds.
