@@ -996,6 +996,7 @@ Given a set of Candidate POIs, calculate available timeslots for them that would
 
     + Attributes
         + results (array[array[number]], optional) - a list of alternative timeslots (in [lowerbound, upperbound] format) for the activity in the solution.
+        + recommendations (array[TimeslotRecommendation], optional) - a list of recommended timeslots for the activity in the solution.
 
 + Response 400
 
@@ -1172,6 +1173,36 @@ Get recommended activities for an existing itinerary and their preferred time wi
 
         Internal Server Error.
         
+        
+## Get Recommended POIs [/mobility-planner/demo/v2/recommendation/poi{?session_id}]
+
+Get recommended POI for an existing itinerary and their preferred time windows.
+
++ Parameters
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
+
+### GET
+
++ Request (application/json)
+
+    + Attributes (array[GoalItem], required)
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + recommendations (array[PoiRecommendation], optional) - a list of recommended POIs and their timeslot for the solution.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
         
 
 ## Reschedule Activity [/mobility-planner/demo/v2/reschedule-activity{?session_id,problem_id,solution_id}]
@@ -3527,6 +3558,17 @@ This query will add a new selection record for the specified request.
 ### RecommendationCandidate
 + candidate (CandidateItem, required) - the recommended POI
 + `time_windows` (array[string], required) - specifies a set of time windows in whiche the recommended POI could be included in the itinerary.
+
+
+### PoiRecommendation
++ poi (CandidateItem, required) - the recommended POI object.
++ `time_slots` (array[TimeslotRecommendation], required) - a set of time windows in whiche the recommended POI could be included in the itinerary.
+
+
+### TimeslotRecommendation
++ `time_slot` (array[number], required) - the time slot with lower and upperbounds in UNIX timestamps.
++ `explanations` (array[RecommendationExplanationItem], optional) - a set of explanations on why this time slot is good.
+
 
 ### RecommendationExplanationItem
 + category (enum, required) - specifies the 'context' of the recommendation. Currently we support three types: for you, for your trip, and for the destination.
