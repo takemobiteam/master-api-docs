@@ -823,6 +823,60 @@ Restore a previous planning session by recreating the planning session and probl
 + Response 500
 
         Internal Server Error.
+        
+
+## User Session [/mobility-planner/demo/v2/session{?user_id,session_id}]
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the session.
+
+### POST
+
+Save a user session data (problem and solution). Planner will also attempt to location the objects using the session_id.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + `problem` (Problem, optional) - the problem object.
+        + `solution` (Solution, optional) - the solution object.
+        + `create_time`: 12345567 (number, optional) - timestamp when the session was created.
+        + `trip_start_time`: 12345567 (number, optional) - timestamp for the start of the trip.
+        + `trip_end_time`: 12345567 (number, optional) - timestamp for the end of the trip.
+        + `trip_context`: `LONDON_UK` (string, optional) - timestamp for the context `(destination)` of the trip.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+### GET
+
+Retrieve the set of user session data created by the user earlier.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + `sessions` (array[UserSessionData], required) - the problem object.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
 
 
 ## Next Best Solution [/mobility-planner/demo/v2/next-solution{?session_id}]
@@ -1174,18 +1228,14 @@ Get recommended activities for an existing itinerary and their preferred time wi
         Internal Server Error.
         
         
-## Get Recommended POIs [/mobility-planner/demo/v2/recommendation/poi{?session_id}]
+## Get Recommended POIs [/mobility-planner/demo/v2/recommendation/pois{?session_id}]
 
-Get recommended POI for an existing itinerary and their preferred time windows.
+Get recommended POIs for an existing itinerary and their preferred time windows.
 
 + Parameters
     + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
 
 ### GET
-
-+ Request (application/json)
-
-    + Attributes (array[GoalItem], required)
   
 + Response 200 (application/json)
 
@@ -4141,3 +4191,11 @@ the direction towards the next stop or intermediate location.
 + name: `Sights & Landmarks` (string, required) - the name of the recommended attribute.
 + source: `Places` (string, required) - the source type of the recommended attribute.
 + category: `EXPERIENCE` (string, required) - the category of POIs this attribute applies to.
+
+### UserSessionData
++ `problem` (Problem, required) - the problem object.
++ `solution` (SolutionResponse, required) - the solution object.
++ `create_time`: 12345567 (number, optional) - timestamp when the session was created.
++ `trip_start_time`: 12345567 (number, optional) - timestamp for the start of the trip.
++ `trip_end_time`: 12345567 (number, optional) - timestamp for the end of the trip.
++ `trip_context`: `LONDON_UK` (string, optional) - timestamp for the context `(destination)` of the trip.
