@@ -101,6 +101,8 @@ Retrieve all supported destinations (compatible contexts) given the specified pl
 + Response 200 (application/json)
 
     + Attributes 
+        + title: `Which park do you want to visit` (string, optional) - a description of the context domain.
+        + tags (array[string], required) - a list of tags used for describing the candidate contexts.
         + contexts (array[CandidateItem], required) - a list of context objects found for the mode.
 
 + Response 400
@@ -229,7 +231,10 @@ Retrieve candidate destination (context) trips given the selected tags in the pr
         Internal Server Error.
 
 
-## Get Primary Destination Trips - Also Known as Primary Context Trips [/mobility-planner/demo/v2/problem/primary-context-trips]
+## Get Primary Destination Trips - Also Known as Primary Context Trips [/mobility-planner/demo/v2/problem/primary-context-trips{?context}]
+
++ Parameters
+    + context (string, optional) - the context used for this profile domain.
 
 ### POST
 
@@ -306,6 +311,40 @@ Retrieve recommended POIs for the specified context given the selected tags in t
             + DINING (array[CandidateItem], required) - a list of recommended dining POIs (up to 10).
             + EXPERIENCE (array[CandidateItem], required) - a list of recommended experience POIs (up to 10).
             + ACCOMMODATION (array[CandidateItem], required) - a list of recommended accommodation POIs (up to 10).
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Get All POIs for Destination [/mobility-planner/demo/v2/domain{?mode,context}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this profile domain.
+    + context (string, optional) - the context used for this profile domain.
+    
+### GET
+
+Retrieve all POIs for the specified context given the destination.
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + destination: `Six Flags New England` (string, required) - the name of the destination.
+        + destination_photo: `https://image.png` (string, required) - the url to an image of the destination.
+        + pois (array[CandidateItem], required) - a list of POIs.
 
 + Response 400
 
@@ -419,6 +458,36 @@ Replan with the modified version (provided in the payload) of an existing activi
     + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
     + `problem_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the original planning problem.
     + `activity_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity that the modified one will replace.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (GoalItem, required)
+  
++ Response 200 (application/json)
+
+    + Attributes (SolutionResponse, required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Replan With Additional Activity [/mobility-planner/demo/v2/problem/new-activity{?session_id}]
+
+Replan with the new activity provided in the payload, and all activities in the original problem.
+
++ Parameters
+    + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
 
 ### POST
 
@@ -840,6 +909,7 @@ Save a user session data (problem and solution). Planner will also attempt to lo
     + Attributes
         + `problem` (Problem, optional) - the problem object.
         + `solution` (Solution, optional) - the solution object.
+        + `profile` (Profile, optional) - the profile object.
         + `create_time`: 12345567 (number, optional) - timestamp when the session was created.
         + `trip_start_time`: 12345567 (number, optional) - timestamp for the start of the trip.
         + `trip_end_time`: 12345567 (number, optional) - timestamp for the end of the trip.
@@ -3144,6 +3214,7 @@ This query will add a new selection record for the specified request.
 + flexible_ordering (boolean, required) - specifies if the ordering of goals can be modified by the planner.
 + activities (array[GoalItem], required) - the set of goals the user wants to achieve.
 + profile (Profile, optional) - the profile of the user.
++ `planner_config` (PlannerConfig, optional) - the configuration of the planner in creating solutions for the request.
 + agents (array[AgentItem], optional) - the set of agents involved in the planning problem
 + budget (Budget, optional) - the the budget that is available when solving for this problem.
 + curation (TripCuration, optional) - specifies if and when curated activities should be included in the itinerary.
@@ -3281,6 +3352,15 @@ This query will add a new selection record for the specified request.
 + THINGSTODO
 + CONTEXT
 + TRIPPURPOSE
+    
+### PlannerConfig
++ `ground_transportation` (GroundTransportationConfig, optional) - the category of configurations for ground transportation decisions.
+
+### GroundTransportationConfig
++ `pre_flight_buffer_time` (number, optional) - an integer describing the buffer time (in seconds) that should be allocated after dropoff at the airport and before a flight.
++ `post_flight_buffer_time` (number, optional) - an integer describing the buffer time (in seconds) that should be allocated before pickup at the airport and after a flight.
++ `pre_train_buffer_time` (number, optional) - an integer describing the buffer time (in seconds) that should be allocated after dropoff at the rail station and before a train.
++ `post_train_buffer_time` (number, optional) - an integer describing the buffer time (in seconds) that should be allocated before pickup at the rail station and after a train.
 
 ### SurveySuggestionRequest
 + category: `activity` (string, required) - the name for the category of suggestions.
@@ -3342,6 +3422,7 @@ This query will add a new selection record for the specified request.
 + source (Source, optional) - the source of the content for this activity. Could be the Ids of the input problem goal from which this activity is generated for, or the raw content from third party API queries.
 + price (Price, optional) - the price of this activity, if applicable.
 + reservation (ActivityReservation, optional) - specify if this activity has an existing reservation.  
++ waiting (ActivityReservation, optional) - specify if this activity has required waiting.  
 + availability (array[ActivityAvailability], optional) - specify the availability of this activity, in or outside the current scheduled time windows.  
 + spec (ActivitySpec, optional) - provide more details on the specification of this activity.
 
@@ -3548,6 +3629,7 @@ This query will add a new selection record for the specified request.
 + `arrival_timestamp`: `1519765200` (number, optional) - the arrival timestamp at the destination location, used when physical movement is involved (such as flight, rail, tour, etc.).
 + `transportation` (Transportation, optional) - the arrival timestamp at the destination location, used when physical movement is involved (such as flight, rail, tour, etc.).
 + recommendations (array[RecommendationExplanationItem], optional) - a list of explanation items on why this POI is good in different contexts (For you, for your trip, for the destination, etc.).
++ hours (array[HoursOfOperation], optional) - a list of hours objects describing the hours of operation for the POI.
 
 
 ### Transportation
@@ -3627,6 +3709,15 @@ This query will add a new selection record for the specified request.
         + FOR_TRIP
         + FOR_CONTEXT
 + `content`: `#2 of 1234 restaurants in New York` (string, required) - specifies the content of the reason for recommendation.
+
+### HoursOfOperation
++ date: `2021-05-31` (string, optional) - the date that the hours of operation values apply to.
++ day_name: `Saturday` (string, optional) - the day of week these hours of operation values apply to.
++ `times` (array[Hours], required) - the opening times of the restaurant.
+
+### Hours
++ `open_time`: `17:00` (string, required) - the time string (in HH:mm) of the open time.
++ `close_time`: `21:00` (string, required) - the time string (in HH:mm) of the close time.
 
 ### Constraint
 + episode_id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the episode that this constraint applies to.
