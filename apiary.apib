@@ -1324,6 +1324,38 @@ Get recommended POIs for an existing itinerary and their preferred time windows.
 
         Internal Server Error.
         
+        
+## Get Recommended POIs and Input Evaluation [/mobility-planner/demo/v2/recommendation/pois{?session_id}]
+
+Get recommended POIs as well as a flag indicating if the inputs are sufficient for a personalized plan.
+
++ Parameters
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (Profile, optional)
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + recommendations (array[PoiRecommendation], optional) - a list of recommended POIs and their timeslot for the solution.
+        + `need_additional_inputs` (boolean, required) - a flag indicating if additional inputs are needed for a personalized plan.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
 
 ## Reschedule Activity [/mobility-planner/demo/v2/reschedule-activity{?session_id,problem_id,solution_id}]
 
