@@ -146,6 +146,40 @@ Retrieve the candidate item object matching the specified planning problem mode 
         Internal Server Error.
 
 
+## Get Candidate Suggestions [/mobility-planner/demo/v2/domain/poi/suggestions{?mode,context,category,keyword}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + context (string, optional) - the context for the POIs.
+    + category (enum, required) - the POI category.
+        + Members
+            + `ACCOMMODATION`
+            + `EXPERIENCE`
+            + `ATTRACTION`
+    + keyword (string, required) - the search keyword.
+
+### GET
+
+Retrieve the candidate POIs matching the specified search keyword.
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + candidates (array[PoiSuggestionElement], required) - a list of candidates that fit the search criteria.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
 ## Get Recommended Destinations - Also Known as Candidate Contexts [/mobility-planner/demo/v2/problem/contexts]
 
 ### POST
@@ -1342,7 +1376,8 @@ Get recommended POIs as well as a flag indicating if the inputs are sufficient f
 
     + Attributes
         + recommendations (array[PoiRecommendation], optional) - a list of recommended POIs and their timeslot for the solution.
-        + `need_additional_inputs` (boolean, required) - a flag indicating if additional inputs are needed for a personalized plan.
+        + `need_additional_dining_inputs` (boolean, required) - a flag indicating if additional dining inputs are needed for a personalized plan.
+        + `need_additional_experience_inputs` (boolean, required) - a flag indicating if additional experience inputs are needed for a personalized plan.
 
 + Response 400
 
@@ -1811,6 +1846,34 @@ Retrieve all compatible contexts given the specified planning problem mode.
 
     + Attributes 
         + contexts (array[CandidateItem], required) - a list of solution objects found for the problem.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+        
+## Get Context Suggestions [/mobility-planner/demo/v2/domain/contexts/suggestions{?mode,keyword}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + keyword (string, required) - the search keyword.
+
+### GET
+
+Retrieve the candidate contexts matching the specified search keyword.
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + candidates (array[PoiSuggestionElement], required) - a list of candidates that fit the search criteria.
 
 + Response 400
 
@@ -3394,6 +3457,11 @@ This query will add a new selection record for the specified request.
 + `pre_train_buffer_time` (number, optional) - an integer describing the buffer time (in seconds) that should be allocated after dropoff at the rail station and before a train.
 + `post_train_buffer_time` (number, optional) - an integer describing the buffer time (in seconds) that should be allocated before pickup at the rail station and after a train.
 
+
+### PoiSuggestionElement
++ `name`: `Sonoma_California` (string, required) - the name of the POI object.
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the POI object.
+
 ### SurveySuggestionRequest
 + category: `activity` (string, required) - the name for the category of suggestions.
 + `previous_suggestions` (array[string], optional) - the list of previous user selections.
@@ -3708,6 +3776,9 @@ This query will add a new selection record for the specified request.
 + `explanations` (array[string], optional) - a list of explanations for the trip.
 + `flights` (array[CandidateItem], optional) - a ranked list of recommended flight options for the trip.
 + `accommodations` (array[CandidateItem], optional) - a ranked list of recommended accommodation options for the trip.
++ images (object, optional) - links to images to be used for this trip candidate.
+    + small: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%402x.png` (string, optional) - link to the small image.
+    + medium: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%403x.png` (string, optional) - link to the medium size image.
 
 ### ContextThemeCandidate
 + `contexts` (array[CandidateItem], required) - a collection of destinations that fit the theme.
