@@ -928,7 +928,7 @@ Restore a previous planning session by recreating the planning session and probl
         Internal Server Error.
         
 
-## User Session [/mobility-planner/demo/v2/session{?user_id,session_id}]
+## Save User Session [/mobility-planner/demo/v2/session{?user_id,session_id}]
 
 + Parameters
     + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
@@ -960,7 +960,13 @@ Save a user session data (problem and solution). Planner will also attempt to lo
 + Response 500
 
         Internal Server Error.
-        
+     
+     
+## Get User Sessions [/mobility-planner/demo/v2/session{?user_id}]
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+
 ### GET
 
 Retrieve the set of user session data created by the user earlier.
@@ -969,6 +975,35 @@ Retrieve the set of user session data created by the user earlier.
 
     + Attributes
         + `sessions` (array[UserSessionData], required) - the problem object.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+        
+## Delete User Session [/mobility-planner/demo/v2/session{?user_id,trip_id}]
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + trip_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the trip.
+
+
+### DELETE
+
+Delete the previously saved trip, identified by the trip_id.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + `success`: true (boolean, required) - a boolean flag indicating if the deletion operation is successful.
 
 + Response 400
 
@@ -4390,6 +4425,8 @@ the direction towards the next stop or intermediate location.
 + `problem` (Problem, required) - the problem object.
 + `solution` (SolutionResponse, required) - the solution object.
 + `create_time`: 12345567 (number, optional) - timestamp when the session was created.
++ `trip_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the trip.
++ `trio_name`: Family trip to Las Vegas (string, optional) - a custom name for the trip.
 + `trip_start_time`: 12345567 (number, optional) - timestamp for the start of the trip.
 + `trip_end_time`: 12345567 (number, optional) - timestamp for the end of the trip.
 + `trip_context`: `LONDON_UK` (string, optional) - timestamp for the context `(destination)` of the trip.
