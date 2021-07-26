@@ -223,6 +223,7 @@ Retrieve candidate destinations (contexts) given the selected destination in the
 
     + Attributes 
         + contexts (array[CandidateItem], required) - a list of nearby destination objects.
+        + `has_matched_destinations` (boolean, required) - a flag indicating if there are any matched destinations in the response. If set to false, it means that there is no destination matching the provided location, and all returned are close by destinations.
 
 + Response 400
 
@@ -945,6 +946,8 @@ Save a user session data (problem and solution). Planner will also attempt to lo
         + `solution` (Solution, optional) - the solution object.
         + `profile` (Profile, optional) - the profile object.
         + `create_time`: 12345567 (number, optional) - timestamp when the session was created.
+        + `trip_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the trip.
+        + `trip_name`: Family trip to Las Vegas (string, optional) - a custom name for the trip.
         + `trip_start_time`: 12345567 (number, optional) - timestamp for the start of the trip.
         + `trip_end_time`: 12345567 (number, optional) - timestamp for the end of the trip.
         + `trip_context`: `LONDON_UK` (string, optional) - timestamp for the context `(destination)` of the trip.
@@ -4426,7 +4429,7 @@ the direction towards the next stop or intermediate location.
 + `solution` (SolutionResponse, required) - the solution object.
 + `create_time`: 12345567 (number, optional) - timestamp when the session was created.
 + `trip_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the trip.
-+ `trio_name`: Family trip to Las Vegas (string, optional) - a custom name for the trip.
++ `trip_name`: Family trip to Las Vegas (string, optional) - a custom name for the trip.
 + `trip_start_time`: 12345567 (number, optional) - timestamp for the start of the trip.
 + `trip_end_time`: 12345567 (number, optional) - timestamp for the end of the trip.
 + `trip_context`: `LONDON_UK` (string, optional) - timestamp for the context `(destination)` of the trip.
