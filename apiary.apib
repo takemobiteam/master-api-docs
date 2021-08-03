@@ -3611,6 +3611,8 @@ This query will add a new selection record for the specified request.
 ### Price
 + category (AllowedPreferenceCategory, optional) - the category of this price object.
 + `amount`: `360` (number, required) - the amount of the price.
++ `min_amount`: `300` (number, required) - the minimum amount of the price.
++ `max_amount`: `4000` (number, required) - the maximum amount of the price.
 + `currency`: `USD` (enum, required) - the currency code for the price.
     + Members
         + USD
