@@ -939,11 +939,11 @@ Restore a previous planning session by recreating the planning session and probl
 
 Save a user session data (problem and solution). Planner will also attempt to location the objects using the session_id.
 
-+ Response 200 (application/json)
++ Request (application/json)
 
     + Attributes
         + `problem` (Problem, optional) - the problem object.
-        + `solution` (Solution, optional) - the solution object.
+        + `solution_response` (Solution, optional) - the solution object.
         + `profile` (Profile, optional) - the profile object.
         + `create_time`: 12345567 (number, optional) - timestamp when the session was created.
         + `trip_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the trip.
@@ -951,6 +951,8 @@ Save a user session data (problem and solution). Planner will also attempt to lo
         + `trip_start_time`: 12345567 (number, optional) - timestamp for the start of the trip.
         + `trip_end_time`: 12345567 (number, optional) - timestamp for the end of the trip.
         + `trip_context`: `LONDON_UK` (string, optional) - timestamp for the context `(destination)` of the trip.
+
++ Response 200 (application/json)
 
 + Response 400
 
@@ -1735,11 +1737,13 @@ Update the avatar in the planning problem profile for the user.
 
         Internal Server Error.
         
-## Plan Profile Domain [/mobility-planner/demo/v2/profile/domain{?mode,context}]
+## Plan Profile Domain [/mobility-planner/demo/v2/profile/domain{?mode,context,category,parent}]
 
 + Parameters
     + mode (AllowedProblemMode, required) - the planner mode used for this profile domain.
     + context (string, optional) - the context used for this profile domain.
+    + category (string, optional) - the category name (ACCOMMODATION, DINING, EXPERIENCE) for the profile domain.
+    + parent (string, optional) - the parent name for this profile domain.
 
 ### GET
 
@@ -3389,6 +3393,7 @@ This query will add a new selection record for the specified request.
 + `problem_id`: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the problem object of this solution.
 + price (Price, required) - the monetary cost of all activities in this solution object. In other words, this is the amount the user will spend on the activities in the plan.
 + activities (array[Activity], required) - contains an array of activities enabled by this solution.
++ `dropped_activities` (array[GoalItem], required) - contains an array of activities requested by the user but not included in this solution.
 + locations (array[Location], required) - contains an array of locations used by this solution.
 + agents (array[AgentItem], optional) - the set of agents involved in the plan, and the Ids of their activities. Only ac
 
