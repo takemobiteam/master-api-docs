@@ -1,4 +1,4 @@
-FORMAT: 1A
+sFORMAT: 1A
 HOST: https://api.takemobi.io/
 
 # The Mobi Travel Planning API
@@ -967,10 +967,11 @@ Save a user session data (problem and solution). Planner will also attempt to lo
         Internal Server Error.
      
      
-## Get User Sessions [/mobility-planner/demo/v2/session{?user_id}]
+## Get User Sessions [/mobility-planner/demo/v2/session{?user_id,session_id}]
 
 + Parameters
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + user_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user.
+    + session_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the session.
 
 ### GET
 
@@ -1009,6 +1010,65 @@ Delete the previously saved trip, identified by the trip_id.
 
     + Attributes
         + `success`: true (boolean, required) - a boolean flag indicating if the deletion operation is successful.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Save User Progress [/mobility-planner/demo/v2/progress{?user_id}]
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+
+### POST
+
+Save a user progress data (sample trips and filters).
+
++ Request (application/json)
+    + Attributes
+        + `profile` (Profile, optional) - the profile object.
+        + `selected_trip_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the selected trip.
+        + `candidate_trips` (array[ContextTripCandidate], optional) - list of all sample trips returned.
+        + `selected_filters` (array[Preference], required) - list of all filters selected.
+
++ Response 200 (application/json)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+        
+## Get User Progress [/mobility-planner/demo/v2/progress{?user_id,selected_trip_id}]
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + selected_trip_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the trip selected by the user.
+
+### GET
+
+Retrieve the set of user session data created by the user earlier.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + `progress` (UserProgressData, required) - the problem object.
 
 + Response 400
 
@@ -4430,6 +4490,12 @@ the direction towards the next stop or intermediate location.
 + name: `Sights & Landmarks` (string, required) - the name of the recommended attribute.
 + source: `Places` (string, required) - the source type of the recommended attribute.
 + category: `EXPERIENCE` (string, required) - the category of POIs this attribute applies to.
+
+### UserProgressData
++ `profile` (Profile, optional) - the profile object.
++ `selected_trip_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the selected trip.
++ `candidate_trips` (array[ContextTripCandidate], optional) - list of all sample trips returned.
++ `selected_filters` (array[Preference], required) - list of all filters selected.
 
 ### UserSessionData
 + `problem` (Problem, required) - the problem object.
