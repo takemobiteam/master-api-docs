@@ -3498,6 +3498,30 @@ This query will add a new selection record for the specified request.
 + `mode_preferences` (array[ModePreference], optional) - the set of user preferences over different modes of transportation.
 + preferences (array[Preference], optional) - the set of user preferences over different categories of activities.
 + `price_tolerance` (number, optional) - a value between 0.0 and 5.0 that describes the user's acceptance of high price POIs. 5.0 mean the use has the highest tolerance, while 0.0 means the user has low tolerance and is more sensitive to price.
++ `saved_pois` (array[CandidateItemAbstract], optional) - the list of abstract POI objects the user has selected and saved.
++ `saved_trips` (array[TripAbstract], optional) - the list of abstract trip objects the user has selected and saved.
++ `saved_filters` (array[PreferenceDomainCandidate], optional) - the list of filters the user has selected and saved.
+
+### PreferenceDomainCandidate
++ category (AllowedPreferenceCategory, required) - the category of activities covered by this preference object.
++ source: `User` (string, optional) - the source of the filter.
++ name: `Chinese` (string, required) - the name of the filter.
++ parent: `Cuisine` (string, required) - the parent filter of the filter.
++ image: `http://takemobi.com/image.png` (string, optional) - an url to the image of the filter.
+
+### TripAbstract
++ `trip_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the trip.
++ `problem_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the problem object.
++ `trip_name`: Family trip to Las Vegas (string, required) - a custom name for the trip.
++ `trip_start_time`: 12345567 (number, required) - timestamp for the start of the trip.
++ `trip_end_time`: 12345567 (number, required) - timestamp for the end of the trip.
++ `trip_context`: `LONDON_UK` (string, required) - timestamp for the context `(destination)` of the trip.
++ `image_url`: `http://takemobi.com/image.png` (string, optional) - the url to a representative image of the trip.
+
+### CandidateItemAbstract
++ `id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the POI.
++ `name`: `Mcdonalds` (string, required) - the name for the POI.
++ `image_url`: `http://takemobi.com/image.png` (string, optional) - the url to a representative image of the POI.
 
 ### Budget
 + price (array[Price], required) - the upper bound of spending of each currency for all activities. Only currencies that have a limit (e.g. AMEX_POINT) may need to be specified.
