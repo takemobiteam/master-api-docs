@@ -1826,6 +1826,87 @@ Retrieve allowed profile options given the planning problem mode and context.
 
         Internal Server Error.
         
+        
+## Plan Profile Survey Domain [/mobility-planner/demo/v2/profile/domain/survey{?survey_id}]
+
++ Parameters
+    + survey_id: `3323-4432-5456345743-f343245346` (string, optional) - the unique identifier for a profile survey.
+
+### GET
+
+Retrieve matched (if `survey_id` is provided) profile surveys. If `survey_id` is not provided, all surveys will be returned
+
++ Response 200 (application/json)
+
+    + Attributes
+        + surveys (array[ProfileSurvey], optional) - a list of profile surveys.
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Plan Profile Survey Questions [/mobility-planner/demo/v2/profile/domain/survey/question{?question_id}]
+
++ Parameters
+    + question_id: `3323-4432-5456345743-f343245346` (string, optional) - the unique identifier for a profile survey question.
+
+### GET
+
+Retrieve matched (if `question_id` is provided) profile survey question. If `question_id` is not provided, all survey questions will be returned
+
++ Response 200 (application/json)
+
+    + Attributes
+        + questions (array[ProfileSurveyQuestion], optional) - a list of profile questions.
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Plan Profile Survey Questions [/mobility-planner/demo/v2/profile/domain/survey/answer{?answer_id}]
+
++ Parameters
+    + answer_id: `3323-4432-5456345743-f343245346` (string, optional) - the unique identifier for a profile survey answer.
+
+### GET
+
+Retrieve matched (if `answer_id` is provided) profile survey answer. If `answer_id` is not provided, all survey answers will be returned
+
++ Response 200 (application/json)
+
+    + Attributes
+        + answers (array[ProfileSurveyAnswer], optional) - a list of profile survey answers.
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
 
 ## Profile Survey Suggestions [/mobility-planner/demo/v2/profile/survey/suggestions]
 
@@ -3501,6 +3582,8 @@ This query will add a new selection record for the specified request.
 + `saved_pois` (array[CandidateItemAbstract], optional) - the list of abstract POI objects the user has selected and saved.
 + `saved_trips` (array[TripAbstract], optional) - the list of abstract trip objects the user has selected and saved.
 + `saved_filters` (array[PreferenceDomainCandidate], optional) - the list of filters the user has selected and saved.
++ `characteristics` (array[UserCharacteristic], optional) - the list of characteristics detected for the user.
++ `survey_answer_ids` (array[string], optional) - the list of unique identifiers indicating the answers the user has provided to our survey questions.
 
 ### PreferenceDomainCandidate
 + category (AllowedPreferenceCategory, required) - the category of activities covered by this preference object.
@@ -3522,6 +3605,28 @@ This query will add a new selection record for the specified request.
 + `id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the POI.
 + `name`: `Mcdonalds` (string, required) - the name for the POI.
 + `image_url`: `http://takemobi.com/image.png` (string, optional) - the url to a representative image of the POI.
+
+### UserCharacteristic
++ `name`: `Relaxing` (string, required) - the name for the characteristic.
++ `value`: `0.8` (number, optional) - a numerical value (between 0.0 and 1.0) indicating the degree that the user fits this characteristic. 0.0 means does not fit at all, while 1.0 means perfect fit.
+
+### ProfileSurvey
++ `id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the survey.
++ `description`: `Favorite Food` (string, required) - a brief description for the survey.
++ `questions` (array[ProfileSurveyQuestion], required) - the list of questions in this survey.
+
+### ProfileSurveyQuestion
++ `id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the question.
++ `survey_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the survey this question belongs to.
++ `description`: `What is your favorite dish?` (string, required) - a brief description for the question.
++ `answers` (array[ProfileSurveyAnswer], required) - the list of answers to this question.
+
+### ProfileSurveyAnswer
++ `id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the answer.
++ `question_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the question this answer belongs to.
++ `description`: `Orange Chicken` (string, required) - a brief description for the answer.
++ `pois` (array[CandidateItemAbstract], optional) - the list of abstract POI objects the answer contains.
++ `filters` (array[PreferenceDomainCandidate], optional) - the list of filters the answer contains.
 
 ### Budget
 + price (array[Price], required) - the upper bound of spending of each currency for all activities. Only currencies that have a limit (e.g. AMEX_POINT) may need to be specified.
