@@ -1881,7 +1881,7 @@ Retrieve matched (if `question_id` is provided) profile survey question. If `que
         Internal Server Error.
         
 
-## Plan Profile Survey Questions [/mobility-planner/demo/v2/profile/domain/survey/answer{?answer_id}]
+## Plan Profile Survey Anwsers [/mobility-planner/demo/v2/profile/domain/survey/answer{?answer_id}]
 
 + Parameters
     + answer_id: `3323-4432-5456345743-f343245346` (string, optional) - the unique identifier for a profile survey answer.
@@ -1894,6 +1894,33 @@ Retrieve matched (if `answer_id` is provided) profile survey answer. If `answer_
 
     + Attributes
         + answers (array[ProfileSurveyAnswer], optional) - a list of profile survey answers.
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Plan Profile Survey Anwser Explanations [/mobility-planner/demo/v2/profile/domain/survey/answer/explanation{?explanation_id}]
+
++ Parameters
+    + explanation_id: `3323-4432-5456345743-f343245346` (string, optional) - the unique identifier for a profile survey answer explanation.
+
+### GET
+
+Retrieve matched (if `explanation_id` is provided) profile survey answer explanation. If `explanation_id` is not provided, all survey answer explanations will be returned
+
++ Response 200 (application/json)
+
+    + Attributes
+        + explanations (array[ProfileSurveyAnswerExplanation], optional) - a list of profile survey answer explanations.
             
 + Response 400
 
@@ -3584,6 +3611,7 @@ This query will add a new selection record for the specified request.
 + `saved_filters` (array[PreferenceDomainCandidate], optional) - the list of filters the user has selected and saved.
 + `characteristics` (array[UserCharacteristic], optional) - the list of characteristics detected for the user.
 + `survey_answer_ids` (array[string], optional) - the list of unique identifiers indicating the answers the user has provided to our survey questions.
++ `survey_answer_explanations` (array[ProfileSurveyAnswerExplanation], optional) - the list of explanations the user has provided for prior survey answers and/or POIs.
 
 ### PreferenceDomainCandidate
 + category (AllowedPreferenceCategory, required) - the category of activities covered by this preference object.
@@ -3627,6 +3655,14 @@ This query will add a new selection record for the specified request.
 + `description`: `Orange Chicken` (string, required) - a brief description for the answer.
 + `pois` (array[CandidateItemAbstract], optional) - the list of abstract POI objects the answer contains.
 + `filters` (array[PreferenceDomainCandidate], optional) - the list of filters the answer contains.
++ `explanations` (array[ProfileSurveyAnswerExplanation], optional) - the list of explanations applicable to this answer.
+
+### ProfileSurveyAnswerExplanation
++ `id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the explanation.
++ `answer_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, optional) - the unique identifier of the answer this explanation applies to.
++ `poi_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, optional) - the unique identifier of the POI this explanation applies to.
++ `description`: `What was memorable?` (string, required) - a brief description for the explanation.
++ `filters` (array[PreferenceDomainCandidate], required) - the list of filters the user could select/selected for the explanation.
 
 ### Budget
 + price (array[Price], required) - the upper bound of spending of each currency for all activities. Only currencies that have a limit (e.g. AMEX_POINT) may need to be specified.
