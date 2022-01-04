@@ -156,6 +156,7 @@ Retrieve the candidate item object matching the specified planning problem mode 
             + `ACCOMMODATION`
             + `EXPERIENCE`
             + `ATTRACTION`
+            + `DINING`
     + keyword (string, required) - the search keyword.
 
 ### GET
@@ -929,11 +930,12 @@ Restore a previous planning session by recreating the planning session and probl
         Internal Server Error.
         
 
-## Save User Session [/mobility-planner/demo/v2/session{?user_id,session_id}]
+## Save User Session [/mobility-planner/demo/v2/session{?user_id,session_id,auto_saved}]
 
 + Parameters
     + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
     + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the session.
+    + auto_saved: `false` (boolean, optional) - a boolean indicator: if true then the session is saved automatically by the client, if false then the save must have been triggered by the end user.
 
 ### POST
 
@@ -993,6 +995,35 @@ Retrieve the set of user session data created by the user earlier.
 + Response 500
 
         Internal Server Error.
+     
+     
+## Get User Session Detail [/mobility-planner/demo/v2/session-details{?user_id,session_id}]
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user.
+    + trip_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the trip.
+    + session_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the session.
+
+### GET
+
+Retrieve the set of user session data created by the user earlier.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + `sessions` (array[UserSessionData], required) - the problem object.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
         
         
 ## Delete User Session [/mobility-planner/demo/v2/session{?user_id,trip_id}]
@@ -1023,6 +1054,38 @@ Delete the previously saved trip, identified by the trip_id.
 
         Internal Server Error.
         
+
+## Updated Booking Status [/mobility-planner/demo/v2/booking-status{?user_id,session_id,activity_id,booking_status}]
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the session.
+    + activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity whose booking status needs to be updated.
+    + booking_status: `false` (boolean, optional) - a boolean indicator: if true then the activity is booked; if false then the activity has not been booked by the user.
+
+### POST
+
+Save a user session data (problem and solution). Planner will also attempt to location the objects using the session_id.
+
++ Request (application/json)
+
++ Response 200 (application/json)
+
+    + Attributes
+        + `activities` (array[Activity], required) - the collection of activities in the current trip, with updated booking status.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
 
 ## Save User Progress [/mobility-planner/demo/v2/progress{?user_id}]
 
@@ -1069,6 +1132,32 @@ Retrieve the set of user session data created by the user earlier.
 
     + Attributes
         + `progress` (UserProgressData, required) - the problem object.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Export PDF Itinerary [/mobility-planner/demo/v2/export/itinerary-pdf]
+
+### POST
+
+Export the user trip to a PDF
+
++ Request (application/json)
+    + Attributes
+        + `selected_trip_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the selected trip.
+        + `url`: `https://abcd.com/df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the url linking to the page to print to pdf.
+
++ Response 200 (application/pdf)
 
 + Response 400
 
@@ -1524,7 +1613,7 @@ Given an activity from the existing solution but with an updated schedule (start
         Internal Server Error.
         
 
-## Remove Activity and Replan [/mobility-planner/demo/v2/activity{?session_id,problem_id,solution_id,activity_id}]
+## Remove Activity and Replan [/mobility-planner/demo/v2/activity{?session_id,problem_id,solution_id,activity_id,candidate_id}]
 
 Remove the specified activity in the existing solution, and calculate a new plan.
 
@@ -1533,6 +1622,7 @@ Remove the specified activity in the existing solution, and calculate a new plan
     + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem.
     + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution this removal will apply to.
     + activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity to be removed.
+    + candidate_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the POI candidate to be removed.
 
 ### DELETE
   
@@ -2070,11 +2160,12 @@ Retrieve all compatible contexts given the specified planning problem mode.
         Internal Server Error.
         
         
-## Get Context Suggestions [/mobility-planner/demo/v2/domain/contexts/suggestions{?mode,keyword}]
+## Get Context Suggestions [/mobility-planner/demo/v2/domain/contexts/suggestions{?mode,keyword,source}]
 
 + Parameters
     + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
     + keyword (string, required) - the search keyword.
+    + source (string, optional) - the source keyword. Currently supporting one 'worldcities', which will disable Mobi search and use the 14k world city search for matching.
 
 ### GET
 
@@ -2970,6 +3061,71 @@ This query will return a list of the nearest bikeshare locations from a particul
 
 # Group User
 
+## Get Tokens
+
+### Get Access Token [GET /mobility-planner/demo/v2/oauth/token/bearer{?code,code_verifier,redirect_uri,mode}]
+
+This query will return the id_token for the given code. 
+
++ Parameters
+    + code: `98621697-c843-47bc-95d9-0e7015455072` (number, required) - the authorization code. 
+    + code_verifier: `abcde` (string, required) - the code verifier.
+    + redirect_uri: `https://amex-staging.takemobi.io/callback` (string, required) - the redirect url. 
+    + mode: `AMEX` (string, required) - the mode of the planning session.
+ 
++ Response 200
+
+    + Attributes
+        + id_token: `98621697-c843-47bc-95d9-0e7015455072` (string, required) - the id token.
+        + access_token: `98621697-c843-47bc-95d9-0e7015455072` (string, required) - the access token.
+        + refresh_token: `98621697-c843-47bc-95d9-0e7015455072` (string, required) - the refresh token.
+        + expires_in: `300` (number, required) - the lifetime of the token in seconds.
+        
+
++ Response 401 (text/plain)
+
+        Unauthorized access due to authentication errors.
+
+
+### Get Refresh Token [GET /mobility-planner/demo/v2/oauth/token_refresh/bearer{?refresh_token,mode}]
+
+This query will return the refresh_token for the given code. 
+
++ Parameters
+    + `refresh_token`: `98621697-c843-47bc-95d9-0e7015455072` (number, required) - the refresh_token
+    + mode: `AMEX` (string, required) - the mode of the planning session.
+ 
++ Response 200
+
+    + Attributes
+        + access_token: `98621697-c843-47bc-95d9-0e7015455072` (string, required) - the access token.
+        + refresh_token: `98621697-c843-47bc-95d9-0e7015455072` (string, required) - the refresh token.
+        + expires_in: `300` (number, required) - the lifetime of the token in seconds.
+        
+
++ Response 401 (text/plain)
+
+        Unauthorized access due to authentication errors.
+
+
+### Validate Token [GET /mobility-planner/demo/v2/oauth/token_refresh/bearer{?access_token,mode}]
+
+This query will return the refresh_token for the given code. 
+
++ Parameters
+    + `access_token`: `98621697-c843-47bc-95d9-0e7015455072` (number, required) - the access_token
+    + mode: `AMEX` (string, required) - the mode of the planning session.
+ 
++ Response 200
+
+    + Attributes
+        + sub: `98621697c84347bc95d90e7015455072` (string, required) - the unique identifier for the user.
+
++ Response 401 (text/plain)
+
+        Unauthorized access due to authentication errors.
+
+
 ## Token Validation [/profile/v3/token_validation]
 
 
@@ -3793,6 +3949,7 @@ This query will add a new selection record for the specified request.
 + waiting (ActivityReservation, optional) - specify if this activity has required waiting.  
 + availability (array[ActivityAvailability], optional) - specify the availability of this activity, in or outside the current scheduled time windows.  
 + spec (ActivitySpec, optional) - provide more details on the specification of this activity.
++ booked: `false` (boolean, optional) - if this activity has been booked by the user.
 
 ### ActivitySpec
 + curated: `true` (boolean, optional) - a boolean flag indicating if the activity was picked by the planner instead of the request.
@@ -4671,3 +4828,5 @@ the direction towards the next stop or intermediate location.
 + `trip_start_time`: 12345567 (number, optional) - timestamp for the start of the trip.
 + `trip_end_time`: 12345567 (number, optional) - timestamp for the end of the trip.
 + `trip_context`: `LONDON_UK` (string, optional) - timestamp for the context `(destination)` of the trip.
++ `auto_saved`: `false` (boolean, optional) - if this trip was saved automatically by the client (and not by the end user).
++ `expired`: `false` (boolean, optional) - if this trip has expired (ending in the past).
