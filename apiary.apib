@@ -4112,6 +4112,7 @@ This query will add a new selection record for the specified request.
         + `NOT_EARLIER_THAN`
         + `NOT_APPLICABLE` 
 + relaxable: `true` (boolean, required) - if the desired time of duration/departure/arrival is relaxable.
++ explanation (ExplanationItem, optional) - explanations related to the activity.
 
 
 ### CandidateInformation
@@ -4175,6 +4176,8 @@ This query will add a new selection record for the specified request.
 + `carrier_code`: `UA` (string, optional) - the code of the air or train carrier.
 + `number`: `UA` (string, optional) - the number of the flight or train.
 
+### ExplanationItem
++ descriptions (array[string], optional) - an array of texts as contents of the explanation.
 
 ### POIDomain
 + destination: `Los Angeles, CA` (string, required) - the name of the destination metro that these POIs belond to.
