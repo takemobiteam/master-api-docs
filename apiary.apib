@@ -1,4 +1,4 @@
-sFORMAT: 1A
+FORMAT: 1A
 HOST: https://api.takemobi.io/
 
 # The Mobi Travel Planning API
@@ -347,6 +347,43 @@ Retrieve recommended POIs for the specified context given the selected tags in t
             + DINING (array[CandidateItem], required) - a list of recommended dining POIs (up to 10).
             + EXPERIENCE (array[CandidateItem], required) - a list of recommended experience POIs (up to 10).
             + ACCOMMODATION (array[CandidateItem], required) - a list of recommended accommodation POIs (up to 10).
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Recommended Filters for Context [/mobility-planner/demo/v2/domain/filters{?mode,category,context}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + context (string, optional) - the selected context for recommended filters.
+    + category (enum, optional) - the selected category of filters to return.
+        + Members
+            + `ACCOMMODATION`
+            + `EXPERIENCE`
+            + `DINING`
+
+### POST
+
+Retrieve the candidate item object matching the specified planning problem mode and candidate id.
+
++ Request (application/json)
+
+    + Attributes (PreferenceDomainCandidates, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + `results` (array[PreferenceDomainCandidateStructure], optional) - the list of filters the user has selected and saved.
 
 + Response 400
 
@@ -3776,6 +3813,13 @@ This query will add a new selection record for the specified request.
 + parent: `Cuisine` (string, required) - the parent filter of the filter.
 + image: `http://takemobi.com/image.png` (string, optional) - an url to the image of the filter.
 
+### PreferenceDomainCandidates
++ candidates (array[PreferenceDomainCandidate], required) - collection of preference domain candidates.
+
+### PreferenceDomainCandidateStructure
++ parent (PreferenceDomainCandidate, required) - the parent candidate.
++ children (array[PreferenceDomainCandidate], optional) - collection of child candidates.
+
 ### TripAbstract
 + `trip_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the trip.
 + `problem_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the problem object.
@@ -3883,9 +3927,16 @@ This query will add a new selection record for the specified request.
 
 
 ### PoiSuggestionElement
-+ `name`: `Sonoma_California` (string, required) - the name of the POI object.
-+ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the POI object.
++ `name`: `Sonoma_California` (string, required) - the name of the context object.
++ `lat`: `43.86231` (number, required) - the latitude of the context object.
++ `lng`: `18.432571` (number, required) - the longitude of the context object.
++ `category` (string, required) - the category of the context object.
+    + Members
+        + CITY
+        + COUNTRY
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, optional) - a unique identifier for the context object.
 
+        
 ### SurveySuggestionRequest
 + category: `activity` (string, required) - the name for the category of suggestions.
 + `previous_suggestions` (array[string], optional) - the list of previous user selections.
@@ -4830,6 +4881,7 @@ the direction towards the next stop or intermediate location.
 + `trip_name`: Family trip to Las Vegas (string, optional) - a custom name for the trip.
 + `trip_start_time`: 12345567 (number, optional) - timestamp for the start of the trip.
 + `trip_end_time`: 12345567 (number, optional) - timestamp for the end of the trip.
-+ `trip_context`: `LONDON_UK` (string, optional) - timestamp for the context `(destination)` of the trip.
++ `trip_context`: `LONDON_UK` (string, optional) - the context `(destination)` of the trip.
++ `trip_contexts` (array[CandidateItem], optional) - a list of relevant context objects `(destinations)` of the trip.
 + `auto_saved`: `false` (boolean, optional) - if this trip was saved automatically by the client (and not by the end user).
 + `expired`: `false` (boolean, optional) - if this trip has expired (ending in the past).
