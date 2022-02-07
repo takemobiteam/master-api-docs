@@ -60,7 +60,7 @@ Retrieve allowed tags (profile options) given the planning problem mode and cont
 
         Internal Server Error.
 
-## Get Recommended Tags [/mobility-planner/demo/v2/profile/domain/recommendation{?mode,context}]
+## Get Recommended Tags for Destination [/mobility-planner/demo/v2/profile/domain/recommendation{?mode,context}]
 
 + Parameters
     + mode (AllowedProblemMode, required) - the planner mode used for this profile domain.
@@ -76,6 +76,43 @@ at the moment but we can adjust that total number and distribution.
     + Attributes
         + recommendations (array[RecommendedAttribute], optional) - a list of recommended preference options.
             
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Recommended Tags Given Selection [/mobility-planner/demo/v2/profile/domain/recommendation{?mode,category,context}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + context (string, optional) - the selected context for recommended filters.
+    + category (enum, optional) - the selected category of filters to return.
+        + Members
+            + `ACCOMMODATION`
+            + `EXPERIENCE`
+            + `DINING`
+
+### POST
+
+Retrieve the candidate item object matching the specified planning problem mode and candidate id.
+
++ Request (application/json)
+
+    + Attributes (PreferenceDomainCandidates, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + `results` (array[PreferenceDomainCandidateStructure], optional) - the list of filters the user has selected and saved.
+
 + Response 400
 
         Bad Request.
@@ -313,6 +350,7 @@ Retrieve candidate destination (context) themes given the selected tags in the p
 
     + Attributes 
         + results (array[ContextThemeCandidate], required) - a list of candidate destination trips.
+        + explanations (array[ContextCandidateExplanation], required) - a list of explanation for each recommended context.
 
 + Response 400
 
@@ -347,43 +385,6 @@ Retrieve recommended POIs for the specified context given the selected tags in t
             + DINING (array[CandidateItem], required) - a list of recommended dining POIs (up to 10).
             + EXPERIENCE (array[CandidateItem], required) - a list of recommended experience POIs (up to 10).
             + ACCOMMODATION (array[CandidateItem], required) - a list of recommended accommodation POIs (up to 10).
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-
-
-## Get Recommended Filters for Context [/mobility-planner/demo/v2/domain/filters{?mode,category,context}]
-
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
-    + context (string, optional) - the selected context for recommended filters.
-    + category (enum, optional) - the selected category of filters to return.
-        + Members
-            + `ACCOMMODATION`
-            + `EXPERIENCE`
-            + `DINING`
-
-### POST
-
-Retrieve the candidate item object matching the specified planning problem mode and candidate id.
-
-+ Request (application/json)
-
-    + Attributes (PreferenceDomainCandidates, required)
-
-+ Response 200 (application/json)
-
-    + Attributes 
-        + `results` (array[PreferenceDomainCandidateStructure], optional) - the list of filters the user has selected and saved.
 
 + Response 400
 
@@ -3807,6 +3808,7 @@ This query will add a new selection record for the specified request.
 + `survey_answer_explanations` (array[ProfileSurveyAnswerExplanation], optional) - the list of explanations the user has provided for prior survey answers and/or POIs.
 
 ### PreferenceDomainCandidate
++ `id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the preference domain candidates.
 + category (AllowedPreferenceCategory, required) - the category of activities covered by this preference object.
 + source: `User` (string, optional) - the source of the filter.
 + name: `Chinese` (string, required) - the name of the filter.
@@ -4264,6 +4266,12 @@ This query will add a new selection record for the specified request.
 ### ContextThemeCandidate
 + `contexts` (array[CandidateItem], required) - a collection of destinations that fit the theme.
 + `theme`: `Best Winter Destimation` (string, required) - specifies the theme of the candidate contexts.
+
+### ContextCandidateExplanation
++ `context_name`: `Boston_Massachusetts` (string, required) - specifies the name of the candidate context.
++ `satisfied_filters` (array[PreferenceDomainCandidate], required) - a collection of user preferred filters that are satisfied by the destination.
++ `good_match_filters` (array[PreferenceDomainCandidate], required) - a collection of user preferred filters that are well supported by POIs at the destination.
++ `known_for_filters` (array[PreferenceDomainCandidate], required) - a collection of user preferred filters that the destination is known for.
 
 ### ThemedCandidateItem
 + `theme`: `Best Italian` (string, required) - specifies the theme of the candidate POI collection.
