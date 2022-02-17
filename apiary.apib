@@ -399,11 +399,14 @@ Retrieve recommended POIs for the specified context given the selected tags in t
         Internal Server Error.
         
 
-## Get All POIs for Destination [/mobility-planner/demo/v2/domain{?mode,context}]
+## Get All POIs for Destination [/mobility-planner/demo/v2/domain{?mode,context,lat,lng,radius}]
 
 + Parameters
     + mode (AllowedProblemMode, required) - the planner mode used for this profile domain.
     + context (string, optional) - the context used for this profile domain.
+    + lat (number, optional) - the reference latitude.
+    + lng (number, optional) - the reference longitude.
+    + radius (number, optional) - the maximum distance from the reference geolocation.
     
 ### GET
 
@@ -455,6 +458,71 @@ Retrieve recommended POIs, separated in themes, for the specified context given 
             + EXPERIENCE (array[ThemedCandidateItem], required) - a list of recommended experience POI themes.
             + ACCOMMODATION (array[ThemedCandidateItem], required) - a list of recommended accommodation POI themes.
 
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+        
+# Group Survey
+
+## Get Survey Domain [/mobility-planner/demo/v2/survey/domain{?mode,context,user_id}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
+    + context (string, optional) - the context used for filtering applicable surveys.
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+
+### GET
+
+Retrieve all relevant surveys.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + surveys (array[ProfileSurvey], required) - a list of applicable surveys.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Add Survey Response [/mobility-planner/demo/v2/survey/response{?mode,context,user_id}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
+    + context (string, optional) - the context used for filtering applicable surveys.
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+
+### POST
+
+Add the user's response to a survey.
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + status (string, required) - a status message.
+
+    
 + Response 400
 
         Bad Request.
@@ -3849,6 +3917,15 @@ This query will add a new selection record for the specified request.
 + `id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the question.
 + `survey_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the survey this question belongs to.
 + `description`: `What is your favorite dish?` (string, required) - a brief description for the question.
++ category (enum, optional) - the category of the question.
+    + Members
+        + TEXT
+        + POI
+        + FILTER
+        + DESTINATION
+        + GEOGRAPHY
+        + RATING
+        + OPTION
 + `answers` (array[ProfileSurveyAnswer], required) - the list of answers to this question.
 
 ### ProfileSurveyAnswer
@@ -3949,7 +4026,8 @@ This query will add a new selection record for the specified request.
 + `responses` (array[SurveyResponse], required) - the list of survey responses.
 
 ### SurveyResponse
-+ `response` (array[SurveyResponseElement], required) - the list of elements in a user survey response.
++ `survey_id`: `123abc` (string, required) - the id for the survey this response applies to.
++ `answers` (array[ProfileSurveyAnswer], required) - the list of answers in a survey response.
 
 ### SurveyResponseElement
 + category: `activity` (string, required) - the name for the category of the response element.
