@@ -515,7 +515,42 @@ Add the user's response to a survey.
 
 + Request (application/json)
 
-    + Attributes (Problem, required)
+    + Attributes (SurveyResponse, required)
+  
++ Response 200 (application/json)
+
+    + Attributes
+        + status (string, required) - a status message.
+
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Add Skipped Survey [/mobility-planner/demo/v2/survey/response/skipped{?mode,context,user_id,survey_id}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
+    + context (string, optional) - the context used for filtering applicable surveys.
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + survey_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the survey that is skipped.
+
+### POST
+
+Record that the user skipped a survey.
+
++ Request (application/json)
+
+    + Attributes (SurveyResponse, required)
   
 + Response 200 (application/json)
 
@@ -535,6 +570,61 @@ Add the user's response to a survey.
 
         Internal Server Error.
 
+
+# Group Tracking
+
+## Track A User Click [/mobility-planner/demo/v2/tracking/click{?mode,url,user_id}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable clicks.
+    + url (string, optional) - the outbound url the click is taking the user to.
+    + user_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user if available.
+
+### POST
+
+Add a user click to tracking.
+
++ Response 200 (application/json)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Track A Detail View [/mobility-planner/demo/v2/tracking/detail-view{?mode,category,poi_id,problem_id,url,user_id}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable clicks.
+    + category (string, required) - the category of the POI. For example, EXPEREINCE, DINING, ACCOMMODATION, etc..
+    + poi_id (string, required) - the unique identifier of the POI.
+    + problem_id (string, optional) - the unique identifier of the planning problem this user is working on.
+    + url (string, optional) - the outbound url the click is taking the user to.
+    + user_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user if available.
+
+### POST
+
+Add a user's POI detail view to tracking.
+
++ Response 200 (application/json)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
 
 # Group Planning
 
@@ -1075,11 +1165,14 @@ Save a user session data (problem and solution). Planner will also attempt to lo
         Internal Server Error.
      
      
-## Get User Sessions [/mobility-planner/demo/v2/session{?user_id,session_id}]
+## Get User Sessions [/mobility-planner/demo/v2/session{?user_id,session_id,trip_id,include_auto_saved,include_user_saved}]
 
 + Parameters
     + user_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user.
+    + trip_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the trip.
     + session_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the session.
+    + include_auto_saved: `true` (boolean, optional) - a boolean value indicating if auto saved sessions should be returned.
+    + include_user_saved: `true` (boolean, optional) - a boolean value indicating if user saved sessions should be returned.
 
 ### GET
 
@@ -1103,7 +1196,7 @@ Retrieve the set of user session data created by the user earlier.
         Internal Server Error.
      
      
-## Get User Session Detail [/mobility-planner/demo/v2/session-details{?user_id,session_id}]
+## Get User Session Detail [/mobility-planner/demo/v2/session-details{?user_id,session_id,trip_id}]
 
 + Parameters
     + user_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user.
