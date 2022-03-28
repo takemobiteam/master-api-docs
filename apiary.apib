@@ -155,6 +155,34 @@ Retrieve all supported destinations (compatible contexts) given the specified pl
         Internal Server Error.
 
 
+## Get Matched Destination - Also Known as Plan Context [/mobility-planner/demo/v2/domain/context{?mode,name}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + name: `Boston_Massachusetts` (string, required) - the name of the context.
+
+### GET
+
+Retrieve matched destination given the specified planning problem mode and context name.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + context (CandidateItem, required) - a context object matching the given mode and name.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
 ## Get Matched Candidate [/mobility-planner/demo/v2/domain/poi{?mode,id}]
 
 + Parameters
@@ -335,8 +363,15 @@ Retrieve candidate destination (context) trips given the trip destination/dates 
         Internal Server Error.
 
 
+## Get Candidate Destination Themes - Also Known as Candidate Context Themes [/mobility-planner/demo/v2/problem/context-themes{?sort,max_results}]
 
-## Get Candidate Destination Themes - Also Known as Candidate Context Themes [/mobility-planner/demo/v2/problem/context-themes]
++ Parameters
+    + sort (enum, optional) - the context used for this profile domain.
+        + Members
+            + `satisfied_filters`
+            + `good_match_filters`
+            + `known_for_filters`
+    + max_results (number, optional) - the max number of context results that should be returned.
 
 ### POST
 
@@ -457,6 +492,7 @@ Retrieve recommended POIs, separated in themes, for the specified context given 
             + DINING (array[ThemedCandidateItem], required) - a list of recommended dining POI themes.
             + EXPERIENCE (array[ThemedCandidateItem], required) - a list of recommended experience POI themes.
             + ACCOMMODATION (array[ThemedCandidateItem], required) - a list of recommended accommodation POI themes.
+            + EVENT (array[ThemedCandidateItem], required) - a list of recommended event POI themes.
 
 + Response 400
 
@@ -4382,7 +4418,7 @@ This query will add a new selection record for the specified request.
 + `transportation` (Transportation, optional) - the arrival timestamp at the destination location, used when physical movement is involved (such as flight, rail, tour, etc.).
 + recommendations (array[RecommendationExplanationItem], optional) - a list of explanation items on why this POI is good in different contexts (For you, for your trip, for the destination, etc.).
 + hours (array[HoursOfOperation], optional) - a list of hours objects describing the hours of operation for the POI.
-
++ `match` (ContextCandidateExplanation, optional) - providing details on how well this candidate matches the provided filters.
 
 ### Transportation
 + `segments` (array[TransportationSegment], optional) - a list of transportation segments, such as a list of flights, multiple train rides.
