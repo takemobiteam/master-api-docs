@@ -33,11 +33,12 @@ Other cities can be added by request.
 
 # Group Bluesky
 
-## Get All Supported Tags - Also Known as Plan Profile Domain [/mobility-planner/demo/v2/profile/domain{?mode,context}]
+## Get All Supported Tags - Also Known as Plan Profile Domain [/mobility-planner/demo/v2/profile/domain{?mode,context,parent}]
 
 + Parameters
     + mode (AllowedProblemMode, required) - the planner mode used for this profile domain.
     + context (string, optional) - the context used for this profile domain.
+    + parent (string, optional) - the parent filters: if provided only children filters for this parent will be returned.
 
 ### GET
 
@@ -246,6 +247,42 @@ Retrieve the candidate POIs matching the specified search keyword.
         Internal Server Error.
 
 
+## Get Filter Suggestions [/mobility-planner/demo/v2/domain/filter/suggestions{?mode,category,keyword,parent}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + category (enum, optional) - the POI category.
+        + Members
+            + `ACCOMMODATION`
+            + `EXPERIENCE`
+            + `ATTRACTION`
+            + `DINING`
+    + keyword (string, required) - the search keyword.
+    + parent (string, optional) - the parent of the returned filters.
+    
+### GET
+
+Retrieve the candidate filters matching the specified search keyword.
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + candidates (array[PreferenceDomainCandidate], required) - a list of candidate filters that fit the search criteria.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+
 ## Get Recommended Destinations - Also Known as Candidate Contexts [/mobility-planner/demo/v2/problem/contexts]
 
 ### POST
@@ -400,6 +437,34 @@ Retrieve candidate destination (context) themes given the selected tags in the p
         Internal Server Error.
         
 
+## Get Candidate Destination Matches to Filters [/mobility-planner/demo/v2/problem/context-filter-match]
+
+### POST
+
+Retrieve candidate destination (context) given the selected tags in the profile, and categorize them baed on the matches.
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + results (array[ContextFilterCandidate], required) - a list of candidate destinations matching the provided filters.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
 ## Get Recommended POIs for Destination [/mobility-planner/demo/v2/problem/pois{?context}]
 
 + Parameters
@@ -471,11 +536,16 @@ Retrieve all POIs for the specified context given the destination.
         Internal Server Error.
         
 
-## Get Recommended Themes of POIs for Destination [/mobility-planner/demo/v2/problem/poi-recommendations{?context,merge_categories}]
+## Get Recommended Themes of POIs for Destination [/mobility-planner/demo/v2/problem/poi-recommendations{?context,merge_categories,sort}]
 
 + Parameters
     + context (string, required) - the selected context for recommended POIs.
     + merge_categories (boolean, required) - if the different categories of POI themes should be merged into one in the response. Default is true. Please set to false if you only want POIs separated in categories.
+    + sort (enum, optional) - sort the Best for Destination candidates based on the provided criteria.
+        + Members
+            + best_match
+            + price_high
+            + price_low
 
 ### POST
 
@@ -1433,7 +1503,7 @@ Find the next best solution for the current problem.
         Internal Server Error.
 
 
-## Get Alternative Activities [/mobility-planner/demo/v2/alternative-activity{?session_id,problem_id,solution_id,activity_id,max_number}]
+## Get Alternative Activities [/mobility-planner/demo/v2/alternative-activity{?session_id,problem_id,solution_id,activity_id,max_number,sort}]
 
 Given a solution, calculate preferred alternative activities for one inside the solution.
 
@@ -1443,6 +1513,11 @@ Given a solution, calculate preferred alternative activities for one inside the 
     + solution_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the solution that alternatives should apply to.
     + activity_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the activity that calculated alternatives will replace.
     + max_number: `10` (number,required) - the max number of alternative activities to return.
+    + sort (enum, optional) - sort the activities based on the provided criteria.
+        + Members
+            + best_match
+            + price_high
+            + price_low
 
 ### GET
   
@@ -4464,6 +4539,7 @@ This query will add a new selection record for the specified request.
 + `price` (array[Price], optional) - the estimated spending for the trip. May include multiple currencies (e.g. AMEX_POINTS and USD)
 + `pois` (array[string], optional) - a list of identifiers for the pre-selected POIs for the trip.
 + `explanations` (array[string], optional) - a list of explanations for the trip.
++ `flight_optional`: `false` (boolean, optional) - a flag indicating if flight is optional for this trip (because the origin and destination are close).
 + `flights` (array[CandidateItem], optional) - a ranked list of recommended flight options for the trip.
 + `accommodations` (array[CandidateItem], optional) - a ranked list of recommended accommodation options for the trip.
 + images (object, optional) - links to images to be used for this trip candidate.
@@ -4479,6 +4555,13 @@ This query will add a new selection record for the specified request.
 + `satisfied_filters` (array[PreferenceDomainCandidate], required) - a collection of user preferred filters that are satisfied by the destination.
 + `good_match_filters` (array[PreferenceDomainCandidate], required) - a collection of user preferred filters that are well supported by POIs at the destination.
 + `known_for_filters` (array[PreferenceDomainCandidate], required) - a collection of user preferred filters that the destination is known for.
+
+### ContextFilterCandidate
++ `filter` (PreferenceDomainCandidate, required) - specifies the filter selected of these candidate contexts.
++ `satisfied_contexts` (array[CandidateItem], required) - a collection of destinations that have POIs sasisfying the filter.
++ `good_match_contexts` (array[CandidateItem], required) - a collection of destinations that have good POIs matching the filter.
++ `known_for_contexts` (array[CandidateItem], required) - a collection of destinations that have POIs that are known for the filter.
+
 
 ### ThemedCandidateItem
 + `theme`: `Best Italian` (string, required) - specifies the theme of the candidate POI collection.
