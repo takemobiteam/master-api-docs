@@ -536,7 +536,7 @@ Retrieve all POIs for the specified context given the destination.
         Internal Server Error.
         
 
-## Get Recommended Themes of POIs for Destination [/mobility-planner/demo/v2/problem/poi-recommendations{?context,merge_categories,sort}]
+## Get Recommended Themes of POIs for Destination [/mobility-planner/demo/v2/problem/poi-recommendations{?context,merge_categories,category,sort}]
 
 + Parameters
     + context (string, required) - the selected context for recommended POIs.
@@ -546,6 +546,13 @@ Retrieve all POIs for the specified context given the destination.
             + best_match
             + price_high
             + price_low
+    + category (enum, optional) - if provided, only POI recommendations of the provided category will be returned.
+        + Members
+            + ACCOMMODATION
+            + DINING
+            + EXPERIENCE
+            + EVENT
+
 
 ### POST
 
@@ -564,6 +571,38 @@ Retrieve recommended POIs, separated in themes, for the specified context given 
             + ACCOMMODATION (array[ThemedCandidateItem], required) - a list of recommended accommodation POI themes.
             + EVENT (array[ThemedCandidateItem], required) - a list of recommended event POI themes.
 
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Bulk POI Details Request [/mobility-planner/demo/v2/domain/pois{?mode,return_abstract}]
+
+### Retrieve details of POIs [POST]
+
++ Parameters
+
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+    + return_abstract (boolean, optional) - boolean flag controlling if only subset of POI fields are needed in the response. Default to true.
+
++ Request (application/json)
+
+    + Attributes
+        + pois (array[string], required) - a list of POI IDs.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + pois (array[CandidateItem], required) - details for the requested POIs
+            
 + Response 400
 
         Bad Request.
@@ -4566,6 +4605,7 @@ This query will add a new selection record for the specified request.
 ### ThemedCandidateItem
 + `theme`: `Best Italian` (string, required) - specifies the theme of the candidate POI collection.
 + `pois` (array[CandidateItem], optional) - a list of POI objects in this collection.
++ `all_poi_ids` (array[string], optional) - a list of all POI ids that fit the theme.
 + `types` (array[string], optional) - a list of type keywords for the POIs in this collection.
 
 
