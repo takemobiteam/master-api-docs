@@ -2105,12 +2105,13 @@ Get confirmed solution for the given problem.
 
 ## Update solution display [/mobility-planner/demo/v2/solution/display{?session_id,display_flights,display_accommodations}]
 
-Confirm a solution for execution.
+Updated the display for a solution.
 
 ### POST
 
 + Parameters
     + session_id: `3323-4432-5456345743-f343245346` (string, required) - the id for the session.
+    + activity_id: `3323-4432-5456345743-f343245346` (string, optional) - the id for the activity that this display control applies to.
     + display_flights: `false` (boolean, required) - a flag indicating if solution should display flights.
     + display_accommodations: `false` (boolean, required) - a flag indicating if solution should display accommodations.
 
@@ -4116,6 +4117,18 @@ This query will add a new selection record for the specified request.
 
 ### Display
 + `display_whole_polyline`: false (boolean, optional) - if true, the polyline for the entire solution is recommended to be displayed in the background when each day's plan is being presented.
++ `display_accommodations`: true (boolean, optional) - if true, display the accommodation options in the solution.
++ `display_flights`: true (boolean, optional) - if true, display the flight options in the solution.
++ `segments` (array[SegmentDisplay], optional) - segment by segment display options.
+
+### SegmentDisplay
++ activity_id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, optional) - unique identifier for the activity this display control applies to.
++ from_location_id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, optional) - unique identifier for the from location of the segment this display control applies to.
++ to_location_id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, optional) - unique identifier for the to location of the segment this display control applies to.
++ from_context: `Boston_Massachusetts` (string, optional) - unique identifier for the from context of the segment this display control applies to.
++ to_context: `New York_USA` (string, optional) - unique identifier for the to context of the segment this display control applies to.
++ `scheduled_start_time`: `1513728314` (number, required) - the scheduled start time of this segment, in Unix time (seconds).  
++ `scheduled_end_time`: `1513728314` (number, required) - the scheduled end time of this segment, in Unix time (seconds).
 + `display_accommodations`: true (boolean, optional) - if true, display the accommodation options in the solution.
 + `display_flights`: true (boolean, optional) - if true, display the flight options in the solution.
 
