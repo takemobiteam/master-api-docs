@@ -771,6 +771,34 @@ Add a user's POI detail view to tracking.
 
         Internal Server Error.
 
+## Track Source of User [/mobility-planner/demo/v2/tracking/source{?mode,user_id,utm_source,utm_medium,utm_campaign,location}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable clicks.
+    + user_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user if available.
+    + utm_source: `travelhub` (string, required) - a unique identifier for the source where the user came from.
+    + utm_medium: `banner` (string, optional) - a unique identifier for the medium.
+    + utm_campaign: `email` (string, optional) - a unique identifier for the campaign.
+    + location: `landing_page` (string, required) - a unique identifier for the location where this source tracking was sent from.
+
+### POST
+
+Add a user's source to tracking.
+
++ Response 200 (application/json)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
 # Group Planning
 
 ## Create Problem [/mobility-planner/demo/v2/problem]
