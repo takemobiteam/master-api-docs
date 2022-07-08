@@ -4399,6 +4399,8 @@ This query will add a new selection record for the specified request.
 ### ActivitySpec
 + curated: `true` (boolean, optional) - a boolean flag indicating if the activity was picked by the planner instead of the request.
 + `planner_scheduled`: `true` (boolean, optional) - a boolean flag indicating if the schedule of this activity was picked by the planner instead of the request.
++ `previously_booked`: `true` (boolean, optional) - a boolean flag indicating if the activity was booked.
++ `context`: `Paris_France` (string, optional) - a matched context for the activity.
 + `satisfied_filters` (array[string], optional) - specify the filters satisfied by this activity.  
 
 ### ActivityReservation
