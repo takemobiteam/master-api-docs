@@ -2571,6 +2571,8 @@ Retrieve all compatible contexts given the specified planning problem mode.
     + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
     + keyword (string, required) - the search keyword.
     + source (string, optional) - the source keyword. Currently supporting one 'worldcities', which will disable Mobi search and use the 14k world city search for matching.
+    + destination_only: false (boolean, optional) - boolean flag to indicate if only destiantion (not country or airport) should be returned.
+    + return_contexts: false (boolean, optional) - boolean flag to indicate if the complete context objects should be returned.
 
 ### GET
 
@@ -2580,6 +2582,7 @@ Retrieve the candidate contexts matching the specified search keyword.
 
     + Attributes 
         + candidates (array[PoiSuggestionElement], required) - a list of candidates that fit the search criteria.
+        + contexts (array[CandidateItem], optional) - a list of context objects that fit the search criteria, if requested.
 
 + Response 400
 
