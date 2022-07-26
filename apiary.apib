@@ -4085,7 +4085,8 @@ This query will add a new selection record for the specified request.
 + profile (Profile, optional) - the profile of the user.
 + `planner_config` (PlannerConfig, optional) - the configuration of the planner in creating solutions for the request.
 + agents (array[AgentItem], optional) - the set of agents involved in the planning problem
-+ budget (Budget, optional) - the the budget that is available when solving for this problem.
++ budget (Budget, optional) - the budget that is available when solving for this problem.
++ traveler_information (TravelerInformation, optional) - the traveler information.
 + curation (TripCuration, optional) - specifies if and when curated activities should be included in the itinerary.
 + recommendation (TripRecommendation, optional) - specifies if recommended activities should be included in the itinerary.
 + pace (TripPace, optional) - specifies the pace of the .
@@ -4264,6 +4265,17 @@ This query will add a new selection record for the specified request.
 ### Budget
 + price (array[Price], required) - the upper bound of spending of each currency for all activities. Only currencies that have a limit (e.g. AMEX_POINT) may need to be specified.
 
+### TravelerInformation
++ adults (number, required) - the number of adults.
++ children (number, optional) - the number of children.
++ child_ages (array[number], optional) - an array of child ages.
++ infants (number, optional) - the number of infants.
++ infant_types (array[InfantType], optional) - an array of infant types.
++ rooms (number, required) - the number of rooms.
+
+### InfantType (enum[string])
++ IN_LAP
++ IN_SEAT
 
 ### ModePreference
 + mode (AllowedModePreferenceCategory, required) - the mode of transportation covered by this preference object.
