@@ -4118,6 +4118,7 @@ This query will add a new selection record for the specified request.
 + session_id: `e790d700-9f97-11ea-bb37-0242ac130002` (string, required) - unique identifier for the user session.
 + solution (Solution, optional) - the solution object for the problem.
 + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
++ highlights (SolutionHighlights, optional) - the highlights of the solution.
 + destination (Location, optional) - the representative location of this plan.
 + display (Display, optional) - any recommended configurations for displaying this solutions.
 + explanations (array[string], optional) - explanations for why no solution could be found by the planner.
@@ -4148,6 +4149,7 @@ This query will add a new selection record for the specified request.
         + NORMAL
         + OVER_SUBSCRIBED
 + contexts (array[CandidateItem], required) - the list of trip context objects from the request.
++ `filter_spec` (SolutionFilterSpec, required) - specification on satisfied and unsatisfied filters.
 
 ### Display
 + `display_whole_polyline`: false (boolean, optional) - if true, the polyline for the entire solution is recommended to be displayed in the background when each day's plan is being presented.
@@ -4165,6 +4167,15 @@ This query will add a new selection record for the specified request.
 + `scheduled_end_time`: `1513728314` (number, required) - the scheduled end time of this segment, in Unix time (seconds).
 + `display_accommodations`: true (boolean, optional) - if true, display the accommodation options in the solution.
 + `display_flights`: true (boolean, optional) - if true, display the flight options in the solution.
+
+### SolutionHighlights
++ `title`: `Destination Highlights` (string, optional) - a high level text description for the solution highlights.
++ `pois` (array[CandidateItem], optional) - the list of POI highlights.
++ `activities` (array[Activity], optional) - the list of activity highlights in the itinerary.
+
+### SolutionFilterSpec
++ `satisfied_filters` (array[PreferenceDomainCandidate], optional) - the list of satisfied filter objects.
++ `unsatisfied_filters` (array[PreferenceDomainCandidate], optional) - the list of unfatisfied filter objects.
 
 ### Profile
 + user_id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, optional) - the unique identifier for the user.
