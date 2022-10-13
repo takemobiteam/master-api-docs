@@ -370,10 +370,12 @@ Retrieve candidate destination (context) trips given the selected tags in the pr
         Internal Server Error.
 
 
-## Get Primary Destination Trips - Also Known as Primary Context Trips [/mobility-planner/demo/v2/problem/primary-context-trips{?context}]
+## Get Primary Destination Trips - Also Known as Primary Context Trips [/mobility-planner/demo/v2/problem/primary-context-trips{?context,include_flights,include_accommodations}]
 
 + Parameters
     + context (string, optional) - the context used for this profile domain.
+    + include_flights: `true` (boolean, optional) - flag to set if flights should be included in the response.
+    + include_accommodations: `true` (boolean, optional) - flag to set if hotels should be included in the response.
 
 ### POST
 
@@ -757,6 +759,31 @@ Add a user click to tracking.
 ### POST
 
 Add a user's POI detail view to tracking.
+
++ Response 200 (application/json)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Track A Map View [/mobility-planner/demo/v2/tracking/map-view{?mode,problem_id,user_id}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable clicks.
+    + problem_id (string, optional) - the unique identifier of the planning problem this user is working on.
+    + user_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user if available.
+
+### POST
+
+Add a user's map view to tracking.
 
 + Response 200 (application/json)
 
@@ -4490,6 +4517,7 @@ This query will add a new selection record for the specified request.
 ### Location
 + id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the location. It is location dependent, in that if the same location appears multiple times in the problem, the id will be the same.
 + name: `Mary Chung, 464 Massachusetts Ave` (string, required) - the name of the location.
++ display_name: `Mary Chung, 464 Massachusetts Ave` (string, required) - the display name of the location.
 + lat: `42.35031` (number, required) - the latitude of the location.
 + lng: `-71.0571` (number, required) - the longitude of the location.
 + `time_zone`: `America/New_York` (string, required) - contains the time zone of this location. The value is the name of the time zone as defined in the [IANA Time Zone Database](http://www.iana.org/time-zones).
