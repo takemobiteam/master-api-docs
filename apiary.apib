@@ -47,7 +47,8 @@ Retrieve allowed tags (profile options) given the planning problem mode and cont
 + Response 200 (application/json)
 
     + Attributes
-        + domains (array[Preference], optional) - a list of preference options allowed for different categories of preferences.
+        + categories (array[AllowedPreferenceCategory], optional) - a list of preference categories allowed.
+        + domain (array[Preference], optional) - a list of preference options allowed for different categories of preferences.
             
 + Response 400
 
@@ -619,9 +620,9 @@ Retrieve recommended POIs, separated in themes, for the specified context given 
         Internal Server Error.
         
         
-# Group Survey
+# Group Insights
 
-## Get Survey Domain [/mobility-planner/demo/v2/survey/domain{?mode,context,user_id}]
+## Get Quiz Domain [/mobility-planner/demo/v2/survey/domain{?mode,context,user_id}]
 
 + Parameters
     + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
@@ -650,7 +651,7 @@ Retrieve all relevant surveys.
         Internal Server Error.
         
 
-## Add Survey Response [/mobility-planner/demo/v2/survey/response{?mode,context,user_id}]
+## Add Quiz Response [/mobility-planner/demo/v2/survey/response{?mode,context,user_id}]
 
 + Parameters
     + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
@@ -684,7 +685,7 @@ Add the user's response to a survey.
         Internal Server Error.
         
 
-## Add Skipped Survey [/mobility-planner/demo/v2/survey/response/skipped{?mode,context,user_id,survey_id}]
+## Add Skipped Quiz [/mobility-planner/demo/v2/survey/response/skipped{?mode,context,user_id,survey_id}]
 
 + Parameters
     + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
@@ -2792,11 +2793,9 @@ ignored give the different mode combinations allowed (e.g. the choices of parkin
         + Default: `true`
     + `electric_charger`: `false` (boolean, optional) - Specifies if only parking locations with electric vehicle charging devices can be used in the routing results.
         + Default: `false`
-    + config: `DISNEY` (string, optional) - Specifies if any special configuration should be used when calculate routing results.
+    + config: `MOBI` (string, optional) - Specifies if any special configuration should be used when calculate routing results.
         + Members
-            + DISNEY
-            + CUBIC
-            + FORD   
+            + MOBI  
     + `request_id`: `324-25sdfgsd-345364-sdgfdsfg` (string, optional) - A UUID for the routing request for future reference.
         + Default: ``
     + `return_polyline`: `true` (boolean, optional) - Specifies if the `path` field of each routing option, which stores the polyline for the movement, should be included in the resposne.
@@ -4122,24 +4121,7 @@ This query will add a new selection record for the specified request.
 + display (Display, optional) - the requested solution display configuration for this problem.
 
 ### AllowedProblemMode (enum[string])
-+ RIDESHARE
-+ MARRIOTT
-+ AIRBNB
-+ BOOKING
-+ TRIPADVISOR
-+ DISNEY
-+ EXPEDIA
-+ YANDEX
-+ CONCUR
-+ HERTZ
-+ WTMC
-+ DEEM
-+ EHI
-+ BESTWESTERN
-+ IHG
-+ FOURSEASONS
-+ ZOLA
-+ AMEX
++ MOBI_AGENT
 
 ### SolutionResponse
 + session_id: `e790d700-9f97-11ea-bb37-0242ac130002` (string, required) - unique identifier for the user session.
@@ -4713,10 +4695,17 @@ This query will add a new selection record for the specified request.
 + images (object, optional) - links to images to be used for this trip candidate.
     + small: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%402x.png` (string, optional) - link to the small image.
     + medium: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%403x.png` (string, optional) - link to the medium size image.
++ `spec` (ContextTripCandidateSpec, optional) - a ranked list of recommended accommodation options for the trip.
 
 ### ContextThemeCandidate
 + `contexts` (array[CandidateItem], required) - a collection of destinations that fit the theme.
 + `theme`: `Best Winter Destimation` (string, required) - specifies the theme of the candidate contexts.
+
+### ContextTripCandidateSpec
++ `num_flights` (number, required) - the number of all available flight options.
++ `num_accommodations` (number, required) - the number of all available accommodation options.
++ `num_experiences` (number, required) - the number of all available experience options.
++ `num_dining` (number, required) - the number of all available dining options.
 
 ### ContextCandidateExplanation
 + `context_name`: `Boston_Massachusetts` (string, required) - specifies the name of the candidate context.
