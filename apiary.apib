@@ -4,21 +4,16 @@ HOST: https://staging.takemobi.io/
 # The Mobi Travel Planning API
 
 Mobi provides a REST API for accessing the travel and transportation planning 
-services. This page documents the second version of the API.
-
-Current version of Mobi API is running on:
+services. Current version of Mobi API is running on:
 
 * https://staging.takemobi.io/
 
 You will need to use https when querying the endpoints: http queries (on port 80) are not supported at the moment. 
 
-The API has four endpoints, **/mobility-data-repository/\<version\>/**, **/intermodal/\<version\>/**, **/mobility-planner/\<version\>/**, **/execution/\<version\>/**, 
-for retriving available mobility services, computing routes, planning multi-event trips, and monitoring trip progress.
-
 In order for a client application to be able to access Mobi API
 on behalf of it's users, the owner of the client application must first
 request access keys by sending an email to [support@takemobi.com]. 
-Please provide your company name and application/project name.
+Please provide your company name and application/project name. The API key needs to be included as part of the `x-api-key` header for all queries. 
 
 ## Allowed HTTP requests
 
