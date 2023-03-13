@@ -1,14 +1,14 @@
 FORMAT: 1A
-HOST: https://api.takemobi.io/
+HOST: https://staging.takemobi.io/
 
 # The Mobi Travel Planning API
 
-Mobi provides a REST API for accessing the inter-modal transportation planning 
+Mobi provides a REST API for accessing the travel and transportation planning 
 services. This page documents the second version of the API.
 
 Current version of Mobi API is running on:
 
-* https://api.takemobi.io/
+* https://staging.takemobi.io/
 
 You will need to use https when querying the endpoints: http queries (on port 80) are not supported at the moment. 
 
@@ -17,11 +17,8 @@ for retriving available mobility services, computing routes, planning multi-even
 
 In order for a client application to be able to access Mobi API
 on behalf of it's users, the owner of the client application must first
-request access keys by sending an email to [peng@takemobi.com]. 
+request access keys by sending an email to [support@takemobi.com]. 
 Please provide your company name and application/project name.
-
-Our service currently covers Boston, San Francisco, Los Angeles, New York City, and other top 30 US metro areas. 
-Other cities can be added by request.
 
 ## Allowed HTTP requests
 
@@ -31,550 +28,272 @@ Other cities can be added by request.
 * DELETE - Deletes a resource
 
 
-# Group Bluesky
+# Group Routing
 
-## Get All Supported Tags - Also Known as Plan Profile Domain [/mobility-planner/demo/v2/profile/domain{?mode,context,parent}]
+## Intermodal Routes [/intermodal/v1/routes/all{?origin,origin_name,destination,destination_name,waypoints,waypoint_arrival_times,waypoint_departure_times,modes,departure_time,arrival_time,duration_stay,accessible,memberships,max_results,duration_margin,walkingtime_margin,bikingtime_margin,cost_margin,save_response,street_parking,electric_charger,config,return_polyline,request_id,max_results}]
 
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode used for this profile domain.
-    + context (string, optional) - the context used for this profile domain.
-    + parent (string, optional) - the parent filters: if provided only children filters for this parent will be returned.
-
-### GET
-
-Retrieve allowed tags (profile options) given the planning problem mode and context.
-
-+ Response 200 (application/json)
-
-    + Attributes
-        + categories (array[AllowedPreferenceCategory], optional) - a list of preference categories allowed.
-        + domain (array[Preference], optional) - a list of preference options allowed for different categories of preferences.
-            
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-
-## Get Recommended Tags for Destination [/mobility-planner/demo/v2/profile/domain/recommendation{?mode,context}]
+Compute a preferred set of intermodal routes connecting the origin and destination locations. The set of parameters accepted by different transportation modes are the same, though some may not be used
+give the different mode combinations allowed (e.g. the choices of parking providers will be skipped in transit only routes). 
 
 + Parameters
-    + mode (AllowedProblemMode, required) - the planner mode used for this profile domain.
-    + context (string, optional) - the context used for this profile domain.
-
-### GET
-
-Retrieve recommended tags (profile options) given the planning problem mode and context. Up to 20 (10 experience, 5 dining and 5 accommodation) 
-at the moment but we can adjust that total number and distribution. 
-
-+ Response 200 (application/json)
-
-    + Attributes
-        + recommendations (array[RecommendedAttribute], optional) - a list of recommended preference options.
-            
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-
-
-## Get Recommended Tags Given Selection [/mobility-planner/demo/v2/profile/domain/recommendation{?mode,category,context}]
-
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
-    + context (string, optional) - the selected context for recommended filters.
-    + category (enum, optional) - the selected category of filters to return.
+    + origin: `42.4153925,-71.1564729` (string, required) - A comma separated string that encodes the coordinates of the trip origin.
+    + `origin_name`: `origin` (string, optional) - The name of the trip origin.
+    + destination: `42.3519217,-71.0550703` (string, required) - A comma separated string that encodes the coordinates of the trip destination.
+    + `destination_name`: `destination` (string, optional) - The name of the trip destination.
+    + `from_stop_id`: `70061` (string, optional) - The GTFS transit stop ID of the trip origination. If provided, we assume the rider is able to depart from the station immediately, no walking is needed.
+    + `to_stop_id`: `70077` (string, optional) - The GTFS transit stop ID of the trip destination. If provided, we assume the station is the destination, no walking beyond is needed.
+    + modes: `TRANSIT` (string, required) - The travel modes requested for the trip. You can include multiple mode names, separated by the comma character `,`, such as `TRANSIT,BIKESHARE`. 
         + Members
-            + `ACCOMMODATION`
-            + `EXPERIENCE`
-            + `DINING`
-
-### POST
-
-Retrieve the candidate item object matching the specified planning problem mode and candidate id.
-
-+ Request (application/json)
-
-    + Attributes (PreferenceDomainCandidates, required)
-
-+ Response 200 (application/json)
-
-    + Attributes 
-        + `results` (array[PreferenceDomainCandidateStructure], optional) - the list of filters the user has selected and saved.
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-
-
-## Get All Supported Destinations - Also Known as Plan Contexts [/mobility-planner/demo/v2/domain/contexts{?mode}]
-
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
-
-### GET
-
-Retrieve all supported destinations (compatible contexts) given the specified planning problem mode.
-
-+ Response 200 (application/json)
-
-    + Attributes 
-        + title: `Which park do you want to visit` (string, optional) - a description of the context domain.
-        + tags (array[string], required) - a list of tags used for describing the candidate contexts.
-        + contexts (array[CandidateItem], required) - a list of context objects found for the mode.
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-
-
-## Get Matched Destination - Also Known as Plan Context [/mobility-planner/demo/v2/domain/context{?mode,name}]
-
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
-    + name: `Boston_Massachusetts` (string, required) - the name of the context.
-
-### GET
-
-Retrieve matched destination given the specified planning problem mode and context name.
-
-+ Response 200 (application/json)
-
-    + Attributes
-        + context (CandidateItem, required) - a context object matching the given mode and name.
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-
-
-## Get Matched Candidate [/mobility-planner/demo/v2/domain/poi{?mode,id}]
-
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
-    + id (string, required) - the candidate id.
-
-### GET
-
-Retrieve the candidate item object matching the specified planning problem mode and candidate id.
-
-+ Response 200 (application/json)
-
-    + Attributes 
-        + poi (CandidateItem, required) - a candidate that fit the id.
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-
-
-## Get Candidate Suggestions [/mobility-planner/demo/v2/domain/poi/suggestions{?mode,context,category,keyword}]
-
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
-    + context (string, optional) - the context for the POIs.
-    + category (enum, required) - the POI category.
+            + DRIVE
+            + BIKE
+            + WALK
+            + TRANSIT
+            + CARSHARE
+            + BIKESHARE
+            + TAXI
+    + `departure_time`: `1482289608` (integer, required) - Specifies the desired time of departure as an integer in seconds since midnight, January 1, 1970 UTC. Only one of the departure/arrival time constraints can be set.
+    + `arrival_time`: `1482289608` (integer, optional) - Specifies the desired time of arrival as an integer in seconds since midnight, January 1, 1970 UTC. Only one of the departure/arrival time constraints can be set.
+    + `duration_stay`: `3600` (integer, optional) - specifies the desired duration of stay at the destination (in seconds). Used for calculating the cost associated with parking and carshare.
+    + `wheelchair_accessible`: `true` (boolean, optional) - Specifies if any transit route included in the trip must be accessible (applies to both vehicles and stops).
+        + Default: `false`
+    + `excluded_transit_route_types`: `1,2` (string, optional) - specifies if any transit route type should be excluded from the results. We use the integer values specified in the GTFS specification for route types (https://developers.google.com/transit/gtfs/reference#routestxt). You can include multiple transit route types, separated by the comma character `,`, such as `1,2,3` (subway, rail, bus).
+    + `allowed_transit_route_types`: `1,2` (string, optional) - specifies if only certain transit route types should be considered in the results. We use the integer values specified in the GTFS specification for route types (https://developers.google.com/transit/gtfs/reference#routestxt). You can include multiple transit route types, separated by the comma character `,`, such as `1,2,3` (subway, rail, bus).
+    + `excluded_transit_agency_ids`: `US_NJ_NJ_TRANSIT_BUS,US_NJ_NJ_TRANSIT_RAIL` (string, optional) - specifies if any transit agency (specified by their agency Ids) should be excluded from the routing results. You can include multiple transit agency Ids, separated by the comma character `,`.
+    + `included_transit_stop`: `70200` (string, optional) - specifies the stop ID of public transit stations that must be used.
+    + `included_transit_stop_geo_coordinates`: `42.35639457,-71.0624242` (string, optional) - A comma separated string that encodes the coordinates of the included pubic transit station. It is required if `incuded_transit_stop` is given.
+    + `max_transit_transfers`: `1` (number, optional) - specifies the maximum number of transfers allowed in any public transit routes. 0 means no transfer is permitted.
+    + `include_infeasible_route`: `true` (boolean, optional) - specifies whether the alternative routes with static schedule information will be included. The default value is false. If set to true, the infeasible routes either canceled or delayed trips would be included.
+    + `disable_parking`: `false` (boolean, optional) - specifies whether the parking solutions, park and walk, park and ride, should be excluded. The default value is false.
+    + memberships (AllowedMembershipType, optional) - Specifies the user holds any transit cards, passes, bikeshare or carshare or rideshare memberships. You can include multiple membership names, separated by the comma character `,`, such as `BLUEBIKES24,UBER,LYFT,CURB,NYC_YELLOW_CAB`.
+    + `drive_preference`: `5.0` (number, optional) - Specifies how much the user likes using the drive mode. Allowed range is [0.0, 5.0] with 5.0 being really preferred and 0.0 being not preferred at all.
+    + `bike_preference`: `5.0` (number, optional) - Specifies how much the user likes using the bike mode. Allowed range is [0.0, 5.0] with 5.0 being really preferred and 0.0 being not preferred at all.
+    + `walk_preference`: `5.0` (number, optional) - Specifies how much the user likes using the walk mode. Allowed range is [0.0, 5.0] with 5.0 being really preferred and 0.0 being not preferred at all.
+    + `transit_preference`: `5.0` (number, optional) - Specifies how much the user likes using the transit mode. Allowed range is [0.0, 5.0] with 5.0 being really preferred and 0.0 being not preferred at all.
+    + `taxi_preference`: `5.0` (number, optional) - Specifies how much the user likes using the taxi mode. Allowed range is [0.0, 5.0] with 5.0 being really preferred and 0.0 being not preferred at all.
+    + `bikeshare_preference`: `5.0` (number, optional) - Specifies how much the user likes using the bikeshare mode. Allowed range is [0.0, 5.0] with 5.0 being really preferred and 0.0 being not preferred at all.
+    + `carshare_preference`: `5.0` (number, optional) - Specifies how much the user likes using the carshare mode. Allowed range is [0.0, 5.0] with 5.0 being really preferred and 0.0 being not preferred at all.
+    + `scooter_preference`: `5.0` (number, optional) - Specifies how much the user likes using the scooter mode. Allowed range is [0.0, 5.0] with 5.0 being really preferred and 0.0 being not preferred at all.
+    + `price_sensitivity`: `0.1` (number, optional) - Specifies how price sensitive the user is. Allowed range is [0.0, 5.0] with 5.0 being highly sensitive to price (budget-oriented) and 0.0 being not sensitive to price at all.
+    + `time_sensitivity`: `0.1` (number, optional) - Specifies how time sensitive the user is. Allowed range is [0.0, 5.0] with 5.0 being highly sensitive to time (as fast as possible) and 0.0 being not sensitive to time at all.
+    + `transfer_sensitivity`: `0.1` (number, optional) - Specifies how transfer sensitive the user is. Allowed range is [0.0, 5.0] with 5.0 being highly sensitive to transfers (as few transfers as possible) and 0.0 being not sensitive to time at all.
+    + `duration_margin`: `600`(number, optional) - Specifies the maximum difference in the total durations of two routes in the response, when every other metrics of the routes being equal. Unit is second.
+        + Default: `0`
+    + `walkingtime_margin`: `600`(number, optional) - Specifies the maximum difference in the total walking durations of two routes in the response, when every other metrics of the routes being equal. Unit is second.
+        + Default: `0`
+    + `bikingtime_margin`: `600`(number, optional) - Specifies the maximum difference in the total biking durations of two routes in the response, when every other metrics of the routes being equal. Unit is second.
+        + Default: `0`
+    + `cost_margin`: `5`(number, optional) - Specifies the maximum difference in the total cost of two routes in the response, when every other metrics of the routes being equal. Unit is USD.
+        + Default: `0`
+    + `time_bracket_width`:`3600`(number, optional) - Specifies the maximum size of time bracket (in seconds) when searching for a sequence of routes with increasing departure times (only allowed in transit only mode).
+    + `scroll_context`: `e63dcd7d-cca0-458f-9108-68cfed42786a` (string, optional) - It is needed in rolling search, its value comes from the response in a standard query with time bracket width provided (only allowed in transit only mode).
+    + `scroll_direction`: `FORWARD` (string, optional) - It is conditionally required along with scroll context in rolling search. Its value is either FORWARD or BACKWARD. (only allowed in transit only mode).
+    + `street_parking`: `true` (boolean, optional) - Specifies if on-street parking can be used in the routing results.
+        + Default: `true`
+    + `electric_charger`: `false` (boolean, optional) - Specifies if only parking locations with electric vehicle charging devices can be used in the routing results.
+        + Default: `false`
+    + `bikeshare_providers`: `pickebike_basel` (string, optional) - When it is provided, bikeshare solution will use it to filter bikeshare providers. It acceptes multiple selections, comma separated. 
+    + `return_polyline`: `true` (boolean, optional) - Specifies if the `path` field of each routing option, which stores the polyline for the movement, should be included in the resposne.
+        + Default: `true`
+    + `encode_polyline`: `false` (boolean, optional) - Specifies if the encoded polyline is desired.
+        + Default: `false`
+    + `save_response`: `false` (boolean, optional) - Specifies if the routing result should be cached in the server side for retrieval later. Note that even if the `return_polyline` field is set to false in the query, the server will cache the complete routing object with the `path` field.
+        + Default: `false`
+    + `route_ordering`: `HIGH_MOBI_SCORE` (string, required) - Specifies the criteria used for ordering the routes in the response. The default ordering is based on `HIGH_MOBI_SCORE`. 
         + Members
-            + `ACCOMMODATION`
-            + `EXPERIENCE`
-            + `ATTRACTION`
-            + `DINING`
-    + keyword (string, required) - the search keyword.
+            + `EARLY_DEPARTURE`
+            + `LATE_DEPARTURE`
+            + `EARLY_ARRIVAL`
+            + `LATE_ARRIVAL`
+            + `SHORT_DURATION`
+            + `HIGH_MOBI_SCORE`
+    + `max_results`: `50` (number, optional) - Specifies the maximum number of routing options to be returned in the response.
+        + Default: `50`
 
 ### GET
 
-Retrieve the candidate POIs matching the specified search keyword.
+The response of this action is a JSON object that encodes one or more routes. 
+By default, the intermodal route options returned are optimized along the pareto front of two objectives, and are different for different mode combinations:
 
-+ Response 200 (application/json)
+* Drive and Park and Walk: cost (`cost_margin`) and walking time (`walkingtime_margin`).
+* Drive and Park and Transit: cost (`cost_margin`) and trip duration (`duration_margin`).
+* Drive and Park and Bikeshare: cost (`cost_margin`) and the sum of walking (`walkingtime_margin`) and biking times (`bikingtime_margin`).
+* Drive and Park and Rideshare: cost and trip duration (By default `cost_margin` and `duration_margin` are not activated for this combination due to the likely large solution space).
+* Transit and Walk: duration and walking time (By default `duration_margin` and `walkingtime_margin` are not activated for this combination due to the likely large solution space).
+* Transit and Bikeshare: duration (`duration_margin`) and the sum of walking (`walkingtime_margin`) and biking times (`bikingtime_margin`).
+* Transit and Rideshare: cost (`cost_margin`) and trip duration (`duration_margin`).
+* Transit and Carshare: cost (`cost_margin`) and trip duration (`duration_margin`).
+* Bikeshare and Walk: duration (`duration_margin`) and walking time (`walkingtime_margin`).
+* Bikeshare and Carshare: cost (`cost_margin`) and trip duration (`duration_margin`).
+* CarShare and Walk: cost (`cost_margin`) and walking time (`walkingtime_margin`).
 
-    + Attributes 
-        + candidates (array[PoiSuggestionElement], required) - a list of candidates that fit the search criteria.
+The formats of responses for different transportation modes are the same, 
+though some optional fields (parking, transit, rideshare, bikeshare and carshare) 
+may appear in the routes of some modes.
 
-+ Response 400
+###### Basic Query
 
-        Bad Request.
-        
-+ Response 401
+For example, the following query will request routes from Arlington, MA (42.4153925,-71.1564729) to South Station in Boston (42.3519217,-71.0550703), with these constraints:
 
-        Unauthorized.
-        
-+ Response 500
+```
+curl --location --request GET 'https://staging.takemobi.io/intermodal/v1/routes/all?origin=42.4153925,-71.1564729&destination=42.3519217,-71.0550703&departure_time=now&wheelchair_accessible=true&duration_stay=3600&memberships=ZIPCAROCCASIONAL,UBER,CHARLIECARD&duration_margin=600&walkingtime_margin=600&bikingtime_margin=600&cost_margin=10&modes=DRIVE,TAXI,TRANSIT&street_parking=false' \
+--header 'x-api-key: {Put API Key here}'
+```
 
-        Internal Server Error.
+- Departure time is the present time.
+- Allow driving, taxi (rideshare) and transit modes to be used.
+- Require wheelchair accessible routes.
+- Will stay at the destination for 1 hour.
+- Street parking is not allowed to be used.
+- Has Charlie Card, Zipcar Occasional and Uber membership - note that membership are required .
+- Return routes with up to 600 seconds longer duration than optimal ones.
+- Return routes with up to 600 seconds longer walking time than optimal ones.
+- Return routes with up to 600 seconds longer biking time than optimal ones.
+- Return routes with up to $10 more expensive than optimal ones.
 
 
-## Get Filter Suggestions [/mobility-planner/demo/v2/domain/filter/suggestions{?mode,category,keyword,parent}]
+###### Margin Parameters
 
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
-    + category (enum, optional) - the POI category.
-        + Members
-            + `ACCOMMODATION`
-            + `EXPERIENCE`
-            + `TRANSPORTATION`
-            + `DINING`
-    + keyword (string, required) - the search keyword.
-    + parent (string, optional) - the parent of the returned filters.
-    + session_id (string, optional) - the unique identifier for the current session.
+Different modes/mode combinations have different objectives for optimization. They are indicated in the list above. Only changes made to the relevant margin parameters (cost, duration, walkingtime and bikingtime) of the mode/mode combination's objective will have impact on the sub-optimal solutions included in the response.
+To see the impact of the margin parameters, you may first try the following TAXI+TRANSIT query from Terminal B of LGA airport (40.7118011,-74.0131196) to World Trade Center (40.7742415,-73.8715167). It has the two margin parameters related to the transit and taxi combination (`duration_margin` and `cost_margin`) set to 0, 
+meaning that only optimal solutions along the pareto front defined by the shortest route duration and lowest route cost would be returned.
+
+```
+curl --location --request GET 'https://staging.takemobi.io/intermodal/v1/routes/all?departure_time=now&destination=40.7118011,-74.0131196&memberships=UBER&origin=40.7742415,-73.8715167&modes=TAXI,TRANSIT&duration_margin=0&cost_margin=0' \
+--header 'x-api-key: {Put API Key here}'
+```
+
+You will see a few routing options being returned using taxi only, transit only, and taxi + transit and/or transit + taxi. Next, we can send the following query with `duration_margin` set to 3600 and `cost_margin` set to 50, meaning that sub-optimal solutions with less than 3600s over the shortest trip time and less than $50 over the chpeast trip cost will be returned.
+
+```
+curl --location --request GET 'https://staging.takemobi.io/intermodal/v1/routes/all?departure_time=now&destination=40.7118011,-74.0131196&memberships=UBER&origin=40.7742415,-73.8715167&modes=TAXI,TRANSIT&duration_margin=3600&cost_margin=50' \
+--header 'x-api-key: {Put API Key here}'
+```
+
+You will see significant more options being returned, primarily from the transit and taxi intermodal category due to the large candidate space available in it.
+
+
+
+Similarly, we can run the test with the Bikeshare mode. The following query requests bikeshare routes from the Empire State Building (40.7484405,-73.9856643) to the World Trade Center (40.7118011,-74.0131196). Initially we set the two relevant margin parameters, `duration_margin` and `walkingtime_margin` to 0.
+
+```
+curl --location --request GET 'https://staging.takemobi.io/intermodal/v1/routes/all?duration_stay=3600&departure_time=now&destination=40.7118011,-74.0131196&origin=40.7484405,-73.98566439999999&modes=BIKESHARE&duration_margin=0&walkingtime_margin=0' \
+--header 'x-api-key: {Put API Key here}'
+```
+
+You will often see 1 route option being returned, which dominates other alternative bikeshare routes in both trip duration and walking time. Next, we will increase the `duration_margin` to 300, which will return route options that are sub-optimal but no more than 300s (5 minutes) slower than the optimal solution.
+
+```
+curl --location --request GET 'https://staging.takemobi.io/intermodal/v1/routes/all?duration_stay=3600&departure_time=now&destination=40.7118011,-74.0131196&origin=40.7484405,-73.98566439999999&modes=BIKESHARE&walkingtime_margin=0&duration_margin=300' \
+--header 'x-api-key: {Put API Key here}'
+```
+
+Depending on the availability of bikes at the time of your query, you will see around 10 options being returned with the query.
+
++ Request
+    + Headers
     
-### GET
-
-Retrieve the candidate filters matching the specified search keyword.
+            x-api-key: [valid_api_key_goes_here]
 
 + Response 200 (application/json)
 
-    + Attributes 
-        + candidates (array[PreferenceDomainCandidate], required) - a list of candidate filters that fit the search criteria.
+    A set of single-mode or intermodal routes from the origin to the destination.
+
+    + Attributes
+        + routes (array[Route], optional) - the set of routes found that meet the requirements.
+
++ Response 204
 
 + Response 400
 
         Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
         
 + Response 500
 
         Internal Server Error.
 
 
+## Group Routing POST [/intermodal/v1/p/routes]
 
-## Get Recommended Destinations - Also Known as Candidate Contexts [/mobility-planner/demo/v2/problem/contexts]
+Compute a preferred set of intermodal routes connecting the origin and destination locations. The set of parameters accepted by different transportation modes are the same, though some may not be used
+give the different mode combinations allowed (e.g. the choices of parking providers will be skipped in transit only routes). 
+
+It supports all functionalities defined in GET method above.
 
 ### POST
 
-Retrieve recommended destinations (contexts) given the selected tags in the profile encoded in the problem.
-
 + Request (application/json)
 
-    + Attributes (Problem, required)
-
+    + Attributes
+        + origin: (Location, required) - the trip origin.
+        + destination: (Location, required) - the trip destination.
+        + `from_stop_id`: `70061` (string, optional) - The GTFS transit stop ID of the trip origination. If provided, we assume the rider is able to depart from the station immediately, no walking is needed.
+        + `to_stop_id`: `70077` (string, optional) - The GTFS transit stop ID of the trip destination. If provided, we assume the station is the destination, no walking beyond is needed.
+        + `from_station_group_id`: `RE_STATION_GROUP_80` (string, optional) - The station group ID in the station_groups.txt provided by Axon Vibe. If provided, the origin will be replaced by the underlying transit stops in routing query.
+        + `from_station_group_name`: `Bedford Midland or Bedford St Johns` (string, optional) - The station group ID in the station_groups.txt provided by Axon Vibe. This field is for troubleshooting purpose and is not in use.
+        + `to_station_group_id`: `RE_STATION_GROUP_86` (string, optional) - The station group ID in the station_groups.txt provided by Axon Vibe. If provided, the destination will be replaced by the underlying transit stops in routing query.
+        + `to_station_group_name`: `Birmingham New St, Moor St or Snow Hill` (string, optional) - The station group ID in the station_groups.txt provided by Axon Vibe. This field is for troubleshooting purpose and is not in use.
+        + `origin_stop_skip_walking_radius`: `150` (number, optional) - If provided, the walk from origin segment will be omitted for the stops within the radius in transit query. The unit is meter.
+        + `destination_stop_skip_walking_radius`: `150` (number, optional) - If provided, the walk to destination segment will be omitted for the stops within the radius in transit query. The unit is meter.
+        + modes: `["TRANSIT","DRIVE"]` (string, required) - The travel modes requested for the trip. You can include multiple mode names, separated by the comma character `,`, such as `TRANSIT,BIKESHARE`. 
+        + `departure_time`: `1482289608` (number, required) - Specifies the desired time of departure as an integer in seconds since midnight, January 1, 1970 UTC. Only one of the departure/arrival time constraints can be set.
+        + `arrival_time`: `1482289608` (number, optional) - Specifies the desired time of arrival as an integer in seconds since midnight, January 1, 1970 UTC. Only one of the departure/arrival time constraints can be set.
+        + `duration_stay`: `3600` (number, optional) - specifies the desired duration of stay at the destination (in seconds). Used for calculating the cost associated with parking and carshare.
+        + `wheelchair_accessible`: `true` (boolean, optional) - Specifies if any transit route included in the trip must be accessible (applies to both vehicles and stops).
+            + Default: `false`
+        + `excluded_transit_route_types`: `1,2` (string, optional) - specifies if any transit route type should be excluded from the results. We use the integer values specified in the GTFS specification for route types (https://developers.google.com/transit/gtfs/reference#routestxt). You can include multiple transit route types, separated by the comma character `,`, such as `1,2,3` (subway, rail, bus).
+        + `allowed_transit_route_types`: `1,2` (string, optional) - specifies if only certain transit route types should be considered in the results. We use the integer values specified in the GTFS specification for route types (https://developers.google.com/transit/gtfs/reference#routestxt). You can include multiple transit route types, separated by the comma character `,`, such as `1,2,3` (subway, rail, bus).
+        + `excluded_transit_agency_ids`: `US_NJ_NJ_TRANSIT_BUS,US_NJ_NJ_TRANSIT_RAIL` (string, optional) - specifies if any transit agency (specified by their agency Ids) should be excluded from the routing results. You can include multiple transit agency Ids, separated by the comma character `,`.
+        + `included_transit_stop`: `70200` (string, optional) - specifies the stop ID of public transit stations that must be used.
+        + `included_transit_stop_geo_coordinates`: `42.35639457,-71.0624242` (string, optional) - A comma separated string that encodes the coordinates of the included pubic transit station. It is required if `incuded_transit_stop` is given.
+        + `max_transit_transfers`: `1` (number, optional) - specifies the maximum number of transfers allowed in any public transit routes. 0 means no transfer is permitted.
+        + `include_infeasible_route`: `true` (boolean, optional) - specifies whether the alternative routes with static schedule information will be included. The default value is false. If set to true, the infeasible routes either canceled or delayed trips would be included.
+        + `disable_parking`: `false` (boolean, optional) - specifies whether the parking solutions, park and walk, park and ride, should be excluded. The default value is false.
+        + memberships (array[AllowedMembershipType], optional) - Specifies the user holds any transit cards, passes, bikeshare or carshare or rideshare memberships. You can include multiple membership names, separated by the comma character `,`, such as `BLUEBIKES24,UBER,LYFT,CURB,NYC_YELLOW_CAB`.
+        + `drive_preference`: `5.0` (number, optional) - Specifies how much the user likes using the drive mode. Allowed range is [0.0, 5.0] with 5.0 being really preferred and 0.0 being not preferred at all.
+        + `bike_preference`: `5.0` (number, optional) - Specifies how much the user likes using the bike mode. Allowed range is [0.0, 5.0] with 5.0 being really preferred and 0.0 being not preferred at all.
+        + `walk_preference`: `5.0` (number, optional) - Specifies how much the user likes using the walk mode. Allowed range is [0.0, 5.0] with 5.0 being really preferred and 0.0 being not preferred at all.
+        + `transit_preference`: `5.0` (number, optional) - Specifies how much the user likes using the transit mode. Allowed range is [0.0, 5.0] with 5.0 being really preferred and 0.0 being not preferred at all.
+        + `taxi_preference`: `5.0` (number, optional) - Specifies how much the user likes using the taxi mode. Allowed range is [0.0, 5.0] with 5.0 being really preferred and 0.0 being not preferred at all.
+        + `bikeshare_preference`: `5.0` (number, optional) - Specifies how much the user likes using the bikeshare mode. Allowed range is [0.0, 5.0] with 5.0 being really preferred and 0.0 being not preferred at all.
+        + `carshare_preference`: `5.0` (number, optional) - Specifies how much the user likes using the carshare mode. Allowed range is [0.0, 5.0] with 5.0 being really preferred and 0.0 being not preferred at all.
+        + `scooter_preference`: `5.0` (number, optional) - Specifies how much the user likes using the scooter mode. Allowed range is [0.0, 5.0] with 5.0 being really preferred and 0.0 being not preferred at all.
+        + `price_sensitivity`: `0.1` (number, optional) - Specifies how price sensitive the user is. Allowed range is [0.0, 5.0] with 5.0 being highly sensitive to price (budget-oriented) and 0.0 being not sensitive to price at all.
+        + `time_sensitivity`: `0.1` (number, optional) - Specifies how time sensitive the user is. Allowed range is [0.0, 5.0] with 5.0 being highly sensitive to time (as fast as possible) and 0.0 being not sensitive to time at all.
+        + `transfer_sensitivity`: `0.1` (number, optional) - Specifies how transfer sensitive the user is. Allowed range is [0.0, 5.0] with 5.0 being highly sensitive to transfers (as few transfers as possible) and 0.0 being not sensitive to time at all.
+        + `duration_margin`: `600`(number, optional) - Specifies the maximum difference in the total durations of two routes in the response, when every other metrics of the routes being equal. Unit is second.
+            + Default: `0`
+        + `walkingtime_margin`: `600`(number, optional) - Specifies the maximum difference in the total walking durations of two routes in the response, when every other metrics of the routes being equal. Unit is second.
+            + Default: `0`
+        + `bikingtime_margin`: `600`(number, optional) - Specifies the maximum difference in the total biking durations of two routes in the response, when every other metrics of the routes being equal. Unit is second.
+            + Default: `0`
+        + `cost_margin`: `5`(number, optional) - Specifies the maximum difference in the total cost of two routes in the response, when every other metrics of the routes being equal. Unit is USD.
+            + Default: `0`
+        + `time_bracket_width`:`3600`(number, optional) - Specifies the maximum size of time bracket (in seconds) when searching for a sequence of routes with increasing departure times (only allowed in transit only mode).
+        + `scroll_context`: `e63dcd7d-cca0-458f-9108-68cfed42786a` (string, optional) - It is needed in rolling search, its value comes from the response in a standard query with time bracket width provided (only allowed in transit only mode).
+        + `scroll_direction`: `FORWARD` (string, optional) - It is conditionally required along with scroll context in rolling search. Its value is either FORWARD or BACKWARD. (only allowed in transit only mode).
+        + `street_parking`: `true` (boolean, optional) - Specifies if on-street parking can be used in the routing results.
+            + Default: `true`
+        + `electric_charger`: `false` (boolean, optional) - Specifies if only parking locations with electric vehicle charging devices can be used in the routing results.
+            + Default: `false`
+        + `bikeshare_providers`: `pickebike_basel` (string, optional) - When it is provided, bikeshare solution will use it to filter bikeshare providers. It acceptes multiple selections, comma separated. 
+        + `return_polyline`: `true` (boolean, optional) - Specifies if the `path` field of each routing option, which stores the polyline for the movement, should be included in the resposne.
+            + Default: `true`
+        + `encode_polyline`: `false` (boolean, optional) - Specifies if the encoded polyline is desired.
+            + Default: `false`
+        + `save_response`: `false` (boolean, optional) - Specifies if the routing result should be cached in the server side for retrieval later. Note that even if the `return_polyline` field is set to false in the query, the server will cache the complete routing object with the `path` field.
+            + Default: `false`
+        + `route_ordering`: `HIGH_MOBI_SCORE` (string, required) - Specifies the criteria used for ordering the routes in the response. The default ordering is based on `HIGH_MOBI_SCORE`. 
+        + `max_results`: `50` (number, optional) - Specifies the maximum number of routing options to be returned in the response.
+            + Default: `50`
+        + `transit_trip_constraints`: (array[TransitTripConstraint], optional) - Specifies the maximum number of routing options to be returned in the response.
+        
 + Response 200 (application/json)
 
-    + Attributes 
-        + contexts (array[string], required) - a list of recommended destination names.
-        + scores (array[number], required) - a list of matching count for each category of POIs at the recommended destinations (the higher the better). Also includes `SATISFIED_SELECTIONS` and `UNSATISFIED_SELECTIONS`
+    A set of single-mode or intermodal routes from the origin to the destination.
 
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-
-
-## Get Nearby Destination - Also Known as Nearby Candidate Contexts [/mobility-planner/demo/v2/problem/nearby-contexts]
-
-### POST
-
-Retrieve candidate destinations (contexts) given the selected destination in the request payload. Currently destinations within 100km will be returned
-
-+ Request (application/json)
-
-    + Attributes (Problem, required)
-
-+ Response 200 (application/json)
-
-    + Attributes 
-        + contexts (array[CandidateItem], required) - a list of nearby destination objects.
-        + `has_matched_destinations` (boolean, required) - a flag indicating if there are any matched destinations in the response. If set to false, it means that there is no destination matching the provided location, and all returned are close by destinations.
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-
-
-## Get Candidate Destination Trips - Also Known as Candidate Context Trips [/mobility-planner/demo/v2/problem/context-trips]
-
-### POST
-
-Retrieve candidate destination (context) trips given the selected tags in the profile, and trip origin/destination/dates encoded in the problem.
-
-+ Request (application/json)
-
-    + Attributes (Problem, required)
-
-+ Response 200 (application/json)
-
-    + Attributes 
-        + results (array[ContextTripCandidate], required) - a list of candidate destination trips.
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-
-
-## Get Primary Destination Trips - Also Known as Primary Context Trips [/mobility-planner/demo/v2/problem/primary-context-trips{?context,include_flights,include_accommodations}]
-
-+ Parameters
-    + context (string, optional) - the context used for this profile domain.
-    + include_flights: `true` (boolean, optional) - flag to set if flights should be included in the response.
-    + include_accommodations: `true` (boolean, optional) - flag to set if hotels should be included in the response.
-
-### POST
-
-Retrieve candidate destination (context) trips given the trip destination/dates encoded in the problem.
-
-+ Request (application/json)
-
-    + Attributes (Problem, required)
-
-+ Response 200 (application/json)
-
-    + Attributes 
-        + results (array[ContextTripCandidate], required) - a list of candidate destination trips.
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-
-
-## Get Candidate Destination Themes - Also Known as Candidate Context Themes [/mobility-planner/demo/v2/problem/context-themes{?sort,max_results}]
-
-+ Parameters
-    + sort (enum, optional) - the context used for this profile domain.
-        + Members
-            + `satisfied_filters`
-            + `good_match_filters`
-            + `known_for_filters`
-    + max_results (number, optional) - the max number of context results that should be returned.
-
-### POST
-
-Retrieve candidate destination (context) themes given the selected tags in the profile, and trip origin/destination/dates encoded in the problem.
-
-+ Request (application/json)
-
-    + Attributes (Problem, required)
-
-+ Response 200 (application/json)
-
-    + Attributes 
-        + results (array[ContextThemeCandidate], required) - a list of candidate destination trips.
-        + explanations (array[ContextCandidateExplanation], required) - a list of explanation for each recommended context.
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-        
-
-## Get Candidate Destination Matches to Filters [/mobility-planner/demo/v2/problem/context-filter-match]
-
-### POST
-
-Retrieve candidate destination (context) given the selected tags in the profile, and categorize them baed on the matches.
-
-+ Request (application/json)
-
-    + Attributes (Problem, required)
-
-+ Response 200 (application/json)
-
-    + Attributes 
-        + results (array[ContextFilterCandidate], required) - a list of candidate destinations matching the provided filters.
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-        
-
-## Get Recommended POIs for Destination [/mobility-planner/demo/v2/problem/pois{?context}]
-
-+ Parameters
-    + context (string, required) - the selected context for recommended POIs.
-
-### POST
-
-Retrieve recommended POIs for the specified context given the selected tags in the profile encoded in the problem.
-
-+ Request (application/json)
-
-    + Attributes (Problem, required)
-
-+ Response 200 (application/json)
-
-    + Attributes 
-        + pois 
-            + DINING (array[CandidateItem], required) - a list of recommended dining POIs (up to 10).
-            + EXPERIENCE (array[CandidateItem], required) - a list of recommended experience POIs (up to 10).
-            + ACCOMMODATION (array[CandidateItem], required) - a list of recommended accommodation POIs (up to 10).
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-        
-
-## Get All POIs for Destination [/mobility-planner/demo/v2/domain{?mode,context,lat,lng,radius}]
-
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode used for this profile domain.
-    + context (string, optional) - the context used for this profile domain.
-    + lat (number, optional) - the reference latitude.
-    + lng (number, optional) - the reference longitude.
-    + radius (number, optional) - the maximum distance from the reference geolocation.
+    + Attributes
+        + routes (array[Route], optional) - the set of routes found that meet the requirements.
     
-### GET
-
-Retrieve all POIs for the specified context given the destination.
-
-+ Request (application/json)
-
-    + Attributes (Problem, required)
-
-+ Response 200 (application/json)
-
-    + Attributes 
-        + destination: `Six Flags New England` (string, required) - the name of the destination.
-        + destination_photo: `https://image.png` (string, required) - the url to an image of the destination.
-        + pois (array[CandidateItem], required) - a list of POIs.
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-        
-
-## Get Recommended Themes of POIs for Destination [/mobility-planner/demo/v2/problem/poi-recommendations{?context,merge_categories,category,sort}]
-
-+ Parameters
-    + context (string, required) - the selected context for recommended POIs.
-    + merge_categories (boolean, required) - if the different categories of POI themes should be merged into one in the response. Default is true. Please set to false if you only want POIs separated in categories.
-    + sort (enum, optional) - sort the Best for Destination candidates based on the provided criteria.
-        + Members
-            + best_match
-            + price_high
-            + price_low
-    + category (enum, optional) - if provided, only POI recommendations of the provided category will be returned.
-        + Members
-            + ACCOMMODATION
-            + DINING
-            + EXPERIENCE
-            + EVENT
-
-
-### POST
-
-Retrieve recommended POIs, separated in themes, for the specified context given the selected tags in the profile encoded in the problem.
-
-+ Request (application/json)
-
-    + Attributes (Problem, required)
-
-+ Response 200 (application/json)
-
-    + Attributes 
-        + results 
-            + DINING (array[ThemedCandidateItem], required) - a list of recommended dining POI themes.
-            + EXPERIENCE (array[ThemedCandidateItem], required) - a list of recommended experience POI themes.
-            + ACCOMMODATION (array[ThemedCandidateItem], required) - a list of recommended accommodation POI themes.
-            + EVENT (array[ThemedCandidateItem], required) - a list of recommended event POI themes.
-
 + Response 400
 
         Bad Request.
@@ -588,56 +307,70 @@ Retrieve recommended POIs, separated in themes, for the specified context given 
         Internal Server Error.
 
 
-## Bulk POI Details Request [/mobility-planner/demo/v2/domain/pois{?mode,return_abstract}]
+## Saved Route [/intermodal/v1/routes/saved-route{?response_id,route_id}]
 
-### Retrieve details of POIs [POST]
-
-+ Parameters
-
-    + mode (string, required) - the mode (group) of the profile to be retrieved
-    + return_abstract (boolean, optional) - boolean flag controlling if only subset of POI fields are needed in the response. Default to true.
-
-+ Request (application/json)
-
-    + Attributes
-        + pois (array[string], required) - a list of POI IDs.
-
-+ Response 200 (application/json)
-
-    + Attributes
-        + pois (array[CandidateItem], required) - details for the requested POIs
-            
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-        
-        
-# Group Insights
-
-## Get Quiz Domain [/mobility-planner/demo/v2/survey/domain{?mode,context,user_id}]
+Retrieve a previously saved route option. 
 
 + Parameters
-    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
-    + context (string, optional) - the context used for filtering applicable surveys.
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + `response_id`: `60ee7e0f-5994-4523-8057-1cdca2d78d56` (string, required) - A unique identifier for a routing response. Stored in each route option's `response_id` field.
+    + `route_id`: `1864f908-b7af-426f-87b8-9862ebb1643e` (string, optional) - A unique identifier for a route option. Stored in each route option's `id` field.
 
 ### GET
 
-Retrieve all relevant surveys.
+For example, the following query will retrieve a previously saved route with `response_id`=60ee7e0f-5994-4523-8057-1cdca2d78d56 and `id`=1864f908-b7af-426f-87b8-9862ebb1643e:
+
+```
+curl --location --request GET 'http://staging.takemobi.io/intermodal/v1/routes/saved-route?response_id=60ee7e0f-5994-4523-8057-1cdca2d78d56&route_id=1864f908-b7af-426f-87b8-9862ebb1643e' \
+--header 'x-api-key: {Put API Key here}'
+```
+
++ Request
+    + Headers
+    
+            x-api-key: [valid_api_key_goes_here]
 
 + Response 200 (application/json)
 
-    + Attributes
-        + surveys (array[ProfileSurvey], required) - a list of applicable surveys.
+    A previously saved route object.
 
+    + Attributes
+        + route (Route, optional) - the previously saved route object.
+
++ Response 204
+
++ Response 400
+
+        Bad Request.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Data Feed Info [/intermodal/v1/feed-info{?lat,lng}]
+
+Data feed available in the application for route planning.
+
++ Parameters
+    + lat: `42.360954` (number, required) - the latitude for region in which data feed info should be returned. 
+    + lng: `-71.101483` (number, required) - the longitude for region in which data feed info should be returned.
+
+### GET
+
+This query will return a list of the data feed loaded for the region (country/continent) specified by the latitude and longitude values. 
+
++ Request
+    + Headers
+    
+            x-api-key: [valid_api_key_goes_here]
+
++ Response 200 (application/json)
+
+    An array of data feed found that meet the search region specified.
+ 
+    + Attributes 
+        + transit (array[TransitFeedInfo], optional) - the set of transit feed info.
+    
 + Response 400
 
         Bad Request.
@@ -648,29 +381,25 @@ Retrieve all relevant surveys.
         
 + Response 500
 
-        Internal Server Error.
-        
+        Internal Server Error.     
+ 
 
-## Add Quiz Response [/mobility-planner/demo/v2/survey/response{?mode,context,user_id}]
+## Multi-to-multi summary [/intermodal/v1/routes/multi-to-multi]
 
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
-    + context (string, optional) - the context used for filtering applicable surveys.
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+Calculate route attributes (not the route) for each pair of locations defined in the query.
 
 ### POST
 
-Add the user's response to a survey.
-
 + Request (application/json)
 
-    + Attributes (SurveyResponse, required)
+    + Attributes (MultiRoutingQuery, required)
   
 + Response 200 (application/json)
 
-    + Attributes
-        + status (string, required) - a status message.
+    A set of routes for each requested pair of locations.
 
+    + Attributes (MultiRoutingSummaryResult, required)
+        
     
 + Response 400
 
@@ -682,30 +411,25 @@ Add the user's response to a survey.
         
 + Response 500
 
-        Internal Server Error.
-        
+        Internal Server Error.            
+ 
 
-## Add Skipped Quiz [/mobility-planner/demo/v2/survey/response/skipped{?mode,context,user_id,survey_id}]
+## Multi-to-multi path [/intermodal/v1/routes/multi-to-multi-path]
 
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
-    + context (string, optional) - the context used for filtering applicable surveys.
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
-    + survey_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the survey that is skipped.
+Calculate paths (not the detailed routes) for each pair of locations defined in the query.
 
 ### POST
-
-Record that the user skipped a survey.
 
 + Request (application/json)
 
-    + Attributes (SurveyResponse, required)
+    + Attributes (MultiRoutingQuery, required)
   
 + Response 200 (application/json)
 
-    + Attributes
-        + status (string, required) - a status message.
+    A set of routes for each requested pair of locations.
 
+    + Attributes (MultiRoutingPathResult, required)
+        
     
 + Response 400
 
@@ -717,116 +441,8 @@ Record that the user skipped a survey.
         
 + Response 500
 
-        Internal Server Error.
+        Internal Server Error. 
 
-
-# Group Tracking
-
-## Track A User Click [/mobility-planner/demo/v2/tracking/click{?mode,url,user_id}]
-
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable clicks.
-    + url (string, optional) - the outbound url the click is taking the user to.
-    + user_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user if available.
-
-### POST
-
-Add a user click to tracking.
-
-+ Response 200 (application/json)
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-
-## Track A Detail View [/mobility-planner/demo/v2/tracking/detail-view{?mode,category,poi_id,problem_id,url,user_id}]
-
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable clicks.
-    + category (string, required) - the category of the POI. For example, EXPEREINCE, DINING, ACCOMMODATION, etc..
-    + poi_id (string, required) - the unique identifier of the POI.
-    + problem_id (string, optional) - the unique identifier of the planning problem this user is working on.
-    + url (string, optional) - the outbound url the click is taking the user to.
-    + user_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user if available.
-
-### POST
-
-Add a user's POI detail view to tracking.
-
-+ Response 200 (application/json)
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-
-## Track A Map View [/mobility-planner/demo/v2/tracking/map-view{?mode,problem_id,user_id}]
-
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable clicks.
-    + problem_id (string, optional) - the unique identifier of the planning problem this user is working on.
-    + user_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user if available.
-
-### POST
-
-Add a user's map view to tracking.
-
-+ Response 200 (application/json)
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-
-## Track Source of User [/mobility-planner/demo/v2/tracking/source{?mode,user_id,utm_source,utm_medium,utm_campaign,location}]
-
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable clicks.
-    + user_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user if available.
-    + utm_source: `travelhub` (string, required) - a unique identifier for the source where the user came from.
-    + utm_medium: `banner` (string, optional) - a unique identifier for the medium.
-    + utm_campaign: `email` (string, optional) - a unique identifier for the campaign.
-    + location: `landing_page` (string, required) - a unique identifier for the location where this source tracking was sent from.
-
-### POST
-
-Add a user's source to tracking.
-
-+ Response 200 (application/json)
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
 
 # Group Planning
 
@@ -2751,122 +2367,646 @@ Check if the planning service is up and running.
         Internal Server Error.
 
 
-# Group Routing
+# Group Bluesky
 
-## Intermodal Routes [/intermodal/v1/routes/all{?origin,origin_name,destination,destination_name,waypoints,waypoint_arrival_times,waypoint_departure_times,modes,departure_time,arrival_time,duration_stay,accessible,memberships,max_results,duration_margin,walkingtime_margin,bikingtime_margin,cost_margin,save_response,street_parking,electric_charger,config,return_polyline,request_id,max_results}]
-
-Compute best intermodal routes. The set of parameters accepted by different transportation modes are identical, though some may be 
-ignored give the different mode combinations allowed (e.g. the choices of parking providers will be ignored in transit only routes). 
+## Get All Supported Tags - Also Known as Plan Profile Domain [/mobility-planner/demo/v2/profile/domain{?mode,context,parent}]
 
 + Parameters
-    + origin: `42.44303,-71.22896` (string, required) - A comma separated string that encodes the coordinates of the trip origin.
-    + `origin_name`: `origin` (string, optional) - The name of the trip origin.
-    + destination: `42.358463,-71.093465` (string, required) - A comma separated string that encodes the coordinates of the trip destination.
-    + `destination_name`: `destination` (string, optional) - The name of the trip destination.
-    + waypoints: `42.44303,-71.22896,42.44303,-71.22896,42.44303,-71.22896` (string, optional) - The latitude and longitude numbers of all intermediate waypoints to stop at.
-    + `waypoint_arrival_times`: `1482289608,-1,-1` (string, optional) - The desired arrival times at each waypoint, in seconds since midnight, January 1, 1970 UTC. Set to -1 if no desired arrival time for the corresponding waypoint.
-    + `waypoint_departure_times`: `-1,-1,1482289608` (string, optional) - The desired departure times at each waypoint, in seconds since midnight, January 1, 1970 UTC. Set to -1 if no desired departure time for the corresponding waypoint.
-    + modes: `TRANSIT` (string, required) - The travel modes requested for the trip. You can include multiple mode names, separated by the comma character `,`, such as `TRANSIT,BIKESHARE`. 
-        + Members
-            + DRIVE
-            + BIKE
-            + WALK
-            + TRANSIT
-            + CARSHARE
-            + BIKESHARE
-            + TAXI
-    + `departure_time`: `1482289608` (integer, optional) - Specifies the desired time of departure as an integer in seconds since midnight, January 1, 1970 UTC. Only one of the departure/arrival time constraints can be set.
-    + `arrival_time`: `1482289608` (integer, optional) - Specifies the desired time of arrival as an integer in seconds since midnight, January 1, 1970 UTC. Only one of the departure/arrival time constraints can be set.
-    + `duration_stay`: `3600` (integer, optional) - specifies the desired duration of stay at the destination (in seconds). Used for calculating the cost associated with parking and carshare.
-    + accessible: `true` (boolean, optional) - Specifies if any transit route included in the trip must be accessible (applies to both vehicles and stops).
-        + Default: `false`
-    + memberships (AllowedMembershipType, optional) - Specifies the user holds any transit cards, passes, bikeshare or carshare or rideshare memberships. You can include multiple membership names, separated by the comma character `,`, such as `BLUEBIKES24,UBER,LYFT`.
-    + `duration_margin`: `5`(number, optional) - Specifies the maximum difference in the total durations of two routes in the response, when every other metrics of the routes being equal.
-        + Default: `0`
-    + `walkingtime_margin`: `5`(number, optional) - Specifies the maximum difference in the total walking durations of two routes in the response, when every other metrics of the routes being equal.
-        + Default: `0`
-    + `bikingtime_margin`: `5`(number, optional) - Specifies the maximum difference in the total biking durations of two routes in the response, when every other metrics of the routes being equal.
-        + Default: `0`
-    + `cost_margin`: `5`(number, optional) - Specifies the maximum difference in the total cost of two routes in the response, when every other metrics of the routes being equal.
-        + Default: `0`
-    + `street_parking`: `true` (boolean, optional) - Specifies if on-street parking can be used in the routing results.
-        + Default: `true`
-    + `electric_charger`: `false` (boolean, optional) - Specifies if only parking locations with electric vehicle charging devices can be used in the routing results.
-        + Default: `false`
-    + config: `MOBI` (string, optional) - Specifies if any special configuration should be used when calculate routing results.
-        + Members
-            + MOBI  
-    + `request_id`: `324-25sdfgsd-345364-sdgfdsfg` (string, optional) - A UUID for the routing request for future reference.
-        + Default: ``
-    + `return_polyline`: `true` (boolean, optional) - Specifies if the `path` field of each routing option, which stores the polyline for the movement, should be included in the resposne.
-        + Default: `true`
-    + `save_response`: `false` (boolean, optional) - Specifies if the routing result should be cached in the server side for retrieval later. Note that even if the `return_polyline` field is set to false in the query, the server will cache the complete routing object with the `path` field.
-        + Default: `false`
-    + `max_results`: `50` (number, optional) - Specifies the maximum number of routing options to be returned in the response.
-        + Default: `50`
+    + mode (AllowedProblemMode, required) - the planner mode used for this profile domain.
+    + context (string, optional) - the context used for this profile domain.
+    + parent (string, optional) - the parent filters: if provided only children filters for this parent will be returned.
 
 ### GET
 
-The response of this action is a JSON object that encodes one or more routes. By default, the routes returned are optimized along the pareto front of two objectives, which are different depending on the modes specified:
-
-* Park and Walk: cost and walking time.
-* Park and Transit: cost and trip duration.
-* Park and Bikeshare: cost and the sum of walking and biking times.
-* Park and Rideshare: cost and trip duration.
-* Transit and Walk: duration and walking time.
-* Transit and Bikeshare: duration and the sum of walking and biking times.
-* Transit and Rideshare: cost and trip duration.
-* Transit and Carshare: cost and trip duration.
-* Bikeshare: duration and walking time.
-* Bikeshare and Carshare: cost and trip duration.
-* CarShare: cost and walking time.
-* Rideshare: cost and trip duration.
-
-The formats of responses for different transportation modes are the same, 
-though some optional fields (parking, transit, rideshare, bikeshare and carshare) 
-may appear in the routes of some modes.
-
-+ Request
-    + Headers
-
-            Authorization:  Bearer <id_token> - (optional) the `id_token` returned from the authentication endpoint.
-            Device-Id: <app_id> - (optional) the installation id of the app that is sending the routing request. No authentication required and this id will only be used to identify the request if saved.
+Retrieve allowed tags (profile options) given the planning problem mode and context.
 
 + Response 200 (application/json)
-
-    A set of routes from the origin to the destination.
 
     + Attributes
-        + routes (array[Route], optional) - the set of routes found that meet the requirements.
-        + spec (RoutingSolutionSpec, optional) - the specifications of the solution and the routing process.
+        + categories (array[AllowedPreferenceCategory], optional) - a list of preference categories allowed.
+        + domain (array[Preference], optional) - a list of preference options allowed for different categories of preferences.
+            
++ Response 400
+
+        Bad Request.
         
-+ Response 204
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Get Recommended Tags for Destination [/mobility-planner/demo/v2/profile/domain/recommendation{?mode,context}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this profile domain.
+    + context (string, optional) - the context used for this profile domain.
+
+### GET
+
+Retrieve recommended tags (profile options) given the planning problem mode and context. Up to 20 (10 experience, 5 dining and 5 accommodation) 
+at the moment but we can adjust that total number and distribution. 
+
++ Response 200 (application/json)
+
+    + Attributes
+        + recommendations (array[RecommendedAttribute], optional) - a list of recommended preference options.
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Recommended Tags Given Selection [/mobility-planner/demo/v2/profile/domain/recommendation{?mode,category,context}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + context (string, optional) - the selected context for recommended filters.
+    + category (enum, optional) - the selected category of filters to return.
+        + Members
+            + `ACCOMMODATION`
+            + `EXPERIENCE`
+            + `DINING`
+
+### POST
+
+Retrieve the candidate item object matching the specified planning problem mode and candidate id.
+
++ Request (application/json)
+
+    + Attributes (PreferenceDomainCandidates, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + `results` (array[PreferenceDomainCandidateStructure], optional) - the list of filters the user has selected and saved.
 
 + Response 400
 
         Bad Request.
         
++ Response 401
+
+        Unauthorized.
+        
 + Response 500
 
-        Internal Server Error.       
- 
+        Internal Server Error.
 
-## Multi-to-multi summary [/intermodal/v1/routes/multi-to-multi]
 
-Calculate route attributes (not the route) for each pair of locations defined in the query.
+## Get All Supported Destinations - Also Known as Plan Contexts [/mobility-planner/demo/v2/domain/contexts{?mode}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+
+### GET
+
+Retrieve all supported destinations (compatible contexts) given the specified planning problem mode.
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + title: `Which park do you want to visit` (string, optional) - a description of the context domain.
+        + tags (array[string], required) - a list of tags used for describing the candidate contexts.
+        + contexts (array[CandidateItem], required) - a list of context objects found for the mode.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Matched Destination - Also Known as Plan Context [/mobility-planner/demo/v2/domain/context{?mode,name}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + name: `Boston_Massachusetts` (string, required) - the name of the context.
+
+### GET
+
+Retrieve matched destination given the specified planning problem mode and context name.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + context (CandidateItem, required) - a context object matching the given mode and name.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Matched Candidate [/mobility-planner/demo/v2/domain/poi{?mode,id}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + id (string, required) - the candidate id.
+
+### GET
+
+Retrieve the candidate item object matching the specified planning problem mode and candidate id.
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + poi (CandidateItem, required) - a candidate that fit the id.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Candidate Suggestions [/mobility-planner/demo/v2/domain/poi/suggestions{?mode,context,category,keyword}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + context (string, optional) - the context for the POIs.
+    + category (enum, required) - the POI category.
+        + Members
+            + `ACCOMMODATION`
+            + `EXPERIENCE`
+            + `ATTRACTION`
+            + `DINING`
+    + keyword (string, required) - the search keyword.
+
+### GET
+
+Retrieve the candidate POIs matching the specified search keyword.
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + candidates (array[PoiSuggestionElement], required) - a list of candidates that fit the search criteria.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Filter Suggestions [/mobility-planner/demo/v2/domain/filter/suggestions{?mode,category,keyword,parent}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + category (enum, optional) - the POI category.
+        + Members
+            + `ACCOMMODATION`
+            + `EXPERIENCE`
+            + `TRANSPORTATION`
+            + `DINING`
+    + keyword (string, required) - the search keyword.
+    + parent (string, optional) - the parent of the returned filters.
+    + session_id (string, optional) - the unique identifier for the current session.
+    
+### GET
+
+Retrieve the candidate filters matching the specified search keyword.
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + candidates (array[PreferenceDomainCandidate], required) - a list of candidate filters that fit the search criteria.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+
+## Get Recommended Destinations - Also Known as Candidate Contexts [/mobility-planner/demo/v2/problem/contexts]
 
 ### POST
 
+Retrieve recommended destinations (contexts) given the selected tags in the profile encoded in the problem.
+
 + Request (application/json)
 
-    + Attributes (MultiRoutingQuery, required)
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + contexts (array[string], required) - a list of recommended destination names.
+        + scores (array[number], required) - a list of matching count for each category of POIs at the recommended destinations (the higher the better). Also includes `SATISFIED_SELECTIONS` and `UNSATISFIED_SELECTIONS`
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Nearby Destination - Also Known as Nearby Candidate Contexts [/mobility-planner/demo/v2/problem/nearby-contexts]
+
+### POST
+
+Retrieve candidate destinations (contexts) given the selected destination in the request payload. Currently destinations within 100km will be returned
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + contexts (array[CandidateItem], required) - a list of nearby destination objects.
+        + `has_matched_destinations` (boolean, required) - a flag indicating if there are any matched destinations in the response. If set to false, it means that there is no destination matching the provided location, and all returned are close by destinations.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Candidate Destination Trips - Also Known as Candidate Context Trips [/mobility-planner/demo/v2/problem/context-trips]
+
+### POST
+
+Retrieve candidate destination (context) trips given the selected tags in the profile, and trip origin/destination/dates encoded in the problem.
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + results (array[ContextTripCandidate], required) - a list of candidate destination trips.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Primary Destination Trips - Also Known as Primary Context Trips [/mobility-planner/demo/v2/problem/primary-context-trips{?context,include_flights,include_accommodations}]
+
++ Parameters
+    + context (string, optional) - the context used for this profile domain.
+    + include_flights: `true` (boolean, optional) - flag to set if flights should be included in the response.
+    + include_accommodations: `true` (boolean, optional) - flag to set if hotels should be included in the response.
+
+### POST
+
+Retrieve candidate destination (context) trips given the trip destination/dates encoded in the problem.
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + results (array[ContextTripCandidate], required) - a list of candidate destination trips.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Candidate Destination Themes - Also Known as Candidate Context Themes [/mobility-planner/demo/v2/problem/context-themes{?sort,max_results}]
+
++ Parameters
+    + sort (enum, optional) - the context used for this profile domain.
+        + Members
+            + `satisfied_filters`
+            + `good_match_filters`
+            + `known_for_filters`
+    + max_results (number, optional) - the max number of context results that should be returned.
+
+### POST
+
+Retrieve candidate destination (context) themes given the selected tags in the profile, and trip origin/destination/dates encoded in the problem.
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + results (array[ContextThemeCandidate], required) - a list of candidate destination trips.
+        + explanations (array[ContextCandidateExplanation], required) - a list of explanation for each recommended context.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Get Candidate Destination Matches to Filters [/mobility-planner/demo/v2/problem/context-filter-match]
+
+### POST
+
+Retrieve candidate destination (context) given the selected tags in the profile, and categorize them baed on the matches.
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + results (array[ContextFilterCandidate], required) - a list of candidate destinations matching the provided filters.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Get Recommended POIs for Destination [/mobility-planner/demo/v2/problem/pois{?context}]
+
++ Parameters
+    + context (string, required) - the selected context for recommended POIs.
+
+### POST
+
+Retrieve recommended POIs for the specified context given the selected tags in the profile encoded in the problem.
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + pois 
+            + DINING (array[CandidateItem], required) - a list of recommended dining POIs (up to 10).
+            + EXPERIENCE (array[CandidateItem], required) - a list of recommended experience POIs (up to 10).
+            + ACCOMMODATION (array[CandidateItem], required) - a list of recommended accommodation POIs (up to 10).
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Get All POIs for Destination [/mobility-planner/demo/v2/domain{?mode,context,lat,lng,radius}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this profile domain.
+    + context (string, optional) - the context used for this profile domain.
+    + lat (number, optional) - the reference latitude.
+    + lng (number, optional) - the reference longitude.
+    + radius (number, optional) - the maximum distance from the reference geolocation.
+    
+### GET
+
+Retrieve all POIs for the specified context given the destination.
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + destination: `Six Flags New England` (string, required) - the name of the destination.
+        + destination_photo: `https://image.png` (string, required) - the url to an image of the destination.
+        + pois (array[CandidateItem], required) - a list of POIs.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Get Recommended Themes of POIs for Destination [/mobility-planner/demo/v2/problem/poi-recommendations{?context,merge_categories,category,sort}]
+
++ Parameters
+    + context (string, required) - the selected context for recommended POIs.
+    + merge_categories (boolean, required) - if the different categories of POI themes should be merged into one in the response. Default is true. Please set to false if you only want POIs separated in categories.
+    + sort (enum, optional) - sort the Best for Destination candidates based on the provided criteria.
+        + Members
+            + best_match
+            + price_high
+            + price_low
+    + category (enum, optional) - if provided, only POI recommendations of the provided category will be returned.
+        + Members
+            + ACCOMMODATION
+            + DINING
+            + EXPERIENCE
+            + EVENT
+
+
+### POST
+
+Retrieve recommended POIs, separated in themes, for the specified context given the selected tags in the profile encoded in the problem.
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + results 
+            + DINING (array[ThemedCandidateItem], required) - a list of recommended dining POI themes.
+            + EXPERIENCE (array[ThemedCandidateItem], required) - a list of recommended experience POI themes.
+            + ACCOMMODATION (array[ThemedCandidateItem], required) - a list of recommended accommodation POI themes.
+            + EVENT (array[ThemedCandidateItem], required) - a list of recommended event POI themes.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Bulk POI Details Request [/mobility-planner/demo/v2/domain/pois{?mode,return_abstract}]
+
+### Retrieve details of POIs [POST]
+
++ Parameters
+
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+    + return_abstract (boolean, optional) - boolean flag controlling if only subset of POI fields are needed in the response. Default to true.
+
++ Request (application/json)
+
+    + Attributes
+        + pois (array[string], required) - a list of POI IDs.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + pois (array[CandidateItem], required) - details for the requested POIs
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+        
+# Group Insights
+
+## Get Quiz Domain [/mobility-planner/demo/v2/survey/domain{?mode,context,user_id}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
+    + context (string, optional) - the context used for filtering applicable surveys.
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+
+### GET
+
+Retrieve all relevant surveys.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + surveys (array[ProfileSurvey], required) - a list of applicable surveys.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Add Quiz Response [/mobility-planner/demo/v2/survey/response{?mode,context,user_id}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
+    + context (string, optional) - the context used for filtering applicable surveys.
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+
+### POST
+
+Add the user's response to a survey.
+
++ Request (application/json)
+
+    + Attributes (SurveyResponse, required)
   
 + Response 200 (application/json)
 
-    A set of routes for each requested pair of locations.
+    + Attributes
+        + status (string, required) - a status message.
 
-    + Attributes (MultiRoutingSummaryResult, required)
-        
     
 + Response 400
 
@@ -2878,25 +3018,30 @@ Calculate route attributes (not the route) for each pair of locations defined in
         
 + Response 500
 
-        Internal Server Error.            
- 
+        Internal Server Error.
+        
 
-## Multi-to-multi path [/intermodal/v1/routes/multi-to-multi-path]
+## Add Skipped Quiz [/mobility-planner/demo/v2/survey/response/skipped{?mode,context,user_id,survey_id}]
 
-Calculate paths (not the detailed routes) for each pair of locations defined in the query.
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
+    + context (string, optional) - the context used for filtering applicable surveys.
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + survey_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the survey that is skipped.
 
 ### POST
 
+Record that the user skipped a survey.
+
 + Request (application/json)
 
-    + Attributes (MultiRoutingQuery, required)
+    + Attributes (SurveyResponse, required)
   
 + Response 200 (application/json)
 
-    A set of routes for each requested pair of locations.
+    + Attributes
+        + status (string, required) - a status message.
 
-    + Attributes (MultiRoutingPathResult, required)
-        
     
 + Response 400
 
@@ -2908,7 +3053,116 @@ Calculate paths (not the detailed routes) for each pair of locations defined in 
         
 + Response 500
 
-        Internal Server Error.    
+        Internal Server Error.
+
+
+# Group Tracking
+
+## Track A User Click [/mobility-planner/demo/v2/tracking/click{?mode,url,user_id}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable clicks.
+    + url (string, optional) - the outbound url the click is taking the user to.
+    + user_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user if available.
+
+### POST
+
+Add a user click to tracking.
+
++ Response 200 (application/json)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Track A Detail View [/mobility-planner/demo/v2/tracking/detail-view{?mode,category,poi_id,problem_id,url,user_id}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable clicks.
+    + category (string, required) - the category of the POI. For example, EXPEREINCE, DINING, ACCOMMODATION, etc..
+    + poi_id (string, required) - the unique identifier of the POI.
+    + problem_id (string, optional) - the unique identifier of the planning problem this user is working on.
+    + url (string, optional) - the outbound url the click is taking the user to.
+    + user_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user if available.
+
+### POST
+
+Add a user's POI detail view to tracking.
+
++ Response 200 (application/json)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Track A Map View [/mobility-planner/demo/v2/tracking/map-view{?mode,problem_id,user_id}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable clicks.
+    + problem_id (string, optional) - the unique identifier of the planning problem this user is working on.
+    + user_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user if available.
+
+### POST
+
+Add a user's map view to tracking.
+
++ Response 200 (application/json)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Track Source of User [/mobility-planner/demo/v2/tracking/source{?mode,user_id,utm_source,utm_medium,utm_campaign,location}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable clicks.
+    + user_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the user if available.
+    + utm_source: `travelhub` (string, required) - a unique identifier for the source where the user came from.
+    + utm_medium: `banner` (string, optional) - a unique identifier for the medium.
+    + utm_campaign: `email` (string, optional) - a unique identifier for the campaign.
+    + location: `landing_page` (string, required) - a unique identifier for the location where this source tracking was sent from.
+
+### POST
+
+Add a user's source to tracking.
+
++ Response 200 (application/json)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
 
 
 # Group Execution
@@ -3493,611 +3747,6 @@ This query will return a list of the nearest bikeshare locations from a particul
 + Response 500
 
         Internal Server Error.
-
-# Group User
-
-## Get Tokens
-
-### Get Access Token [GET /mobility-planner/demo/v2/oauth/token/bearer{?code,code_verifier,redirect_uri,mode}]
-
-This query will return the id_token for the given code. 
-
-+ Parameters
-    + code: `98621697-c843-47bc-95d9-0e7015455072` (number, required) - the authorization code. 
-    + code_verifier: `abcde` (string, required) - the code verifier.
-    + redirect_uri: `https://amex-staging.takemobi.io/callback` (string, required) - the redirect url. 
-    + mode: `AMEX` (string, required) - the mode of the planning session.
- 
-+ Response 200
-
-    + Attributes
-        + id_token: `98621697-c843-47bc-95d9-0e7015455072` (string, required) - the id token.
-        + access_token: `98621697-c843-47bc-95d9-0e7015455072` (string, required) - the access token.
-        + refresh_token: `98621697-c843-47bc-95d9-0e7015455072` (string, required) - the refresh token.
-        + expires_in: `300` (number, required) - the lifetime of the token in seconds.
-        
-
-+ Response 401 (text/plain)
-
-        Unauthorized access due to authentication errors.
-
-
-### Get Refresh Token [GET /mobility-planner/demo/v2/oauth/token_refresh/bearer{?refresh_token,mode}]
-
-This query will return the refresh_token for the given code. 
-
-+ Parameters
-    + `refresh_token`: `98621697-c843-47bc-95d9-0e7015455072` (number, required) - the refresh_token
-    + mode: `AMEX` (string, required) - the mode of the planning session.
- 
-+ Response 200
-
-    + Attributes
-        + access_token: `98621697-c843-47bc-95d9-0e7015455072` (string, required) - the access token.
-        + refresh_token: `98621697-c843-47bc-95d9-0e7015455072` (string, required) - the refresh token.
-        + expires_in: `300` (number, required) - the lifetime of the token in seconds.
-        
-
-+ Response 401 (text/plain)
-
-        Unauthorized access due to authentication errors.
-
-
-### Validate Token [GET /mobility-planner/demo/v2/oauth/token_refresh/bearer{?access_token,mode}]
-
-This query will return the refresh_token for the given code. 
-
-+ Parameters
-    + `access_token`: `98621697-c843-47bc-95d9-0e7015455072` (number, required) - the access_token
-    + mode: `AMEX` (string, required) - the mode of the planning session.
- 
-+ Response 200
-
-    + Attributes
-        + sub: `98621697c84347bc95d90e7015455072` (string, required) - the unique identifier for the user.
-
-+ Response 401 (text/plain)
-
-        Unauthorized access due to authentication errors.
-
-
-## Token Validation [/profile/v3/token_validation]
-
-
-### Validate ID Token [GET /profile/v3/token_validation]
-
-This query will validate if the given id_token is valid. 
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
- 
-+ Response 200
-
-+ Response 401 (text/plain)
-
-        Unauthorized access due to authentication errors.
-
-## Stored Locations [/profile/v3/places]
-
-
-### Retrieve stored places [GET /profile/v3/places]
-
-This query will return a list of places stored by the user. 
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
- 
-+ Response 200 (application/json)
-
-    An array of stored places of the user.
-
-    + Attributes (array[StoredPlace], optional)
-    
-+ Response 401
-
-        Unauthorized.
-        
-### Add place [POST /profile/v3/places]
-
-This query will add a new stored place for the user. 
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-    
-    + Attributes (StoredPlace)
-
-+ Response 200 (application/json)
-
-    An array of stored places of the user, including the newly added one.
-
-    + Attributes (array[StoredPlace], optional)
-    
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.       
-
-
-### Remove stored place [DELETE /profile/v3/places{?place_id}]
-
-This query will remove a stored place for the user. 
-
-+ Parameters
-    + place_id: `21341234-2sdff-2152345` (string, required) - the unique Google Place id for the place to be removed.
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-            
-+ Response 200 (application/json)
-
-    An array of stored places of the user, with the provided one removed.
-
-    + Attributes (array[StoredPlace], optional)
-    
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-
-## Stored Vehicles [/profile/v3/vehicles]
-
-
-### Retrieve stored vehicles [GET /profile/v3/vehicles]
-
-This query will return a list of vehicles stored by the user.
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-            
-+ Response 200 (application/json)
-
-    An array of stored vehicles of the user.
-
-    + Attributes (array[StoredVehicle], optional)
-        
-+ Response 401
-
-        Unauthorized.
-
-### Add vehicles [POST /profile/v3/vehicles]
-
-This query will add a new stored vehicle for the user.
-    
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-            
-    + Attributes (StoredVehicle)
-
-+ Response 200 (application/json)
-
-    An array of stored vehicles of the user.
-
-    + Attributes (array[StoredVehicle], optional)
-    
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error. 
-        
-### Remove stored vehicles [DELETE /profile/v3/vehicles{?id}]
-
-This query will remove a stored vehicle for the user. 
-
-+ Parameters
-    + id: `21341234-2sdff-2152345` (string, required) - the unique id for the vehicle to be removed.
-    
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-            
-+ Response 200 (application/json)
-
-    An array of stored vehicles of the user, with the provided one removed.
-
-    + Attributes (array[StoredVehicle], optional)
-    
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-## Stored Memberships [/profile/v3/memberships]
-
-
-### Retrieve stored memberships [GET /profile/v3/memberships{?user_id}]
-
-This query will return a list of memberships stored by the user. 
-
-+ Parameters
-    + user_id: `21341234-2sdff-2152345` (string, required) - the unique id for the user.
-
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-            
-+ Response 200 (application/json)
-
-    An array of stored memberships of the user.
-
-    + Attributes (array[StoredMembership], optional)
-
-+ Response 401
-
-        Unauthorized.
-        
-### Add membership [POST /profile/v3/memberships{?user_id}]
-
-This query will add a new membership record for the user. 
-
-+ Parameters
-    + user_id: `21341234-2sdff-2152345` (string, required) - the unique id for the user.
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-            
-    + Attributes (StoredMembership, required)
-            
-+ Response 200 (application/json)
-
-    An array of stored memberships of the user with the addition.
-
-    + Attributes (array[StoredMembership], optional)
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-### Remove stored membership [DELETE /profile/v3/memberships{?id,user_id}]
-
-This query will remove a stored membership for the user. 
-
-+ Parameters
-    + id: `21341234-2sdff-2152345` (string, required) - the unique id for the membership object to be removed.
-    + user_id: `auth0|2asdfcdasv345` (string, required) - the unique id for the user that owns the membership.
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-            
-+ Response 200 (application/json)
-
-    An array of stored memberships of the user with the deletion.
-
-    + Attributes (array[StoredMembership], optional)
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
- 
-
-### Get supported membership types [GET /profile/v3/memberships/types{?lat,lng}]
-
-This query returns all supported membership types serving the location specified by the lat/lng value. If no lat/lng provided, it returns all supported membership types.
-
-+ Parameters
-    + lat: `42.195` (number, optional) - the latitude of the user's point of interest for membership informaion.
-    + lng: `-122.123` (number, optional) - the longitude of the user's point of interest for membership informaion.
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-            
-+ Response 200 (application/json)
-
-    An array of supported membership types.
-
-    + Attributes (array[StoredMembershipType], optional) 
-    
-+ Response 401
-
-        Unauthorized.   
-
-## Stored Mode Preferences [/profile/v3/mode_preferences]
-
-
-### Retrieve stored mode preferences [GET /profile/v3/mode_preferences]
-
-This query will return a set of mode preferences stored by the user. 
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-        
-+ Response 200 (application/json)
-
-    The stored mode preferences of the user.
-
-    + Attributes (StoredModePreference, optional)
-    
-+ Response 401 (text/plain)
-
-        Unauthorized access due to authentication errors.
-        
-### Retrieve available modes [GET /profile/v3/mode_preferences/availability]
-
-This query will return a list of modes available to the user. 
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-            
-+ Response 200 (application/json)
-
-    + Attributes
-        + modes (array[string], optional) - an array of available transportation modes for the user.
-        + memberships (array[string], optional) - an array of stored membership types owned by the user.
-
-+ Response 401 (text/plain)
-
-        Unauthorized access due to authentication errors.
-        
-### Set mode preference [POST /profile/v3/mode_preferences{?mode,preference}]
-
-This query will update the mode preference for the user. 
-
-+ Parameters
-    + mode: `walk` (enum, required) - the name for the mode.
-        + Members
-            + walk
-            + cycle
-            + drive
-            + transit
-            + rideshare
-            + carshare
-            + bikeshare
-    + preference: `1` (enum, required) - the preference value for the mode.
-        + Members
-            + 0 - never
-            + 1 - minimal
-            + 2 - sometimes
-            + 3 - less
-            + 4 - more
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-            
-+ Response 200 (application/json)
-
-    The stored mode preferences of the user with the edit.
-
-    + Attributes (StoredModePreference, optional)
-    
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.     
-        
-### Remove stored mode preferences [DELETE /profile/v3/mode_preferences]
-
-This query will remove stored mode preferences for the user. 
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-            
-+ Response 200 
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-
-        
-## Routing Request History [/profile/v3/history]
-
-
-### Retrieve stored requests [GET /profile/v3/history/request{?time_ub,count}]
-
-This query will return a list of recent routing requests stored by the user. 
-            
-+ Parameters
-    + time_ub: `4294967295` (number, optional) - the upperbound (most recent) on the timestamps of requests returned. The time specified as Unix time, or seconds since midnight, January 1, 1970 UTC.
-    + count: `10` (number, optional) - the maximum number of requests returned in the result. 
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-
-+ Response 200 (application/json)
-
-    An array of stored requests of the user that meet the search criteria.
-
-    + Attributes (array[StoredRequest], optional)
-        
-+ Response 401
-
-        Unauthorized.
-        
-### Add request record [POST /profile/v3/history/request]
-
-This query will add a new request record. 
-
-+ Request (application/json)
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-            
-    + Attributes (StoredRequest, required)
-
-+ Response 200 (application/json)
-
-    The request object being added.
-
-    + Attributes (StoredRequest, optional)
-    
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-### Remove stored requests [DELETE /profile/v3/history/request{?request_id}]
-
-This query will remove a stored request record for the user, as well as all the related responses and selections. 
-
-+ Parameters
-    + request_id: `21341234-2sdff-2152345` (string, required) - the unique id for the request record to be removed.
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-            
-+ Response 200
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-### Retrieve stored responses [GET /profile/v3/history/response{?request_id,response_id}]
-
-This query will return the response generated for the request.  
-
-+ Parameters
-    + request_id: `21341234-2sdff-2152345` (number, optional) - the id for the request whose responses should be retrieved. If specified then the response id parameter will be ignored.
-    + response_id: `21341234-2sdff-2152345` (number, optional) - the id for the response to be retrieved. 
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-
-+ Response 200 (application/json)
-
-    An array of stored responses previously generated by Mobi API that meet the search criteria.
-
-    + Attributes (array[StoredResponse], optional)
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-### Retrieve stored selections [GET /profile/v3/history/selection{?request_id}]
-
-This query will return the route selection user made for the request.  
-
-+ Parameters
-    + request_id: `21341234-2sdff-2152345` (number, required) - the id for the request whose selections should be retrieved.
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-
-+ Response 200 (application/json)
-
-    An array of stored selections made for the specified request.
-
-    + Attributes (array[StoredSelection], optional)
-        
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-### Add selection [POST /profile/v3/history/selection{?request_id,response_id,route_id}]
-
-This query will add a new selection record for the specified request. 
-
-+ Parameters
-    + request_id: `21341234-2sdff-2152345` (number, required) - the id for the request whose selections should be recorded.
-    + response_id: `21341234-2sdff-2152345` (number, optional) - the id for the response whose selections should be recorded. 
-    + route_id: `21341234-2sdff-2152345` (string, required) - the id for the route selected by the user.
-
-+ Request
-    + Headers
-    
-            Authorization:  Bearer <id_token> - the id_token returned from the authentication endpoint.
-
-+ Response 200 (application/json)
-    
-    The selection object being created for this query.
-
-    + Attributes (StoredSelection, optional)
-        
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
 
 
 ## Data Structures
@@ -5038,6 +4687,18 @@ This query will add a new selection record for the specified request.
 + bearing: `135` (number, optional) - the GTFS-compatable bearing of the vehicle. This can be the compass bearing, or
 the direction towards the next stop or intermediate location.
 
+### TransitFeedInfo
++ `mobi_feed_id`: `US-MA-MBTA` (string, required) - contains a unique identifier for the GTFS feed.
++ `feed_publisher_name`: `MBTA` (string, optional) - full name of the organization that publishes the dataset.
++ `feed_publisher_url`: `https://www.mbta.com/` (string, optional) - URL of the dataset publishing organization's website.
++ `feed_lang`: `eng` (string, optional) - Default language for the text in this dataset.
++ `default_lang`: `en` (string, optional) - Defines the language used when the data consumer doesn’t know the language of the rider.
++ `feed_start_date`: `20210531` (string, optional) - The dataset provides complete and reliable schedule information for service in the period from the beginning of the feed_start_date day to the end of the feed_end_date day.
++ `feed_end_date`: `20210630` (string, optional) - The dataset provides complete and reliable schedule information for service in the period from the beginning of the feed_start_date day to the end of the feed_end_date day.
++ `feed_version`: `465-ACC` (string, optional) - String that indicates the current version of their GTFS dataset.
++ `feed_contact_email`: `peng@takemobi.com` (string, optional) - Email address for communication regarding the GTFS dataset and data publishing practices.
++ `feed_contact_url`: `https://support.takemobi.com` (string, optional) - URL for contact information, a web-form, support desk, or other tools for communication regarding the GTFS dataset and data publishing practices. 
+
 ### RouteTags
 + positive_tags (array[string], optional) - contains an array of string denoting positive information about the route.
 + negative_tags (array[string], optional) - contains an array of string denoting negative information about the route.
@@ -5317,6 +4978,32 @@ the direction towards the next stop or intermediate location.
 + `activitiy_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the Id of the activity.
 + `updated_inventory`: `false` (boolean, required) - the updated inventory (false for no longer available).
 + `updated_price` (Price, optional) - the updated pricing for the activity (may remain the same as before).
+
+### TransitTripConstraint
++ `departure_stop_ids`: `["70061"]` (array[string], required) - list of stop IDs of the departure stops.
++ `departure_stop_id`: `70061` (string, required) - stop ID of the departure stop (deprecated).
++ `departure_stop_lat`: 42.0 (number, required) - latitude of the departure stop.
++ `departure_stop_lng`: `-71.0` (number, required) - longitude of the departure stop.
++ `arrival_stop_ids`: `["70077"]` (array[string], required) - list of stop IDs of the arrival stops.
++ `arrival_stop_id`: `70077" (string, required) - stop ID of the arrival stop (deprecated).
++ `arrival_stop_lat`: 42.1 (number, required) - latitude of the arrival stop.
++ `arrival_stop_lng`: `-71.1` (number, required) - longitude of the arrival stop.
++ `scheduled_departure_time`: 1627926660 (number, required) - the scheduled departure time at the departure stop.
++ `scheduled_arrival_time`: 1627927800 (number, required) - the scheduled arrival time at the arrival stop.
+
+### TrafficData
++ `jam_factor`: 3.0 (number, required) - jam factor in the range of 0 - 10.
++ `speed`: 10.0 (number, required) - current speed, unit is meter per second.
++ `free_flow`: 15.0 (number, required) - free flow speed in case of no congestion, unit is meter per second.
++ `polyline`: `[[51.718495,-1.968243],[51.718876,-1.968448]]` (string, optional) - a list of double pairs representating the path. It is returned when return polyline is true and encode polyline is false.
++ `encoded_polyline`: `aaaaa` (string, optional) - an encoded polyline representation of the path. See https://developers.google.com/maps/documentation/utilities/polylinealgorithm for more details.  It is returned when both return polyline and encode polyline are true.
+
+### Trace
++ timestamp: `1519765200` (number, required) - the timestamp of the trace point.
++ lat: `42.35031` (number, required) - the latitude of the location.
++ lng: `-71.0571` (number, required) - the longitude of the location.
++ bearing: `90.0` (number, optional) - the bearing, a.k.a. moving direction, at the trace point. Its value is in the range of 0 - 360   longitude of the location.
++ speed: `15.0` (number, optional) - the speed at the trace point.
 
 ### RecommendedAttribute
 + name: `Sights & Landmarks` (string, required) - the name of the recommended attribute.
