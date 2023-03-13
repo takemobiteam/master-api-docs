@@ -2950,6 +2950,45 @@ Retrieve recommended POIs, separated in themes, for the specified context given 
 
         Internal Server Error.
         
+
+## Chat Interaction [/mobility-planner/demo/v2/dialog/response{?mode,session_id}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + session_id: `Six Flags New England` (string, optional) - the UUID for the current session.
+
+### POST
+
+Return the textual response as well as suggested itinerary planning inputs for the users' journeys.
+
++ Request (application/json)
+
+    + Attributes
+        + input: `I want to go to a warm place with my family` (string, required) - string input from the user.
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + response: `Here is a trip that may work for you` (string, required) - a textual response for the request.
+        + `traveler_information` (TravelerInformation, optional) - detected traveler information from the input.
+        + selected_filters: `Here is a trip that may work for you` (array[PreferenceDomainCandidate], required) - a list of detected trip preferences.
+        + trip_start_time: `Here is a trip that may work for you` (number, required) - in UNIX timestamp, the detected trip start time.
+        + trip_end_time: `Here is a trip that may work for you` (number, required) - in UNIX timestamp, the detected trip end time.
+        + show_destinations: `true` (boolean, required) - a boolean flag indicating if we have enough information for destination recommendation.
+        + show_sample_trips: `false` (boolean, required) - a boolean flag indicating if we have enough information for sample trip recommendation.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
         
 # Group Insights
 
