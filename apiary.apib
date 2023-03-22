@@ -2971,6 +2971,7 @@ Return the textual response as well as suggested itinerary planning inputs for t
     + Attributes 
         + response: `Here is a trip that may work for you` (string, required) - a textual response for the request.
         + `traveler_information` (TravelerInformation, optional) - detected traveler information from the input.
+        + problem (Problem, optional) - the planning problem object parsed from the chat input.
         + selected_filters: `Here is a trip that may work for you` (array[PreferenceDomainCandidate], required) - a list of detected trip preferences.
         + trip_start_time: `Here is a trip that may work for you` (number, required) - in UNIX timestamp, the detected trip start time.
         + trip_end_time: `Here is a trip that may work for you` (number, required) - in UNIX timestamp, the detected trip end time.
