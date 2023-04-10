@@ -2378,7 +2378,7 @@ Retrieve allowed tags (profile options) given the planning problem mode and cont
 + Response 200 (application/json)
 
     + Attributes
-        + categories (array[AllowedPreferenceCategory], optional) - a list of preference categories allowed.
+        + category (array[AllowedPreferenceCategory], optional) - a list of preference categories allowed.
         + domain (array[Preference], optional) - a list of preference options allowed for different categories of preferences.
             
 + Response 400
@@ -2905,6 +2905,53 @@ Retrieve recommended POIs, separated in themes, for the specified context given 
             + EXPERIENCE (array[ThemedCandidateItem], required) - a list of recommended experience POI themes.
             + ACCOMMODATION (array[ThemedCandidateItem], required) - a list of recommended accommodation POI themes.
             + EVENT (array[ThemedCandidateItem], required) - a list of recommended event POI themes.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Get Recommended Themes of POIs for Destination [/mobility-planner/demo/v2/problem/poi-recommendation-summaries{?context,merge_categories,category,sort,max_results,trip_id,user_id}]
+
++ Parameters
+    + context (string, required) - the selected context for recommended POIs.
+    + merge_categories (boolean, required) - if the different categories of POI themes should be merged into one in the response. Default is true. Please set to false if you only want POIs separated in categories.
+    + sort (enum, optional) - sort the Best for Destination candidates based on the provided criteria.
+        + Members
+            + best_match
+            + price_high
+            + price_low
+    + category (enum, optional) - if provided, only POI recommendations of the provided category will be returned.
+        + Members
+            + ACCOMMODATION
+            + DINING
+            + EXPERIENCE
+            + EVENT
+    + max_results (string, optional) - the maximum number of results for each category of recommendation.
+    + trip_id (string, optional) - the unique identifier for the trip.
+    + user_id (string, optional) - the unique identifier for the user.
+
+
+### POST
+
+Retrieve recommended POIs, separated in themes, for the specified context given the selected tags in the profile encoded in the problem.
+
++ Request (application/json)
+
+    + Attributes (Problem, required)
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + results (array[ThemedCandidateItemSummary], required) - a list of recommended POIs in different categories.
 
 + Response 400
 
@@ -3784,7 +3831,1354 @@ This query will return a list of the nearest bikeshare locations from a particul
         Internal Server Error.
 
 
+# Group Profile
+
+## Profile [/mobility-planner/demo/v2/preference/profile{?user_id,mode}]
+
+### Retrieve basic profile data [GET]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Response 200 (application/json)
+
+    + Attributes 
+        - profile (Profile, required)
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+### Update profile data [POST]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Response 200 (application/json)
+
+    + Attributes (Profile, required) - profile details
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+### Delete profile data [DELETE]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+    + everything (string, optional) - whether to delete everything (defaults to true) if false, deletes quizzes, surveys, POI and context collections.
+    + code (string, optional) - in staging (only) a numeric code may be required to perform the delete. If absent, will be present in the response for re-submit.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + success (boolean, required) - whether the delete was successful. Should only be false with a 200 response in staging when code no provided.
+        + code (string, optional) - (staging only) returned in staging when a code was not submitted so that it can be provided in the following delete request.
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Bulk POI Details Request [/mobility-planner/demo/v2/domain/pois{?mode,return_abstract}]
+
+### Retrieve coordinates of saved POIs [POST]
+
++ Parameters
+
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+    + return_abstract (boolean, optional) - boolean flag controlling if only subset of POI fields are needed in the response. Default to true.
+
++ Request (application/json)
+
+    + Attributes
+        + pois (array[string], required) - a list of POI IDs.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + pois (array[CandidateItem], required) - details for the requested POIs
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Bulk POI Status Request [/mobility-planner/demo/v2/preference/status/pois{?mode,user_id}]
+
+### Retrieve status of saved POIs [POST]
+
++ Parameters
+
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+    + user_id (string, required) - user ID
+
++ Request (application/json)
+
+    + Attributes
+        + pois (array[string], required) - a list of POI IDs.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + results (array[SavedPoi], required) - saved status for the requested POIs
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Bulk Context Status Request [/mobility-planner/demo/v2/preference/status/contexts{?mode,user_id}]
+
+### Retrieve status of saved contexts [POST]
+
++ Parameters
+
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+    + user_id (string, required) - user ID
+
++ Request (application/json)
+
+    + Attributes
+        + contexts (array[string], required) - a list of context IDs.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + results (array[SavedPoi], required) - saved status for the requested contexts
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Matched Saved Locations [/mobility-planner/demo/v2/preference/locations/matched{?mode,user_id}]
+
+### Retrieve matched saved locations of provided Ids [POST]
+
++ Parameters
+
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+    + user_id (boolean, required) - the unique identifier for the user.
+
++ Request (application/json)
+
+    + Attributes
+        + pois (array[string], required) - a list of POI IDs.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + locations (array[SavedPoi], required) - details for the matched saved POIs
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Get Profile Quiz Domain [/mobility-planner/demo/v2/survey/profile/domain{?mode,context,user_id,poi_subject_ids,survey_question_type}]
+
++ Parameters
+
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + poi_subject_ids: `3323-4432-5456345743-f343245346,3323-4432-5456345743-f343245346` (string, optional) - comma-separated string of unique identifiers for the subject POIs. If provided, we will only return quizzes related to the POIs.
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
+    + context (string, optional) - the context used for filtering applicable surveys.
+    + survey_type (string, optional) - the context used for filtering applicable surveys.
+    + survey_question_type (enum, optional) - type of question the returned survey must contain
+        + Members
+            + CATEGORY_TILES
+            + CONTEXT_CATEGORY_TILES
+            + SUBJECT_POI_REVIEW
+            + SUBJECT_FILTER_REVIEW
+            + SUBJECT_YES_NO
+            + IMAGE_GRID
+            
+### Retrieve all relevant quizzes [GET]
+ 
++ Response 200 (application/json)
+
+    + Attributes
+        + surveys (array[ProfileSurvey], required) - a list of applicable quizzes.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Get Profile Quiz By Id [/mobility-planner/demo/v2/survey/profile/domain/{survey_id}/{?mode,context,user_id}]
+
++ Parameters
+
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
+    + context (string, optional) - the context used for filtering applicable surveys.
+    + survey_id: `3323-4432-5456345743-f343245346` (string, optional) - the id for the survey.
+
+### Retrieve all relevant quizzes [GET]
+ 
++ Response 200 (application/json)
+
+    + Attributes (ProfileSurveyResponse, required) - a quiz whose id matches the provided one
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Get Profile Quiz Recommendation [/mobility-planner/demo/v2/survey/profile/recommendation{?mode,context,user_id,previous_survey_id,previous_survey_relationship,poi_subject_ids,survey_question_type}]
+
++ Parameters
+
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + previous_survey_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the quiz the user has just completed. If provided, it will be used to bias the selection of recommended quizzes.
+    + previous_survey_relationship (enum, optional) - relationship of the recommendation to the quiz the user has just completed.
+        + Members
+            + SIMILAR
+            + DIFFERENT
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
+    + context (string, optional) - the context used for filtering applicable surveys.
+    + poi_subject_ids: `3323-4432-5456345743-f343245346,3323-4432-5456345743-f343245346` (string, optional) - comma-separated string of unique identifiers for the subject POI. If provided, we will only return quizzes related to the POIs.
+    + survey_question_type (enum, optional) - type of question the returned survey must contain
+        + Members
+            + CATEGORY_TILES
+            + CONTEXT_CATEGORY_TILES
+            + SUBJECT_POI_REVIEW
+            + SUBJECT_FILTER_REVIEW
+            + SUBJECT_YES_NO
+            + IMAGE_GRID
+            
+### Retrieve recommended quizzes [GET]
+ 
++ Response 200 (application/json)
+
+    + Attributes
+        + surveys (array[ProfileSurveyResponse], required) - a list of applicable quizzes.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Add Profile Quiz Response [/mobility-planner/demo/v2/survey/profile/response{?mode,user_id}]
+
+### Add response to a survey [POST]
+
++ Parameters
+
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
+
++ Request (application/json)
+
+    + Attributes (SurveyResponse, required)
+  
++ Response 200 (application/json)
+
+    + Attributes
+
+        + status (string, required) - a status message
+        + survey_status (ProfileSurveyStatus, required) - the status of the quiz after submitting this response.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+    
+
+## Delete Profile Quiz Responses [/mobility-planner/demo/v2/survey/profile/responses/{survey_id}/{?mode,user_id}]
+
+### Delete all responses to a survey [DELETE]
+
++ Parameters
+
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
+    + survey_id: `3323-4432-5456345743-f343245346` (string, required) - the id for the survey.
+  
++ Response 200 (application/json)
+
+    + Attributes
+
+        + status (string, required) - a status message
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Get Profile Quiz Status By Id [/mobility-planner/demo/v2/survey/profile/status/{survey_id}/{?mode,context,user_id}]
+
++ Parameters
+
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
+    + context (string, optional) - the context used for filtering applicable surveys.
+    + survey_id: `3323-4432-5456345743-f343245346` (string, required) - the id for the survey.
+
+### Retrieve Quiz Status [GET]
+ 
++ Response 200 (application/json)
+
+    + Attributes
+        + status (ProfileSurveyStatus, required) - the status of a quiz.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Update Profile Quiz Status By Id [/mobility-planner/demo/v2/survey/profile/status/{survey_id}/{?mode,user_id,status}]
+
++ Parameters
+
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
+    + status (enum, required) - the status of the survey.
+        + Members
+            + COMPLETED
+    + survey_id: `3323-4432-5456345743-f343245346` (string, required) - the id for the survey.
+
+### Update Quiz Status [POST]
+ 
++ Response 200 (application/json)
+
+    + Attributes
+        + status (ProfileSurveyStatus, required) - the status of a quiz.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+## Add Skipped Quiz [/mobility-planner/demo/v2/survey/response/skipped{?mode,context,user_id,survey_id}]
+
+### Record a skipped survey [POST]
+
++ Parameters
+
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + survey_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the survey that is skipped.
+    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
+    + context (string, optional) - the context used for filtering applicable surveys.
+
++ Request (application/json)
+
+    + Attributes (SurveyResponse, required)
+  
++ Response 200 (application/json)
+
+    + Attributes
+
+        + status (string, required) - a status message
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.     
+
+## POI Collections [/mobility-planner/demo/v2/preference/poi/collections{?user_id,mode,collection_id,problem_id}]
+
+### Retrieve POI Collections [GET]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+    + collection_id (string, optional) - the Id of the collection to be retrieved
+    + problem_id (string, optional) - the Id of the relevant planning problem to be retrieved
+
++ Response 200 (application/json)
+
+    + Attributes
+
+        + collections (array[PoiCollectionPreview], required) - collections for specified user
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+### Create POI collection [POST]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Request (application/json)
+
+    + Attributes
+
+        + id (string, optional) - a unique UUID for the collection
+        + name (string, optional) - collection name
+        + subtitle (string, optional) - collection subtitle
+        + pois (array[SavedPoi], optional) - list of pois in collection
+
++ Response 200 (application/json)
+
+    + Attributes
+
+        + status (string, required) - a status message
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Recommended POI Collections [/mobility-planner/demo/v2/preference/poi/collections/recommendation{?user_id,mode,collection_id}]
+
+### Get Recommended POI Collections [GET]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+    + collection_id (string, required) - the Id of the reference collection for recommendation
+
++ Response 200 (application/json)
+
+    + Attributes
+
+        + collections (array[PoiCollectionPreview], required) - collections for specified user
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Default POI Collection [/mobility-planner/demo/v2/preference/poi/default-collection{?user_id,mode}]
+
+### Retrieve the default POI Collection saved [GET]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Response 200 (application/json)
+
+    + Attributes
+        + result
+            + preview (PoiCollectionPreview, required) - collection preview
+            + pois (array[CandidateItem], required) - list of pois in collection
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## POI Collection [/mobility-planner/demo/v2/preference/poi/collections/{collection_id}/{?user_id,mode}]
+
+### Retrieve POI collection [GET]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+    + collection_id (string, required) - the id of the collection
+
++ Response 200 (application/json)
+
+    + Attributes
+        + result
+            + preview (PoiCollectionPreview, required) - collection preview
+            + pois (array[CandidateItem], required) - list of pois in collection
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+### Update POI collection [PUT]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Request (application/json)
+
+    + Attributes
+
+        + id (string, required) - a unique UUID for the collection
+        + name (string, optional) - collection name
+        + subtitle (string, optional) - collection subtitle
+        + pois (array[SavedPoi], optional) - list of pois in collection
+
++ Response 200 (application/json)
+
+    + Attributes
+        + status (string, required) - a status message
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+### Delete collection [DELETE]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Response 200 (application/json)
+
+    + Attributes
+        + status (string, required) - a status message
+ 
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Context Collections [/mobility-planner/demo/v2/preference/context/collections{?user_id,mode}]
+
+### Retrieve saved context collections [GET]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Response 200 (application/json)
+
+    + Attributes
+        + collections (array[PoiCollectionPreview], required) - saved contexts for specified user
+ 
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+### Save context collection [POST]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Request (application/json)
+
+    + Attributes
+        + id (string, required) - a unique UUID for the collection
+        + name (string, optional) - collection title
+        + subtitle (string, optional) - collection subtitle
+        + pois (array[SavedPoi], optional) - list of pois in collection
+
++ Response 200 (application/json)
+
+    + Attributes
+
+        + status (string, required) - a status message
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+## Default Context Collection [/mobility-planner/demo/v2/preference/context/default-collection{?user_id,mode}]
+
+### Retrieve the default context collection saved [GET]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Response 200 (application/json)
+
+    + Attributes
+        + result
+            + preview (PoiCollectionPreview, required) - collection preview
+            + contexts (array[CandidateItem], required) - saved contexts for specified user
+ 
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Context Collection [/mobility-planner/demo/v2/preference/context/collections/{collection_id}/{?user_id,mode}]
+
+### Retrieve saved context collection [GET]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + collection_id (string, required) - collection ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Response 200 (application/json)
+
+    + Attributes
+        + result
+            + preview (PoiCollectionPreview, required) - collection preview
+            + contexts (array[CandidateItem], required) - saved contexts for specified user
+ 
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+### Delete saved context collection [DELETE]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Response 200 (application/json)
+
+    + Attributes
+        + status (string, required) - a status message
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+### Update context collection [PUT]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Request (application/json)
+
+    + Attributes
+        + id (string, required) - a unique UUID for the collection
+        + name (string, optional) - collection title
+        + subtitle (string, optional) - collection subtitle
+        + pois (array[SavedPoi], optional) - list of pois in collection
+
++ Response 200 (text)
+
+        Context successfully saved.
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+## Filter Collections [/mobility-planner/demo/v2/preference/filter/collections{?user_id,mode}]
+
+### Retrieve filter collections [GET]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Response 200 (application/json)
+
+    + Attributes
+        + collections (array[FilterCollection], required) - saved preferences for specified user
+ 
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Filter Collection [/mobility-planner/demo/v2/preference/filter/collections/{collection_id}/{?user_id,collection_id,mode}]
+
+### Retrieve filter collection [GET]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + collection_id (string, required) - collection ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Response 200 (application/json)
+
+    + Attributes
+        + result (FilterCollection, optional) - the filter collection object
+ 
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+### Delete filter collection [DELETE]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Response 200 (application/json)
+
+    + Attributes
+        + status (string, required) - a status message
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+### Update filter collection [PUT]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) the profile to be retrieved
+
++ Request (application/json)
+
+    + Attributes
+        + id (string, required) - a unique UUID for the collection
+        + name (string, optional) - collection title
+        + subtitle (string, optional) - collection subtitle
+        + filters (array[PreferenceDomainCandidate], optional) - list of filters in collection
+
++ Response 200 (application/json)
+
+    + Attributes
+
+        + status (string, required) - a status message
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Trips [/mobility-planner/demo/v2/trips{?user_id}]
+
+### Retrieve trips [GET]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+
++ Response 200 (application/json)
+
+    + Attributes
+
+        + trips (array[UserSessionData], required) - trips for specified user
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Trip [/mobility-planner/demo/v2/trips/{trip_id}/{?user_id}]
+
+### Retrieve trip [GET]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + trip_id (string, required) - trip ID
+
++ Response 200 (application/json)
+
+    + Attributes
+
+        + trip (UserSessionData, required)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+### Delete trip [DELETE]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + trip_id (string, required) - trip ID
+
++ Response 200 (application/json)
+
+    + Attributes
+
+        + status (string, required) - a status message
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+### Update trip [PUT]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + trip_id (string, required) - trip ID
+
++ Request (application/json)
+
+    + Attributes (UserSessionData, required)
+
++ Response 200 (application/json)
+
+    + Attributes
+
+        + status (string, required) - a status message
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Saved POIs [/mobility-planner/demo/v2/preference/pois{?user_id,mode}]
+
+### Retrieve saved POIs [GET]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Response 200 (application/json)
+
+    + Attributes
+
+        + pois (array[CandidateItem], required) - saved POIs for specified user
+ 
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## POI Management [/mobility-planner/demo/v2/preference/pois/{poi_id}/{?user_id,collection_id,mode}]
+
+### Save POI [PUT]
+
+Saves POI to a collection. If the user is in a context where a collection is specified, include the collection ID to save the POI to. Otherwise, the POI will be saved to a default collection.
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + collection_id (string, optional) - ID of the collection to save the POI to. If not provided, a default collection will be created for the user.
+    + poi_id (string, required) - ID of the POI
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+    + preference (enum, required) - the mode (group) of the profile to be retrieved
+        + Members
+            + `MAYBE`
+            + `INTERESTED`
+            + `DEFINITELY`
+    + visited: `false` (boolean, optional) - if the user has visited this POI
+    + highlighted: `false` (boolean, optional) - whether this POI is of particular importance
+
++ Response 200 (application/json)
+
+    + Attributes
+        + result
+            + preview (PoiCollectionPreview, required) - collection preview
+            + pois (array[CandidateItem], required) - list of pois in collection
+ 
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+### Remove POI from collection [DELETE]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + collection_id (string, required) - ID of the collection to remove the POI from
+    + poi_id (string, required) - ID of the POI
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Response 200 (application/json)
+
+    + Attributes
+        + result
+            + preview (PoiCollectionPreview, required) - collection preview
+            + pois (array[CandidateItem], required) - list of pois in collection
+ 
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Context Management [/mobility-planner/demo/v2/preference/contexts/{context_id}/{?user_id,collection_id,mode}]
+
+### Save Context [PUT]
+
+Saves context to a collection. If the user is in a context where a collection is specified, include the collection ID to save the context to. Otherwise, the context will be saved to a default collection.
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + collection_id (string, optional) - ID of the collection to save the POI to. If not provided, a default collection will be created for the user.
+    + context_id (string, required) - ID of the context
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+    + preference (enum, required) - the mode (group) of the profile to be retrieved
+        + Members
+            + `MAYBE`
+            + `INTERESTED`
+            + `DEFINITELY`
+    + visited: `false` (boolean, optional) - if the user has visited this context
+    + highlighted: `false` (boolean, optional) - whether this context is of particular importance
+
++ Response 200 (application/json)
+
+    + Attributes
+        + result
+            + preview (PoiCollectionPreview, required) - collection preview
+            + contexts (array[CandidateItem], required) - list of pois in collection
+ 
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+### Remove Context from collection [DELETE]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + collection_id (string, required) - ID of the collection to remove the POI from
+    + context_id (string, required) - ID of the context
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Response 200 (application/json)
+
+    + Attributes
+        + result
+            + preview (PoiCollectionPreview, required) - collection preview
+            + contexts (array[CandidateItem], required) - list of pois in collection
+ 
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Visits [/mobility-planner/demo/v2/preference/visit/pois/{poi_id}/{?user_id,mode,visited}]
+
+### Update POI Visit Status [PUT]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+    + visited: `false` (boolean, required) - if the user has visited this POI
+    + poi_id (string, required) - ID of the POI
+
++ Response 200 (application/json)
+
+    + Attributes
+        + status (string, required) - a status message
+            
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Relevant Locations [/mobility-planner/demo/v2/preference/locations{?user_id,mode}]
+
+### Retrieve Relevant Locations for User [GET]
+
++ Parameters
+
+    + user_id (string, required) - user ID
+    + mode (string, required) - the mode (group) of the profile to be retrieved
+
++ Response 200 (application/json)
+
+    + Attributes
+        + locations (array[SavedLocation], required) - saved locations for the specified user
+        + surveys (array[ProfileSurvey], required) - surveys relevant for the saved locations
+ 
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
 ## Data Structures
+
+### Coordinates
++ lat: 40.7128 (number, required) - latitude coordinate
++ lng: 74.0060 (number, required) - longitude coordinate
+
+### PoiCollectionPreview
++ id: `e790d700-9f97-11ea-bb37-0242ac130002` (string, required) - collection ID
++ name: `Favorite Restaurants` (string, required) - collection name
++ subtitle: `San Francisco, Tokyo, and 3 other cities` (string, required) - collection subtitle
++ images: (array[PoiImage]) - images of pois in collection
++ saved_pois: (array[SavedPoi]) - abstract saved POI objects.
++ num_special: 2 (number, required) - number of special pois in collection
++ num_known: 32 (number, required) - number of known pois in collection
++ num_experience: 123 (number, required) - number of experiences in collection
++ num_dining: 43 (number, required) - number of dining venues in collection
++ num_accomodation: 54 (number, required) - number of accomodations in collection
+
+### TripPreview
++ trip_id: `e790d700-9f97-11ea-bb37-0242ac130002` (string, required) - trip ID
++ name: `Comic Con` (string, required) - trip name
++ location: `New York City, NY USA` (string, required) - formatted string consisting of <city>, <state/region> <country>
++ image: `https://images.pexels.com/photos/2619967/pexels-photo-2619967.jpeg` (string, required) - image of trip
++ start_date: `2022-05-12` (string, required) - start date of trip
++ end_date: `2022-05-16` (string, required) - end date of trip
++ num_preferences: 12 (number, required) - number of preferences indicated for trip
++ num_criteria: 21 (number, required) - number of criteria indicated for trip
++ num_places: 32 (number, required) - number of pois in trip
++ poi_images: `https://images.pexels.com/photos/2619967/pexels-photo-2619967.jpeg`, `https://images.pexels.com/photos/2619967/pexels-photo-2619967.jpeg` (array[string], required) - list of first 2 (or fewer) images of pois in trip
++ themes: `RELAXING`, `CULTURE` (TripThemes, required) - list of themes of trip
+
+### TripThemes (enum[string])
++ RELAXING
++ THRILLING
++ CREATIVE
++ CULTURE
++ NATURE
++ SOCIAL
++ ROMANTIC
++ UNUSUAL
+
+### ContextPreview
++ poi_id: `e790d700-9f97-11ea-bb37-0242ac130002` (string, required) - context ID
++ name: `Hynes Convention Center` (string, required) - context name
++ location: `New York City, NY USA` (string, required) - context location
++ image: `https://images.pexels.com/photos/2619967/pexels-photo-2619967.jpeg` (string, required) - image of context
+
+### FilterCollection
++ id: `e790d700-9f97-11ea-bb37-0242ac130002` (string, required) - preference ID
++ name: `When I Travel Solo` (string, required) - preference title
++ subtitle: `When I Travel Solo` (string, required) - preference subtitle
++ themes (array[AllowedPreferenceCategory], required) - preference themes
++ filters (array[PreferenceDomainCandidate], required) - list of preference filters
+
+### FilterCollectionResults
++ name: `Traveling Solo`(string, required) - name of preference
++ image: `https://images.pexels.com/photos/2619967/pexels-photo-2619967.jpeg` (string, required) - image of preference
++ source_quizzes (array[QuizResults], required) - list of quizzes with their results
++ related_quizzes (array[ProfileSurvey], required) - list of quizzes related to preference
++ poi_recommendations (array[CandidateItem], required) - list of POIs recommended for preference
+
+### QuizResults 
++ quiz (ProfileSurvey, required) - quiz contents
++ results (array[QuizResult], required) - list of results for the quiz
+
+### QuizResult
++ subject: `Cabins` (string, required) - subject of quiz result
++ descriptor: `during` (string, required) - descriptor of quiz result
++ results: Summer, Autumn, Winter (array[string], required) - list of results
++ is_accepted: true (boolean, required) - is quiz result accepted or rejected
++ are_images: false (boolean, required) - are the results images
 
 ### Problem
 + id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the problem object.
@@ -3932,15 +5326,42 @@ This query will return a list of the nearest bikeshare locations from a particul
 + `name`: `Relaxing` (string, required) - the name for the characteristic.
 + `value`: `0.8` (number, optional) - a numerical value (between 0.0 and 1.0) indicating the degree that the user fits this characteristic. 0.0 means does not fit at all, while 1.0 means perfect fit.
 
+### ProfileSurveyResponse
++ survey (ProfileSurvey, required) - a quiz whose id matches the provided one.
++ survey_status (ProfileSurveyStatus, required) - the status of the quiz.
+
 ### ProfileSurvey
-+ `id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the survey.
-+ `description`: `Favorite Food` (string, required) - a brief description for the survey.
-+ `questions` (array[ProfileSurveyQuestion], required) - the list of questions in this survey.
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the survey.
++ name: `Favorite Cuisines`(string, required) - quiz name
++ description: `What is your favorite dish?` (string, required) - a brief description for the quiz.
++ image (PoiImage, required) - url to quiz image
++ theme: `TRAVEL` (enum, required) - quiz theme
+    + Members
+        + TRAVEL
+        + TRANSPORTATION
+        + PAST_EXPERIENCE
+        + IDENTITY
++ topic: `DINING` (enum, required) - quiz topic
+    + Members   
+        + DINING
+        + EXPERIENCE
+        + ACCOMMODATION
+        + PERSONALITY
+        + FAVORITE
+        + MEMORY
+        + NOSTALGIA
++ questions (array[ProfileSurveyQuestion], optional) - the list of questions in this survey.
++ referenced_poi_ids (array[string], optional) - the list of POI Ids referenced in this survey.
++ `estimated_completion_time`: 360 (number, optional) - quiz time in seconds
 
 ### ProfileSurveyQuestion
 + `id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the question.
 + `survey_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the survey this question belongs to.
++ name (string, required) - question name
 + `description`: `What is your favorite dish?` (string, required) - a brief description for the question.
++ subject_poi (CandidateItem, optional) - the subject POI of the question.
++ subject_poi_status (SavedPoi, optional) - the status of the subject POI for the user.
++ subject_filter (PreferenceDomainCandidate, optional) - the subject POI of the question.
 + category (enum, optional) - the category of the question.
     + Members
         + TEXT
@@ -3950,15 +5371,45 @@ This query will return a list of the nearest bikeshare locations from a particul
         + GEOGRAPHY
         + RATING
         + OPTION
+        + COMPARISON
++ type (enum, required) - type of question format
+    + Members
+        + CATEGORY_TILES
+        + CONTEXT_CATEGORY_TILES
+        + SUBJECT_POI_REVIEW
+        + SUBJECT_FILTER_REVIEW
+        + SUBJECT_YES_NO
+        + IMAGE_GRID
 + `answers` (array[ProfileSurveyAnswer], required) - the list of answers to this question.
+
 
 ### ProfileSurveyAnswer
 + `id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the answer.
 + `question_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the question this answer belongs to.
-+ `description`: `Orange Chicken` (string, required) - a brief description for the answer.
++ subject_type (enum, required) - type of subject for answer
+    + Members
+        + POI
+        + PREFERENCE
+        + CONTEXT
++ subject_poi (CandidateItem, optional) - subject POI
++ subject_poi_status (SavedPoi, optional) - the status of the subject POI for the user.
++ subject_filter (PreferenceDomainCandidate, optional) - subject preference
++ subject_context_filter (PreferenceDomainCandidate, optional) - subject context
++ name: `Orange Chicken` (string, required) - name of answer (usually the subject)
++ description: `A Chinese dish` (string, optional) - a brief description for the answer.
++ categories (array[PreferenceDomainCandidate], optional) - possible categories for answer
++ context_filters (array[PreferenceDomainCandidate], optional) - possible context for answer
 + `pois` (array[CandidateItemAbstract], optional) - the list of abstract POI objects the answer contains.
 + `filters` (array[PreferenceDomainCandidate], optional) - the list of filters the answer contains.
 + `explanations` (array[ProfileSurveyAnswerExplanation], optional) - the list of explanations applicable to this answer.
++ reactions (array[Reaction], optional) - possible reactions for answer
++ characteristics (array[PreferenceDomainCandidate], optional) - possible characteristics for answer
+
+### Reaction (enum[string])
++ YES
++ NO
++ INDIFFERENT
++ IGNORE
 
 ### ProfileSurveyAnswerExplanation
 + `id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the explanation.
@@ -3966,6 +5417,20 @@ This query will return a list of the nearest bikeshare locations from a particul
 + `poi_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, optional) - the unique identifier of the POI this explanation applies to.
 + `description`: `What was memorable?` (string, required) - a brief description for the explanation.
 + `filters` (array[PreferenceDomainCandidate], required) - the list of filters the user could select/selected for the explanation.
+
+
+### ProfileSurveyStatus
++ survey_id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the survey.
++ user_status (enum, required) - status of the survey for the user.
+    + Members
+        + NOT_STARTED
+        + STARTED
+        + COMPLETED
++ positive_filter_selections (array[PreferenceDomainCandidate], required) - positive filter selections
++ negative_filter_selections (array[PreferenceDomainCandidate], required) - negative filter selections
++ questions_answered (array[string], required) - ids of questions answered
++ provided_answers (array[ProfileSurveyAnswer], required) - the answer objects provided to the survey.
++ saved_pois (array[SavedPoi], required) - ids of POIs saved
 
 ### Budget
 + price (array[Price], required) - the upper bound of spending of each currency for all activities. Only currencies that have a limit (e.g. AMEX_POINT) may need to be specified.
@@ -4223,9 +5688,9 @@ This query will return a list of the nearest bikeshare locations from a particul
 
    
 ### GoalItem
-+ id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the goal object.
++ id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, optional) - unique identifier for the goal object.
 + calendar_id: `a1111c8c` (string, optional) - the id of the calendar event from which this goal is generated from.
-+ name: `Lunch` (string, required) - the name of the goal.
++ name: `Lunch` (string, optional) - the name of the goal.
 + category (enum, optional) - the category of this activity.
     + Members
         + `FLIGHT`
@@ -4235,7 +5700,7 @@ This query will return a list of the nearest bikeshare locations from a particul
         + `EXPERIENCE`
         + `ATTRACTION`
         + `TOUR`
-+ optional: `true` (boolean, required) - specify if the goal can be dropped from the user's plan.
++ optional: `true` (boolean, optional) - specify if the goal can be dropped from the user's plan.
 + `candidate_information` (CandidateInformation, required) - specify the candidate information known by the user for the goal.
 + `allowed_incoming_modes` (array, required) - specify the allowed incoming modes for going to this activity.
     - (enum)
@@ -4411,6 +5876,12 @@ This query will return a list of the nearest bikeshare locations from a particul
 + `types` (array[string], optional) - a list of type keywords for the POIs in this collection.
 
 
+### ThemedCandidateItemSummary
++ `theme`: `Best Italian` (string, required) - specifies the theme of the candidate POI collection.
++ `pois` (array[PoiCollectionRecommendationElement], required) - a list of POI objects in this collection.
++ `selected_filter` (PreferenceDomainCandidate, optional) - the selected filter object this collection is built on top of.
+
+
 ### RecommendationCandidate
 + candidate (CandidateItem, required) - the recommended POI
 + `time_windows` (array[string], required) - specifies a set of time windows in whiche the recommended POI could be included in the itinerary.
@@ -4433,6 +5904,54 @@ This query will return a list of the nearest bikeshare locations from a particul
         + FOR_TRIP
         + FOR_CONTEXT
 + `content`: `#2 of 1234 restaurants in New York` (string, required) - specifies the content of the reason for recommendation.
+
+
+### PoiCollectionRecommendationElement
++ poi (CandidateItem, required) - the recommended POI object.
++ `status` (SavedPoi, required) - the status of this POI.
++ `match` (RecommendationExplanationItem, required) - the status of this POI matching the input preferences.
+
+
+### SavedPoi
++ `id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier, usually from the data source, for the POI candidate.
++ preference (enum, required) - the mode (group) of the profile to be retrieved
+    + Members
+        + `MAYBE`
+        + `INTERESTED`
+        + `DEFINITELY`
++ visited: `false` (boolean, optional) - if the user has visited this POI
++ highlighted: `false` (boolean, optional) - whether this POI is of particular importance to the user
+
+
+### SavedLocation
++ type (enum, required) - type of map marker for location
+    + Members
+        + HOME
+        + TRIP_PLANNED
+        + TRIP_TAKEN
+        + SAVED_CONTEXT
+        + SAVED_POI
+        + QUIZ
+        + VISITED
+        + FUNCTIONAL
++ category (enum, optional) - the category of this location
+    + Members
+        + ACCOMMODATION
+        + EXPERIENCE
+        + DINING
+        + CONTEXT
+        + GEOLOCATION
++ images (array[PoiImage], optional) - images for this location
++ location (Location, required) - saved location for the user
++ poi_id (string, optional) - POI ID if this is a POI
++ survey_ids (array[string], optional) - IDs of quizzes in which this location is referenced
++ trip_id (string, optional) - trip ID if this is a place from a trip
+
+
+### PoiImage
++ alt: `small` (string, optional) - the name of the image
++ src: `http://image.io` (string, required) - the url of the image
+
 
 ### HoursOfOperation
 + date: `2021-05-31` (string, optional) - the date that the hours of operation values apply to.
