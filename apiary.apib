@@ -2964,6 +2964,52 @@ Retrieve recommended POIs, separated in themes, for the specified context given 
 + Response 500
 
         Internal Server Error.
+        
+        
+## POI Organization [/mobility-planner/demo/v2/problem/poi-organization{?organization,category,trip_id,user_id}]
+
++ Parameters
+    + organization (enum, optional) - the organization type requested.
+        + Members
+            + ALL
+            + TYPE
+            + COLLECTION
+            + DESTINATION
+    + category (enum, optional) - if provided, only POI recommendations of the provided category will be returned.
+        + Members
+            + ACCOMMODATION
+            + DINING
+            + EXPERIENCE
+            + EVENT
+    + trip_id (string, optional) - the unique identifier for the trip.
+    + user_id (string, optional) - the unique identifier for the user.
+
+
+### POST
+
+Retrieve organized POIs
+
++ Request (application/json)
+
+    + Attributes
+        + pois (array[string], required) - a list of POI IDs.
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + results (array[PoiCollectionRecommendationResult], required) - a list of organized POI sets.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
 
 
 ## Bulk POI Details Request [/mobility-planner/demo/v2/domain/pois{?mode,return_abstract}]
@@ -4431,7 +4477,7 @@ This query will return a list of the nearest bikeshare locations from a particul
     + Attributes
         + result
             + preview (PoiCollectionPreview, required) - collection preview
-            + pois (array[CandidateItem], required) - list of pois in collection
+            + pois (array[PoiCollectionRecommendationElement], required) - list of pois in collection
 
 + Response 400
 
@@ -4936,6 +4982,10 @@ Saves POI to a collection. If the user is in a context where a collection is spe
             + `DEFINITELY`
     + visited: `false` (boolean, optional) - if the user has visited this POI
     + highlighted: `false` (boolean, optional) - whether this POI is of particular importance
+    + `liked_for_trip`: `false` (boolean, optional) - whether this POI is liked in a trip
+    + `highlighted_for_trip`: `false` (boolean, optional) - whether this POI is highlighted for a trip
+    + `liked_in_profile`: `false` (boolean, optional) - whether this POI is liked in profile
+    + `highlighted_in_profile`: `false` (boolean, optional) - whether this POI is highlighted in profile
 
 + Response 200 (application/json)
 
@@ -5881,6 +5931,10 @@ Saves context to a collection. If the user is in a context where a collection is
 + `pois` (array[PoiCollectionRecommendationElement], required) - a list of POI objects in this collection.
 + `selected_filter` (PreferenceDomainCandidate, optional) - the selected filter object this collection is built on top of.
 
+### PoiCollectionRecommendationResult
++ `theme`: `Chicago` (string, required) - specifies the theme of the candidate POI collection.
++ `organization`: `DESTINATION` (string, required) - specifies the organization of the POI collection.
++ `pois` (array[PoiCollectionRecommendationElement], required) - a list of POI objects in this collection.
 
 ### RecommendationCandidate
 + candidate (CandidateItem, required) - the recommended POI
