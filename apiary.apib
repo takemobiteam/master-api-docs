@@ -4448,7 +4448,7 @@ This query will return a list of the nearest bikeshare locations from a particul
     + Attributes
         + result
             + preview (PoiCollectionPreview, required) - collection preview
-            + pois (array[CandidateItem], required) - list of pois in collection
+            + pois (array[PoiCollectionRecommendationElement], required) - list of pois and their status in collection
             
 + Response 400
 
@@ -5170,11 +5170,18 @@ Saves context to a collection. If the user is in a context where a collection is
 + subtitle: `San Francisco, Tokyo, and 3 other cities` (string, required) - collection subtitle
 + images: (array[PoiImage]) - images of pois in collection
 + saved_pois: (array[SavedPoi]) - abstract saved POI objects.
-+ num_special: 2 (number, required) - number of special pois in collection
-+ num_known: 32 (number, required) - number of known pois in collection
-+ num_experience: 123 (number, required) - number of experiences in collection
-+ num_dining: 43 (number, required) - number of dining venues in collection
-+ num_accomodation: 54 (number, required) - number of accomodations in collection
++ counts (array[PoiCollectionPreviewCount], required) - number of special poi counts in collection
+
+### PoiCollectionPreviewCount
++ type (enum, required) - type of the count
+  + Members
+        + SAVED
+        + HIGHLIGHT
+        + EXPERIENCE
+        + DINING
+        + ACCOMMODATION
++ count: 32 (number, required) - number POIs in this category
+
 
 ### TripPreview
 + trip_id: `e790d700-9f97-11ea-bb37-0242ac130002` (string, required) - trip ID
