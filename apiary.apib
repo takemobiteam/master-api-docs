@@ -2887,6 +2887,7 @@ Retrieve all POIs for the specified context given the destination.
             + DINING
             + EXPERIENCE
             + EVENT
+    + max_distance: 10000 (number, optional) - if provided, only POIs within this distance (in meters) to the center of the destination would be returned in the recommendation.
 
 
 ### POST
@@ -4981,11 +4982,16 @@ Saves POI to a collection. If the user is in a context where a collection is spe
             + `INTERESTED`
             + `DEFINITELY`
     + visited: `false` (boolean, optional) - if the user has visited this POI
-    + highlighted: `false` (boolean, optional) - whether this POI is of particular importance
-    + `liked_for_trip`: `false` (boolean, optional) - whether this POI is liked in a trip
-    + `highlighted_for_trip`: `false` (boolean, optional) - whether this POI is highlighted for a trip
-    + `liked_in_profile`: `false` (boolean, optional) - whether this POI is liked in profile
-    + `highlighted_in_profile`: `false` (boolean, optional) - whether this POI is highlighted in profile
+    + `profile_status`: `false` (boolean, optional) - whether this POI is of particular importance in the profile collection
+        + Members
+            + `LIKED`
+            + `HIGHLIGHTED`
+            + `NONE`
+    + `trip_status`: `false` (boolean, optional) - whether this POI is of particular importance in a trip collection
+        + Members
+            + `LIKED`
+            + `HIGHLIGHTED`
+            + `NONE`
 
 + Response 200 (application/json)
 
@@ -5052,7 +5058,16 @@ Saves context to a collection. If the user is in a context where a collection is
             + `INTERESTED`
             + `DEFINITELY`
     + visited: `false` (boolean, optional) - if the user has visited this context
-    + highlighted: `false` (boolean, optional) - whether this context is of particular importance
+    + `profile_status`: `false` (boolean, optional) - whether this POI is of particular importance in the profile collection
+        + Members
+            + `LIKED`
+            + `HIGHLIGHTED`
+            + `NONE`
+    + `trip_status`: `false` (boolean, optional) - whether this POI is of particular importance in a trip collection
+        + Members
+            + `LIKED`
+            + `HIGHLIGHTED`
+            + `NONE`
 
 + Response 200 (application/json)
 
@@ -5981,7 +5996,16 @@ Saves context to a collection. If the user is in a context where a collection is
         + `INTERESTED`
         + `DEFINITELY`
 + visited: `false` (boolean, optional) - if the user has visited this POI
-+ highlighted: `false` (boolean, optional) - whether this POI is of particular importance to the user
++ profile_status (enum, optional) - whether this POI is of particular importance to the user in the profile collection
+    + Members
+        + `LIKED`
+        + `HIGHLIGHTED`
+        + `NONE`
++ trip_status (enum, optional) - whether this POI is of particular importance to the user in the trip collection
+    + Members
+        + `LIKED`
+        + `HIGHLIGHTED`
+        + `NONE`
 
 
 ### SavedLocation
