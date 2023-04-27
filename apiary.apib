@@ -2871,7 +2871,7 @@ Retrieve all POIs for the specified context given the destination.
         Internal Server Error.
         
 
-## Get Recommended Themes of POIs for Destination [/mobility-planner/demo/v2/problem/poi-recommendations{?context,merge_categories,category,sort}]
+## Get Recommended Themes of POIs for Destination [/mobility-planner/demo/v2/problem/poi-recommendations{?context,merge_categories,category,sort,max_distance}]
 
 + Parameters
     + context (string, required) - the selected context for recommended POIs.
@@ -2887,7 +2887,7 @@ Retrieve all POIs for the specified context given the destination.
             + DINING
             + EXPERIENCE
             + EVENT
-    + max_distance: 10000 (number, optional) - if provided, only POIs within this distance (in meters) to the center of the destination would be returned in the recommendation.
+    + `max_distance`: 10000 (number, optional) - if provided, only POIs within this distance (in meters) to the center of the destination would be returned in the recommendation.
 
 
 ### POST
@@ -2920,7 +2920,7 @@ Retrieve recommended POIs, separated in themes, for the specified context given 
         Internal Server Error.
         
 
-## Get Recommended Themes of POIs for Destination [/mobility-planner/demo/v2/problem/poi-recommendation-summaries{?context,merge_categories,category,sort,max_results,trip_id,user_id}]
+## Get Summary of Recommended Themes of POIs for Destination [/mobility-planner/demo/v2/problem/poi-recommendation-summaries{?context,merge_categories,category,sort,max_results,trip_id,user_id}]
 
 + Parameters
     + context (string, required) - the selected context for recommended POIs.
