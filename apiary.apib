@@ -2721,6 +2721,7 @@ Retrieve candidate destination (context) trips given the trip destination/dates 
 
     + Attributes 
         + results (array[ContextTripCandidate], required) - a list of candidate destination trips.
+        + recommendations (array[ThemedCandidateItem], required) - a list of recommended flights, hotels, activities and dinings grouped under different themes.
 
 + Response 400
 
@@ -5944,6 +5945,7 @@ Saves context to a collection. If the user is in a context where a collection is
 ### ThemedCandidateItem
 + `theme`: `Best Italian` (string, required) - specifies the theme of the candidate POI collection.
 + `pois` (array[CandidateItem], optional) - a list of POI objects in this collection.
++ `primary_category` (AllowedPreferenceCategory, optional) - specifies the primary category of POIs in this collection.
 + `all_poi_ids` (array[string], optional) - a list of all POI ids that fit the theme.
 + `types` (array[string], optional) - a list of type keywords for the POIs in this collection.
 
