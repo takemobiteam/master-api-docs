@@ -4967,7 +4967,7 @@ This query will return a list of the nearest bikeshare locations from a particul
 
         Internal Server Error.
 
-## POI Management [/mobility-planner/demo/v2/preference/pois/{poi_id}/{?user_id,collection_id,mode}]
+## POI Management [/mobility-planner/demo/v2/preference/pois/{poi_id}/{?user_id,collection_id,mode,preference,visited,profile_status,trip_status}]
 
 ### Save POI [PUT]
 
@@ -4979,7 +4979,7 @@ Saves POI to a collection. If the user is in a context where a collection is spe
     + collection_id (string, optional) - ID of the collection to save the POI to. If not provided, a default collection will be created for the user.
     + poi_id (string, required) - ID of the POI
     + mode (string, required) - the mode (group) of the profile to be retrieved
-    + preference (enum, required) - the mode (group) of the profile to be retrieved
+    + preference (enum, optional) - the mode (group) of the profile to be retrieved
         + Members
             + `MAYBE`
             + `INTERESTED`
