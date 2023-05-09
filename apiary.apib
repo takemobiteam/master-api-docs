@@ -2362,6 +2362,37 @@ Check if the planning service is up and running.
         Internal Server Error.
 
 
+## Get Alternative POIs [/mobility-planner/demo/v2/alternative-pois/{poi_id}{?mode,context,trip_id,user_id,max_results}]
+
+Get suggestions for alternative POIs to a specified POI (throught the poi_id in the API call)
+
+### GET
+        
++ Parameters
+    + `poi_id`: `3323-4432-5456345743-f343245346` (string, required) - UUID of the reference POI for which we want to get alternatives.
+    + `mode`: (string, required) - Planner mode, which might restrict the POI suggestions according to the business logic.
+    + `context`: (string, optional) - Context from which the alternative POIs will be drawn. If not specified, the context(s) associated with the reference POI will be used instead.
+    + `trip_id`: (string, optional) - If a `trip_id` **and** a `user_id` provided, the POIs already "saved" for this trip will be excluded from the suggestions returned.
+    + `user_id`: (string, optional) - The `user_id` is optional but needs to be provided to be able to access the trip, i.e. `trip_id` alone is not sufficient.
+    + `max_results`: (int, optional) - The maximum number of alternative POIs in the response.
+        + Default: `20`
+  
++ Response 200 (application/json)
+
+    + Attributes (PoiCollectionRecommendationElement, required)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
 # Group Bluesky
 
 ## Get All Supported Tags - Also Known as Plan Profile Domain [/mobility-planner/demo/v2/profile/domain{?mode,context,parent}]
