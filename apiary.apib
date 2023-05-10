@@ -3095,16 +3095,27 @@ Return the textual response as well as suggested itinerary planning inputs for t
         + input: `I want to go to a warm place with my family` (string, required) - string input from the user.
 
 + Response 200 (application/json)
-
+    
     + Attributes 
+        + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a textual response for the request.
         + response: `Here is a trip that may work for you` (string, required) - a textual response for the request.
         + `traveler_information` (TravelerInformation, optional) - detected traveler information from the input.
         + problem (Problem, optional) - the planning problem object parsed from the chat input.
-        + selected_filters: `Here is a trip that may work for you` (array[PreferenceDomainCandidate], required) - a list of detected trip preferences.
-        + trip_start_time: `Here is a trip that may work for you` (number, required) - in UNIX timestamp, the detected trip start time.
-        + trip_end_time: `Here is a trip that may work for you` (number, required) - in UNIX timestamp, the detected trip end time.
+        + selected_filters (array[PreferenceDomainCandidate], required) - a list of must have trip preferences.
+        + excluded_filters (array[PreferenceDomainCandidate], required) - a list of must avoid trip preferences.
+        + `trip_start_time`: `1513725841` (number, required) - in UNIX timestamp, the detected trip start time.
+        + `trip_end_time`: `1513725841` (number, required) - in UNIX timestamp, the detected trip end time.
+        + origin (OriginDestinationItem, optional) - parsed origin of the trip.
+        + destination (OriginDestinationItem, optional) - parsed destination of the trip.
+        + trip_contexts (array[CandidateItem], optional) - parsed contexts for the trip.
+        + pois (array[CandidateItemAbstract], optional) - parsed desired POIs for trip.
+        + activities (array[GoalItem], optional) - parsed desired activities for trip.
+        + budget (Budget, optional) - parsed budget information.
+        + intention (ChatIntention, optional) - parsed intention of the users.
+        + history (array[ChatEntry], optional) - history of the chat.
         + show_destinations: `true` (boolean, required) - a boolean flag indicating if we have enough information for destination recommendation.
         + show_sample_trips: `false` (boolean, required) - a boolean flag indicating if we have enough information for sample trip recommendation.
+        + success: `true` (boolean, required) - a boolean flag indicating if the query was processed successfully.
 
 + Response 400
 
@@ -6702,3 +6713,17 @@ the direction towards the next stop or intermediate location.
 + `trip_contexts` (array[CandidateItem], optional) - a list of relevant context objects `(destinations)` of the trip.
 + `auto_saved`: `false` (boolean, optional) - if this trip was saved automatically by the client (and not by the end user).
 + `expired`: `false` (boolean, optional) - if this trip has expired (ending in the past).
+
+### ChatEntry
++ `role`: `user` (string, optional) - role name.
++ `content`: `I want to visit Australia` (string, optional) - role content.
+
+### ChatIntention
++ `origin_specified`: `false` (boolean, optional) - if the user has provided trip origin.
++ `destination_specified`: `false` (boolean, optional) - if the user has provided trip destination.
++ `budget_specified`: `false` (boolean, optional) - if the user has provided budget preferences.
++ `accommodation_preference_specified`: `false` (boolean, optional) - if the user has provided accommodation preferences.
++ `dining_preference_specified`: `false` (boolean, optional) - if the user has provided dining preferences.
++ `experience_preference_specified`: `false` (boolean, optional) - if the user has provided experience preferences.
++ `flight_preference_specified`: `false` (boolean, optional) - if the user has provided flight preferences.
++ `have_more_preferences`: `true` (boolean, optional) - if the user has more preference to provide
