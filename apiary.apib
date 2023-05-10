@@ -2379,7 +2379,8 @@ Get suggestions for alternative POIs to a specified POI (throught the poi_id in 
   
 + Response 200 (application/json)
 
-    + Attributes (PoiCollectionRecommendationElement, required)
+    + Attributes
+        + recommendations (array[PoiCollectionRecommendationElement], required) - a list of suggested POIs with additional information (PoiCollectionRecommendationElement objects).
     
 + Response 400
 
