@@ -3103,6 +3103,8 @@ Return the textual response as well as suggested itinerary planning inputs for t
         + `traveler_information` (TravelerInformation, optional) - detected traveler information from the input.
         + problem (Problem, optional) - the planning problem object parsed from the chat input.
         + selected_filters (array[PreferenceDomainCandidate], required) - a list of must have trip preferences.
+        + `recommended_filters` (array[PreferenceDomainCandidate], required) - a list of recommended trip preferences.
+        + `not_recommended_filters` (array[PreferenceDomainCandidate], required) - a list of not recommended trip preferences.
         + excluded_filters (array[PreferenceDomainCandidate], required) - a list of must avoid trip preferences.
         + `trip_start_time`: `1513725841` (number, required) - in UNIX timestamp, the detected trip start time.
         + `trip_end_time`: `1513725841` (number, required) - in UNIX timestamp, the detected trip end time.
