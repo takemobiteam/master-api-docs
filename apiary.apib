@@ -3118,6 +3118,7 @@ Return the textual response as well as suggested itinerary planning inputs for t
         + history (array[ChatEntry], optional) - history of the chat.
         + show_destinations: `true` (boolean, required) - a boolean flag indicating if we have enough information for destination recommendation.
         + show_sample_trips: `false` (boolean, required) - a boolean flag indicating if we have enough information for sample trip recommendation.
+        + raw_data (array[ChatRawData], required) - a boolean flag indicating if the query was processed successfully.
         + success: `true` (boolean, required) - a boolean flag indicating if the query was processed successfully.
 
 + Response 400
@@ -6730,3 +6731,7 @@ the direction towards the next stop or intermediate location.
 + `experience_preference_specified`: `false` (boolean, optional) - if the user has provided experience preferences.
 + `flight_preference_specified`: `false` (boolean, optional) - if the user has provided flight preferences.
 + `have_more_preferences`: `true` (boolean, optional) - if the user has more preference to provide
+
+### ChatRawData
++ `key`: `trip_fact_response` (string, optional) - the field name for the raw data.
++ `value`: `{origin_specified: false}` (string, optional) - the field value for the raw data.
