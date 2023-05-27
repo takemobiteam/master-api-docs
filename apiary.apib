@@ -25,7 +25,7 @@ Please provide your company name and application/project name. The API key needs
 
 # Group Routing
 
-## Intermodal Routes [/intermodal/v1/routes/all{?origin,origin_name,destination,destination_name,waypoints,waypoint_arrival_times,waypoint_departure_times,modes,departure_time,arrival_time,duration_stay,accessible,memberships,max_results,duration_margin,walkingtime_margin,bikingtime_margin,cost_margin,save_response,street_parking,electric_charger,config,return_polyline,request_id,max_results}]
+## Intermodal Routes [/intermodal/v1/routes/all{?origin,origin_name,destination,destination_name,from_stop_id,to_stop_id,waypoints,waypoint_arrival_times,waypoint_departure_times,modes,departure_time,arrival_time,duration_stay,wheelchair_accessible,excluded_transit_route_types,allowed_transit_route_types,excluded_transit_agency_ids,included_transit_stop,included_transit_stop_geo_coordinates,max_transit_transfers,include_infeasible_route,disable_parking,memberships,drive_preference,transit_preference,bike_preference,walk_preference,taxi_preference,bikeshare_preference,carshare_preference,scooter_preference,price_sensitivity,time_sensitivity,transfer_sensitivity,duration_margin,walkingtime_margin,bikingtime_margin,cost_margin,time_bracket_width,scroll_context,scroll_direction,save_response,street_parking,electric_charger,bikeshare_providers,config,return_polyline,encode_polyline,request_id,route_ordering,max_results}]
 
 Compute a preferred set of intermodal routes connecting the origin and destination locations. The set of parameters accepted by different transportation modes are the same, though some may not be used
 give the different mode combinations allowed (e.g. the choices of parking providers will be skipped in transit only routes). 
@@ -219,8 +219,8 @@ It supports all functionalities defined in GET method above.
 + Request (application/json)
 
     + Attributes
-        + origin: (Location, required) - the trip origin.
-        + destination: (Location, required) - the trip destination.
+        + origin (Location, required) - the trip origin.
+        + destination (Location, required) - the trip destination.
         + `from_stop_id`: `70061` (string, optional) - The GTFS transit stop ID of the trip origination. If provided, we assume the rider is able to depart from the station immediately, no walking is needed.
         + `to_stop_id`: `70077` (string, optional) - The GTFS transit stop ID of the trip destination. If provided, we assume the station is the destination, no walking beyond is needed.
         + `from_station_group_id`: `RE_STATION_GROUP_80` (string, optional) - The station group ID in the station_groups.txt provided by Axon Vibe. If provided, the origin will be replaced by the underlying transit stops in routing query.
@@ -280,7 +280,7 @@ It supports all functionalities defined in GET method above.
         + `route_ordering`: `HIGH_MOBI_SCORE` (string, required) - Specifies the criteria used for ordering the routes in the response. The default ordering is based on `HIGH_MOBI_SCORE`. 
         + `max_results`: `50` (number, optional) - Specifies the maximum number of routing options to be returned in the response.
             + Default: `50`
-        + `transit_trip_constraints`: (array[TransitTripConstraint], optional) - Specifies the maximum number of routing options to be returned in the response.
+        + `transit_trip_constraints` (array[TransitTripConstraint], optional) - Specifies the maximum number of routing options to be returned in the response.
         
 + Response 200 (application/json)
 
@@ -920,7 +920,7 @@ Restore a previous planning session by recreating the planning session and probl
 
 + Request (application/json)
 
-    + Attributes (Solution, required) - a solution.
+    + Attributes (Solution, required)
   
 + Response 200 (application/json)
 
@@ -1536,17 +1536,17 @@ Get recommended activities for an existing itinerary and their preferred time wi
 + Response 500
 
         Internal Server Error.
-        
-        
-## Get Recommended POIs [/mobility-planner/demo/v2/recommendation/pois{?session_id}]
 
-Get recommended POIs for an existing itinerary and their preferred time windows.
+        
+## Get Recommended POIs and Input Evaluation [/mobility-planner/demo/v2/recommendation/pois{?session_id}]
 
 + Parameters
     + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
 
 ### GET
   
+Get recommended POIs for an existing itinerary and their preferred time windows.
+
 + Response 200 (application/json)
 
     + Attributes
@@ -1563,16 +1563,10 @@ Get recommended POIs for an existing itinerary and their preferred time windows.
 + Response 500
 
         Internal Server Error.
-        
-        
-## Get Recommended POIs and Input Evaluation [/mobility-planner/demo/v2/recommendation/pois{?session_id}]
-
-Get recommended POIs as well as a flag indicating if the inputs are sufficient for a personalized plan.
-
-+ Parameters
-    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
 
 ### POST
+
+Get recommended POIs as well as a flag indicating if the inputs are sufficient for a personalized plan.
 
 + Request (application/json)
 
@@ -1720,9 +1714,9 @@ Confirm the final activity selections by the customer.
 
 ## Confirm Plan for Execution [/mobility-planner/demo/v2/solution{?problem_id,solution_id}]
 
-Confirm a solution for execution.
-
 ### POST
+
+Confirm a solution for execution.
 
 + Parameters
     + problem_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem created.
@@ -1732,6 +1726,31 @@ Confirm a solution for execution.
 
         The plan has been confirmed.
     
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+### GET
+
+Get previously generated solution for the given problem.
+
++ Parameters
+    + `problem_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem created.
+    + `solution_id`: `59392ab2-61a9-418d-924b-217ed8fd043e` (string, required) - a unique identifier for a solution previously generated for the problem.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + solutions (Solution, required) - the solution objects found for the problem.
+
 + Response 400
 
         Bad Request.
@@ -1771,7 +1790,7 @@ Get confirmed solution for the given problem.
 
         Internal Server Error.
 
-## Update solution display [/mobility-planner/demo/v2/solution/display{?session_id,display_flights,display_accommodations}]
+## Update solution display [/mobility-planner/demo/v2/solution/display{?session_id,activity_id,display_flights,display_accommodations}]
 
 Updated the display for a solution.
 
@@ -2096,8 +2115,9 @@ Retrieve relevant survey category values given the requested category and previo
 + Response 500
 
         Internal Server Error.
-        
-## Save Survey Response [/mobility-planner/demo/v2/profile/survey/response?{session_id}]
+
+
+## Survey Response [/mobility-planner/demo/v2/profile/survey/response?{session_id}]
 
 + Parameters
     + `session_id` (string, required) - a unique identifier for the user session.
@@ -2125,12 +2145,6 @@ Save survey response.
 + Response 500
 
         Internal Server Error.
-        
-
-## Retrieve Survey Response [/mobility-planner/demo/v2/profile/survey/response?{session_id}]
-
-+ Parameters
-    + `session_id` (string, required) - a unique identifier for the user session.
 
 ### GET
 
@@ -2178,33 +2192,6 @@ Retrieve all possible POIs that can be added to the planning problem given the s
 
         Internal Server Error.
         
-## Plan Contexts [/mobility-planner/demo/v2/domain/contexts{?mode}]
-
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
-
-### GET
-
-Retrieve all compatible contexts given the specified planning problem mode.
-
-+ Response 200 (application/json)
-
-    + Attributes 
-        + contexts (array[CandidateItem], required) - a list of solution objects found for the problem.
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-        
-        
 ## Get Context Suggestions [/mobility-planner/demo/v2/domain/contexts/suggestions{?mode,keyword,source,destination_only,return_contexts}]
 
 + Parameters
@@ -2251,33 +2238,6 @@ Retrieve a previously solved problem and solutions objects.
         + problem (Problem, required) - the problem object that matches the given problem id.
         + solutions (array[Solution], required) - a list of solution objects found for the problem.
     
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-        
-## Get Previous Solution [/mobility-planner/demo/v2/solution{?problem_id,solution_id}]
-
-Get previously generated solution for the given problem.
-
-### GET
-
-+ Parameters
-    + `problem_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the planning problem created.
-    + `solution_id`: `59392ab2-61a9-418d-924b-217ed8fd043e` (string, required) - a unique identifier for a solution previously generated for the problem.
-
-+ Response 200 (application/json)
-
-    + Attributes
-        + solutions (Solution, required) - the solution objects found for the problem.
-
 + Response 400
 
         Bad Request.
@@ -2370,11 +2330,11 @@ Get suggestions for alternative POIs to a specified POI (throught the poi_id in 
         
 + Parameters
     + `poi_id`: `3323-4432-5456345743-f343245346` (string, required) - UUID of the reference POI for which we want to get alternatives.
-    + `mode`: (string, required) - Planner mode, which might restrict the POI suggestions according to the business logic.
-    + `context`: (string, optional) - Context from which the alternative POIs will be drawn. If not specified, the context(s) associated with the reference POI will be used instead.
-    + `trip_id`: (string, optional) - If a `trip_id` **and** a `user_id` provided, the POIs already "saved" for this trip will be excluded from the suggestions returned.
-    + `user_id`: (string, optional) - The `user_id` is optional but needs to be provided to be able to access the trip, i.e. `trip_id` alone is not sufficient.
-    + `max_results`: (int, optional) - The maximum number of alternative POIs in the response.
+    + `mode` (string, required) - Planner mode, which might restrict the POI suggestions according to the business logic.
+    + `context` (string, optional) - Context from which the alternative POIs will be drawn. If not specified, the context(s) associated with the reference POI will be used instead.
+    + `trip_id` (string, optional) - If a `trip_id` **and** a `user_id` provided, the POIs already "saved" for this trip will be excluded from the suggestions returned.
+    + `user_id` (string, optional) - The `user_id` is optional but needs to be provided to be able to access the trip, i.e. `trip_id` alone is not sufficient.
+    + `max_results` (int, optional) - The maximum number of alternative POIs in the response.
         + Default: `20`
   
 + Response 200 (application/json)
@@ -2611,7 +2571,7 @@ Retrieve the candidate POIs matching the specified search keyword.
         Internal Server Error.
 
 
-## Get Filter Suggestions [/mobility-planner/demo/v2/domain/filter/suggestions{?mode,category,keyword,parent}]
+## Get Filter Suggestions [/mobility-planner/demo/v2/domain/filter/suggestions{?mode,category,keyword,parent,session_id}]
 
 + Parameters
     + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
@@ -2907,14 +2867,14 @@ Retrieve all POIs for the specified context given the destination.
 ## Get Recommended Themes of POIs for Destination [/mobility-planner/demo/v2/problem/poi-recommendations{?context,merge_categories,category,sort,max_distance,reference_lat,reference_lng}]
 
 + Parameters
-    + context (string, required) - the selected context for recommended POIs.
-    + merge_categories (boolean, required) - if the different categories of POI themes should be merged into one in the response. Default is true. Please set to false if you only want POIs separated in categories.
-    + sort (enum, optional) - sort the Best for Destination candidates based on the provided criteria.
+    + `context` (string, required) - the selected context for recommended POIs.
+    + `merge_categories` (boolean, required) - if the different categories of POI themes should be merged into one in the response. Default is true. Please set to false if you only want POIs separated in categories.
+    + `sort` (enum, optional) - sort the Best for Destination candidates based on the provided criteria.
         + Members
             + best_match
             + price_high
             + price_low
-    + category (enum, optional) - if provided, only POI recommendations of the provided category will be returned.
+    + `category` (enum, optional) - if provided, only POI recommendations of the provided category will be returned.
         + Members
             + ACCOMMODATION
             + DINING
@@ -2922,7 +2882,7 @@ Retrieve all POIs for the specified context given the destination.
             + EVENT
     + `max_distance`: 10000 (number, optional) - if provided, only POIs within this distance (in meters) to the center of the destination would be returned in the recommendation.
     + `reference_lat`: 42.195 (number, optional) - if provided, only POIs within this reference latitude would be returned in the recommendation.
-    + `reference_lng`: -81.074 (number, optional) - if provided, only POIs within this reference longitude would be returned in the recommendation.
+    + `reference_lng`: 81.074 (number, optional) - if provided, only POIs within this reference longitude would be returned in the recommendation.
 
 
 ### POST
@@ -3929,7 +3889,7 @@ This query will return a list of the nearest bikeshare locations from a particul
 
 # Group Profile
 
-## Profile [/mobility-planner/demo/v2/preference/profile{?user_id,mode}]
+## Profile [/mobility-planner/demo/v2/preference/profile{?user_id,mode,everything,code}]
 
 ### Retrieve basic profile data [GET]
 
@@ -3964,7 +3924,7 @@ This query will return a list of the nearest bikeshare locations from a particul
 
 + Response 200 (application/json)
 
-    + Attributes (Profile, required) - profile details
+    + Attributes (Profile, required)
             
 + Response 400
 
@@ -3992,38 +3952,6 @@ This query will return a list of the nearest bikeshare locations from a particul
     + Attributes
         + success (boolean, required) - whether the delete was successful. Should only be false with a 200 response in staging when code no provided.
         + code (string, optional) - (staging only) returned in staging when a code was not submitted so that it can be provided in the following delete request.
-            
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-
-
-## Bulk POI Details Request [/mobility-planner/demo/v2/domain/pois{?mode,return_abstract}]
-
-### Retrieve coordinates of saved POIs [POST]
-
-+ Parameters
-
-    + mode (string, required) - the mode (group) of the profile to be retrieved
-    + return_abstract (boolean, optional) - boolean flag controlling if only subset of POI fields are needed in the response. Default to true.
-
-+ Request (application/json)
-
-    + Attributes
-        + pois (array[string], required) - a list of POI IDs.
-
-+ Response 200 (application/json)
-
-    + Attributes
-        + pois (array[CandidateItem], required) - details for the requested POIs
             
 + Response 400
 
@@ -4134,7 +4062,7 @@ This query will return a list of the nearest bikeshare locations from a particul
         Internal Server Error.
         
 
-## Get Profile Quiz Domain [/mobility-planner/demo/v2/survey/profile/domain{?mode,context,user_id,poi_subject_ids,survey_question_type}]
+## Get Profile Quiz Domain [/mobility-planner/demo/v2/survey/profile/domain{?mode,context,user_id,poi_subject_ids,survey_type,survey_question_type}]
 
 + Parameters
 
@@ -4184,7 +4112,7 @@ This query will return a list of the nearest bikeshare locations from a particul
  
 + Response 200 (application/json)
 
-    + Attributes (ProfileSurveyResponse, required) - a quiz whose id matches the provided one
+    + Attributes (ProfileSurveyResponse, required)
 
 + Response 400
 
@@ -4358,40 +4286,7 @@ This query will return a list of the nearest bikeshare locations from a particul
         
 + Response 500
 
-        Internal Server Error.
-        
-## Add Skipped Quiz [/mobility-planner/demo/v2/survey/response/skipped{?mode,context,user_id,survey_id}]
-
-### Record a skipped survey [POST]
-
-+ Parameters
-
-    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
-    + survey_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the survey that is skipped.
-    + mode (AllowedProblemMode, required) - the planner mode for filtering applicable surveys.
-    + context (string, optional) - the context used for filtering applicable surveys.
-
-+ Request (application/json)
-
-    + Attributes (SurveyResponse, required)
-  
-+ Response 200 (application/json)
-
-    + Attributes
-
-        + status (string, required) - a status message
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.     
+        Internal Server Error.   
 
 ## POI Collections [/mobility-planner/demo/v2/preference/poi/collections{?user_id,mode,collection_id,problem_id}]
 
@@ -5031,12 +4926,12 @@ Saves POI to a collection. If the user is in a context where a collection is spe
             + `INTERESTED`
             + `DEFINITELY`
     + visited: `false` (boolean, optional) - if the user has visited this POI
-    + `profile_status`: `false` (boolean, optional) - whether this POI is of particular importance in the profile collection
+    + `profile_status` (enum, optional) - whether this POI is of particular importance in the profile collection
         + Members
             + `LIKED`
             + `HIGHLIGHTED`
             + `NONE`
-    + `trip_status`: `false` (boolean, optional) - whether this POI is of particular importance in a trip collection
+    + `trip_status` (enum, optional) - whether this POI is of particular importance in a trip collection
         + Members
             + `LIKED`
             + `HIGHLIGHTED`
@@ -5089,7 +4984,7 @@ Saves POI to a collection. If the user is in a context where a collection is spe
 
         Internal Server Error.
 
-## Context Management [/mobility-planner/demo/v2/preference/contexts/{context_id}/{?user_id,collection_id,mode}]
+## Context Management [/mobility-planner/demo/v2/preference/contexts/{context_id}/{?user_id,collection_id,mode,preference,visited,profile_status,trip_status}]
 
 ### Save Context [PUT]
 
@@ -5107,12 +5002,12 @@ Saves context to a collection. If the user is in a context where a collection is
             + `INTERESTED`
             + `DEFINITELY`
     + visited: `false` (boolean, optional) - if the user has visited this context
-    + `profile_status`: `false` (boolean, optional) - whether this POI is of particular importance in the profile collection
+    + `profile_status` (enum, optional) - whether this POI is of particular importance in the profile collection
         + Members
             + `LIKED`
             + `HIGHLIGHTED`
             + `NONE`
-    + `trip_status`: `false` (boolean, optional) - whether this POI is of particular importance in a trip collection
+    + `trip_status` (enum, optional) - whether this POI is of particular importance in a trip collection
         + Members
             + `LIKED`
             + `HIGHLIGHTED`
@@ -5232,8 +5127,8 @@ Saves context to a collection. If the user is in a context where a collection is
 + id: `e790d700-9f97-11ea-bb37-0242ac130002` (string, required) - collection ID
 + name: `Favorite Restaurants` (string, required) - collection name
 + subtitle: `San Francisco, Tokyo, and 3 other cities` (string, required) - collection subtitle
-+ images: (array[PoiImage]) - images of pois in collection
-+ saved_pois: (array[SavedPoi]) - abstract saved POI objects.
++ images (array[PoiImage]) - images of pois in collection
++ saved_pois (array[SavedPoi]) - abstract saved POI objects.
 + counts (array[PoiCollectionPreviewCount], required) - number of special poi counts in collection
 
 ### PoiCollectionPreviewCount
@@ -5630,7 +5525,7 @@ Saves context to a collection. If the user is in a context where a collection is
 + `name`: `Sonoma_California` (string, required) - the name of the context object.
 + `lat`: `43.86231` (number, required) - the latitude of the context object.
 + `lng`: `18.432571` (number, required) - the longitude of the context object.
-+ `category` (string, required) - the category of the context object.
++ `category` (enum, required) - the category of the context object.
     + Members
         + CITY
         + COUNTRY
@@ -5942,6 +5837,7 @@ Saves context to a collection. If the user is in a context where a collection is
 ### TripCuration
 + `curates_trip`: `false` (boolean, required) - specifies if curated activities could be included in the itinerary.
 + `time_windows` (array[string], required) - specifies a set of time windows in whiche curated activities could be included in the itinerary.
++ `context_configs` (array[ContextCurationConfig]) - specifies the curated activities for each activity category.
 
 ### TripRecommendation
 + `included`: `false` (boolean, required) - specifies if recommended activities could be included in the itinerary.
@@ -6707,7 +6603,7 @@ the direction towards the next stop or intermediate location.
 
 ### UserSessionData
 + `problem` (Problem, required) - the problem object.
-+ `solution` (SolutionResponse, required) - the solution object.
++ `solution_response` (SolutionResponse, required) - the solution object.
 + `create_time`: 12345567 (number, optional) - timestamp when the session was created.
 + `trip_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the trip.
 + `trip_name`: Family trip to Las Vegas (string, optional) - a custom name for the trip.
@@ -6715,8 +6611,10 @@ the direction towards the next stop or intermediate location.
 + `trip_end_time`: 12345567 (number, optional) - timestamp for the end of the trip.
 + `trip_context`: `LONDON_UK` (string, optional) - the context `(destination)` of the trip.
 + `trip_contexts` (array[CandidateItem], optional) - a list of relevant context objects `(destinations)` of the trip.
++ `trip_context_specs` (array[TripContextSpec], optional) - a list of relevant context itinerary specifications of the trip.
 + `auto_saved`: `false` (boolean, optional) - if this trip was saved automatically by the client (and not by the end user).
 + `expired`: `false` (boolean, optional) - if this trip has expired (ending in the past).
+
 
 ### ChatEntry
 + `role`: `user` (string, optional) - role name.
@@ -6735,3 +6633,75 @@ the direction towards the next stop or intermediate location.
 ### ChatRawData
 + `key`: `trip_fact_response` (string, optional) - the field name for the raw data.
 + `value`: `{origin_specified: false}` (string, optional) - the field value for the raw data.
+
+
+### TripContextSpec
++ `context_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the context.
++ `context_name`: `Boston, Massachusetts` (string, required) - the name of the context.
++ `start_timestamp`: 12345567 (number, optional) - timestamp for the start of the itinerary for the context.
++ `end_timestamp`: 12345567 (number, optional) - timestamp for the end of the itinerary for the context.
++ `pois` (array[PoiCollectionRecommendationElement], optional) - planned POIs for the context.
++ `counts` (PoiCounts, optional) - statistics for all POIs from the context.
++ `planned_counts` (PoiCounts, optional) - statistics for all planned POIs from the context.
++ `activity_specs` (array[TripActivitySpec], optional) - a list of relevant activity specifications of the context.
+
+
+### TripActivitySpec
++ category: `EXPERIENCE` (string, required) - the category of POIs.
++ `pois` (array[PoiCollectionRecommendationElement], optional) - planned POIs for the activity category.
++ `counts` (PoiCounts, optional) - statistics for all POIs from the activity category.
++ `planned_counts` (PoiCounts, optional) - statistics for all planned POIs from the activity category.
++ `collection_specs` (array[TripCollectionSpec], optional) - a list of relevant activity specifications of the activity category.
+
+
+### TripCollectionSpec
++ `id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the collection.
++ `name`: `Breakfast` (string, required) - the name of the collection.
++ `description`: `Breakfast POIs` (string, optional) - description for the collection.
++ `pois` (array[PoiCollectionRecommendationElement], optional) - POIs in the collection.
++ `counts` (PoiCounts, optional) - statistics for all POIs from the collection.
+
+
+### ContextCurationConfig
++ `context_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the context.
++ `context_name`: `Boston, Massachusetts` (string, required) - the name of the context.
++ `included`: `false` (boolean, required) - specifies if curated activities could be included in the itinerary for this context.
++ `activity_configs` (array[ActivityCurationConfig]) - specifies the curated activities for each activity category.
+
+### ActivityCurationConfig
++ category: `EXPERIENCE` (string, required) - the category of POIs.
++ `included`: `false` (boolean, required) - specifies if curated activities could be included in the itinerary for this category.
++ `preference_domain` (array[CurationConfigPreferenceOption], optional) - allowed preference options.
++ `preference_selection` (CurationConfigPreferenceOption, optional) - selected preference option.
++ `objective_domain` (array[CurationConfigObjectiveOption], optional) - allowed objective options.
++ `objective_selection` (CurationConfigObjectiveOption, optional) - selected objective option.
++ `collection_configs` (array[CollectionCurationConfig]) - specifies the curated activities for each collection of activities in this category.
+
+### CollectionCurationConfig
++ `id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the collection.
++ `name`: `Breakfast` (string, required) - the name of the collection.
++ `description`: `Breakfast POIs` (string, optional) - description for the collection.
++ `included`: `false` (boolean, required) - specifies if curated activities could be included in the itinerary from this collection.
++ `preference_domain` (array[CurationConfigPreferenceOption], optional) - allowed preference options.
++ `preference_selection` (CurationConfigPreferenceOption, optional) - selected preference option.
++ `objective_domain` (array[CurationConfigObjectiveOption], optional) - allowed objective options.
++ `objective_selection` (CurationConfigObjectiveOption, optional) - selected objective option.
+
+### CurationConfigPreferenceOption
++ `id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the preference option.
++ `name`: `Breakfast` (string, required) - the name of the preference option.
++ `description`: `Breakfast POIs` (string, optional) - description for the preference option.
++ `lowerbound`: `1519765200` (number, optional) - the lowerbound for the preference option.
++ `upperbound`: `1519765200` (number, optional) - the link to a photo of the destination.
+
+### CurationConfigObjectiveOption
++ `id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - the unique identifier of the objective option.
++ `name`: `Breakfast` (string, required) - the name of the objective option.
++ `description`: `Breakfast POIs` (string, optional) - description for the objective option.
+
+### PoiCounts
++ `liked`: 1 (number, optional) - number of liked POIs.
++ `highlighted`: 2 (number, optional) - number of highlighted POIs.
++ `matched`: 3 (number, optional) - number of matched POIs.
++ `recommended`: 4 (number, optional) - number of recommended POIs.
++ `booked`: 5 (number, optional) - number of booked POIs.
