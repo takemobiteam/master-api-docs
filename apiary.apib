@@ -1296,7 +1296,7 @@ Given a solution, calculate feasible alternative timeslots for one of its activi
 + Response 200 (application/json)
 
     + Attributes
-        + results (array[array[number]], optional) - a list of alternative timeslots (in [lowerbound, upperbound] format) for the activity in the solution.
+        + results (array[string], optional) - a list of alternative timeslots (in [lowerbound, upperbound] format) for the activity in the solution.
 
 + Response 400
 
@@ -1359,7 +1359,7 @@ Given a set of Candidate POIs, calculate available timeslots for them that would
 + Response 200 (application/json)
 
     + Attributes
-        + results (array[array[number]], optional) - a list of alternative timeslots (in [lowerbound, upperbound] format) for the activity in the solution.
+        + results (array[string], optional) - a list of alternative timeslots (in [lowerbound, upperbound] format) for the activity in the solution.
         + recommendations (array[TimeslotRecommendation], optional) - a list of recommended timeslots for the activity in the solution.
 
 + Response 400
