@@ -34,7 +34,14 @@ jobs:
       - name: Get aglio and build index page
         uses: actions/setup-node@v3
       - run: npm install -g aglio
-      - run: aglio -i apiary.apib --theme-template triple -o docs/index.html
+#       - run: aglio -i apiary.apib --theme-template triple -o docs/index.html
+      - name: Get Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0' # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - run: gem install apiaryio
+      - run: apiary preview --path="./apiary.apib" --output="./docs/index.html"
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
