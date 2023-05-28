@@ -387,13 +387,13 @@ Calculate route attributes (not the route) for each pair of locations defined in
 
 + Request (application/json)
 
-    + Attributes (MultiRoutingQuery, required)
+    + Attributes (MultiRoutingQuery)
   
 + Response 200 (application/json)
 
     A set of routes for each requested pair of locations.
 
-    + Attributes (MultiRoutingSummaryResult, required)
+    + Attributes (MultiRoutingSummaryResult)
         
     
 + Response 400
@@ -417,13 +417,13 @@ Calculate paths (not the detailed routes) for each pair of locations defined in 
 
 + Request (application/json)
 
-    + Attributes (MultiRoutingQuery, required)
+    + Attributes (MultiRoutingQuery)
   
 + Response 200 (application/json)
 
     A set of routes for each requested pair of locations.
 
-    + Attributes (MultiRoutingPathResult, required)
+    + Attributes (MultiRoutingPathResult)
         
     
 + Response 400
@@ -449,11 +449,11 @@ Create a new planning problem and find the best solution for the current problem
 
 + Request (application/json)
 
-    + Attributes (Problem, required)
+    + Attributes (Problem)
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
     
 + Response 400
 
@@ -475,7 +475,7 @@ Create a new planning problem, and find the best solutions of different variatio
 
 + Request (application/json)
 
-    + Attributes (Problem, required)
+    + Attributes (Problem)
   
 + Response 200 (application/json)
 
@@ -508,11 +508,11 @@ Replan with the modified version (provided in the payload) of an existing activi
 
 + Request (application/json)
 
-    + Attributes (GoalItem, required)
+    + Attributes (GoalItem)
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
     
 + Response 400
 
@@ -538,11 +538,11 @@ Replan with the new activity provided in the payload, and all activities in the 
 
 + Request (application/json)
 
-    + Attributes (GoalItem, required)
+    + Attributes (GoalItem)
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
     
 + Response 400
 
@@ -569,11 +569,11 @@ Replan with the new activities provided in the payload, and all activities in th
 
 + Request (application/json)
 
-    + Attributes (array[GoalItem], required)
+    + Attributes (array[GoalItem])
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
     
 + Response 400
 
@@ -599,11 +599,11 @@ Replan with the new timeframe provided in the payload, and all activities in the
 
 + Request (application/json)
 
-    + Attributes (Problem, required)
+    + Attributes (Problem)
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
     
 + Response 400
 
@@ -629,11 +629,11 @@ Replan with the new activities provided in the payload, and also insert saved pl
 
 + Request (application/json)
 
-    + Attributes (array[GoalItem], required)
+    + Attributes (array[GoalItem])
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
     
 + Response 400
 
@@ -659,11 +659,11 @@ Replan with the new activities provided in the payload, and also remove any inse
 
 + Request (application/json)
 
-    + Attributes (array[GoalItem], required)
+    + Attributes (array[GoalItem])
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
     
 + Response 400
 
@@ -689,11 +689,11 @@ Replan with new transportation options connecting the origin and destination. Cu
 
 + Request (application/json)
 
-    + Attributes (Problem, required)
+    + Attributes (Problem)
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
     
 + Response 400
 
@@ -720,7 +720,7 @@ Replan a previously generated solution and get an updated one.
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
     
 + Response 400
 
@@ -743,7 +743,7 @@ Evaluating the availability of activities in the provided solution.
 
 + Request (application/json)
 
-    + Attributes (Solution, required)
+    + Attributes (Solution)
   
 + Response 200 (application/json)
 
@@ -774,7 +774,7 @@ Getting alternative availability (on different timeslot) for the selected activi
 
 + Request (application/json)
 
-    + Attributes (Solution, required)
+    + Attributes (Solution)
   
 + Response 200 (application/json)
 
@@ -803,11 +803,11 @@ Find an updated plan that fix all the availability issues in the current solutio
 
 + Request (application/json)
 
-    + Attributes (Solution, required)
+    + Attributes (Solution)
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
 
 + Response 400
 
@@ -894,7 +894,7 @@ Restore a previous planning session by reloading a previously created problem id
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
 
 + Response 400
 
@@ -920,11 +920,11 @@ Restore a previous planning session by recreating the planning session and probl
 
 + Request (application/json)
 
-    + Attributes (Solution, required)
+    + Attributes (Solution)
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
 
 + Response 400
 
@@ -1195,7 +1195,7 @@ Find the next best solution for the current problem.
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
 
 + Response 400
 
@@ -1262,11 +1262,11 @@ Given the alternative activity for one in the existing solution, calculate a new
 
 + Request (application/json)
 
-    + Attributes (Activity, required)
+    + Attributes (Activity)
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
     
 + Response 400
 
@@ -1328,7 +1328,7 @@ Given the alternative timeslot for an activity, calculate a new plan.
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
     
 + Response 400
 
@@ -1354,7 +1354,7 @@ Given a set of Candidate POIs, calculate available timeslots for them that would
 
 + Request (application/json)
 
-    + Attributes (array[GoalItem], required)
+    + Attributes (array[GoalItem])
   
 + Response 200 (application/json)
 
@@ -1423,11 +1423,11 @@ Given the additional activity between the two specified ones, calculate a new pl
 
 + Request (application/json)
 
-    + Attributes (Activity, required)
+    + Attributes (Activity)
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
     
 + Response 400
 
@@ -1490,11 +1490,11 @@ Given the alternative transportation activity for one in the existing solution, 
 
 + Request (application/json)
 
-    + Attributes (Activity, required)
+    + Attributes (Activity)
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
     
 + Response 400
 
@@ -1570,7 +1570,7 @@ Get recommended POIs as well as a flag indicating if the inputs are sufficient f
 
 + Request (application/json)
 
-    + Attributes (Profile, optional)
+    + Attributes (Profile)
   
 + Response 200 (application/json)
 
@@ -1605,11 +1605,11 @@ Given an activity from the existing solution but with an updated schedule (start
 
 + Request (application/json)
 
-    + Attributes (Activity, required)
+    + Attributes (Activity)
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
     
 + Response 400
 
@@ -1639,7 +1639,7 @@ Remove the specified activity in the existing solution, and calculate a new plan
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
     
 + Response 400
 
@@ -1664,11 +1664,11 @@ Insert a new conflict of one temporal constraint and find the next best solution
 
 + Request (application/json)
 
-    + Attributes (Constraint, required)
+    + Attributes (Constraint)
   
 + Response 200 (application/json)
 
-    + Attributes (SolutionResponse, required)
+    + Attributes (SolutionResponse)
     
 + Response 400
 
@@ -1694,7 +1694,7 @@ Confirm the final activity selections by the customer.
 
 + Request (application/json)
 
-    + Attributes (ActivitySelection, required)
+    + Attributes (ActivitySelection)
         
 + Response 200 (application/json)
 
@@ -1804,7 +1804,7 @@ Updated the display for a solution.
 
 + Response 200 (application/json)
 
-        + Attributes (SolutionResponse, required)
+        + Attributes (SolutionResponse)
     
 + Response 400
 
@@ -1883,7 +1883,7 @@ Retrieve the planning problem profile.
 
 + Response 200 (application/json)
 
-    + Attributes (Profile, optional)
+    + Attributes (Profile)
     
 + Response 400
 
@@ -1903,7 +1903,7 @@ Update the planning problem profile for the user.
 
 + Request (application/json)
 
-    + Attributes (Profile, required)
+    + Attributes (Profile)
 
 + Response 200 (application/json)
 
@@ -1937,37 +1937,8 @@ Update the avatar in the planning problem profile for the user.
 
 + Response 200 (application/json)
 
-    + Attributes (Profile, required)
+    + Attributes (Profile)
     
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-        
-## Plan Profile Domain [/mobility-planner/demo/v2/profile/domain{?mode,context,category,parent}]
-
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode used for this profile domain.
-    + context (string, optional) - the context used for this profile domain.
-    + category (string, optional) - the category name (ACCOMMODATION, DINING, EXPERIENCE) for the profile domain.
-    + parent (string, optional) - the parent name for this profile domain.
-
-### GET
-
-Retrieve allowed profile options given the planning problem mode and context.
-
-+ Response 200 (application/json)
-
-    + Attributes
-        + domains (array[Preference], optional) - a list of preference options allowed for different categories of preferences.
-            
 + Response 400
 
         Bad Request.
@@ -2097,7 +2068,7 @@ Retrieve relevant survey category values given the requested category and previo
 
 + Request (application/json)
 
-    + Attributes (SurveySuggestionRequest, required)
+    + Attributes (SurveySuggestionRequest)
     
 + Response 200 (application/json)
 
@@ -2128,11 +2099,11 @@ Save survey response.
 
 + Request (application/json)
 
-    + Attributes (SurveyResponse, required)
+    + Attributes (SurveyResponse)
     
 + Response 200 (application/json)
 
-    + Attributes (SurveyResponse, required)
+    + Attributes (SurveyResponse)
             
 + Response 400
 
@@ -2152,34 +2123,8 @@ Retrieve previously saved survey responses.
     
 + Response 200 (application/json)
 
-    + Attributes (SurveyResponses, required)
+    + Attributes (SurveyResponses)
             
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-        
-## Plan POIs [/mobility-planner/demo/v2/domain{?mode,context}]
-
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode used for this domain.
-    + context (string, optional) - only return POIs in this domain that has the specified context.
-
-### GET
-
-Retrieve all possible POIs that can be added to the planning problem given the specified planning problem mode and context.
-
-+ Response 200 (application/json)
-
-    + Attributes (array[POIDomain], optional)
-
 + Response 400
 
         Bad Request.
@@ -2262,7 +2207,7 @@ Retrieve an example problem for this user.
 
 + Response 200 (application/json)
 
-    + Attributes (Problem, optional)
+    + Attributes (Problem)
     
 + Response 400
 
@@ -2431,7 +2376,7 @@ Retrieve the candidate item object matching the specified planning problem mode 
 
 + Request (application/json)
 
-    + Attributes (PreferenceDomainCandidates, required)
+    + Attributes (PreferenceDomainCandidates)
 
 + Response 200 (application/json)
 
@@ -2616,7 +2561,7 @@ Retrieve recommended destinations (contexts) given the selected tags in the prof
 
 + Request (application/json)
 
-    + Attributes (Problem, required)
+    + Attributes (Problem)
 
 + Response 200 (application/json)
 
@@ -2645,7 +2590,7 @@ Retrieve candidate destinations (contexts) given the selected destination in the
 
 + Request (application/json)
 
-    + Attributes (Problem, required)
+    + Attributes (Problem)
 
 + Response 200 (application/json)
 
@@ -2674,7 +2619,7 @@ Retrieve candidate destination (context) trips given the selected tags in the pr
 
 + Request (application/json)
 
-    + Attributes (Problem, required)
+    + Attributes (Problem)
 
 + Response 200 (application/json)
 
@@ -2707,7 +2652,7 @@ Retrieve candidate destination (context) trips given the trip destination/dates 
 
 + Request (application/json)
 
-    + Attributes (Problem, required)
+    + Attributes (Problem)
 
 + Response 200 (application/json)
 
@@ -2744,7 +2689,7 @@ Retrieve candidate destination (context) themes given the selected tags in the p
 
 + Request (application/json)
 
-    + Attributes (Problem, required)
+    + Attributes (Problem)
 
 + Response 200 (application/json)
 
@@ -2773,7 +2718,7 @@ Retrieve candidate destination (context) given the selected tags in the profile,
 
 + Request (application/json)
 
-    + Attributes (Problem, required)
+    + Attributes (Problem)
 
 + Response 200 (application/json)
 
@@ -2804,7 +2749,7 @@ Retrieve recommended POIs for the specified context given the selected tags in t
 
 + Request (application/json)
 
-    + Attributes (Problem, required)
+    + Attributes (Problem)
 
 + Response 200 (application/json)
 
@@ -2842,7 +2787,7 @@ Retrieve all POIs for the specified context given the destination.
 
 + Request (application/json)
 
-    + Attributes (Problem, required)
+    + Attributes (Problem)
 
 + Response 200 (application/json)
 
@@ -2891,7 +2836,7 @@ Retrieve recommended POIs, separated in themes, for the specified context given 
 
 + Request (application/json)
 
-    + Attributes (Problem, required)
+    + Attributes (Problem)
 
 + Response 200 (application/json)
 
@@ -2942,7 +2887,7 @@ Retrieve recommended POIs, separated in themes, for the specified context given 
 
 + Request (application/json)
 
-    + Attributes (Problem, required)
+    + Attributes (Problem)
 
 + Response 200 (application/json)
 
@@ -3138,7 +3083,7 @@ Add the user's response to a survey.
 
 + Request (application/json)
 
-    + Attributes (SurveyResponse, required)
+    + Attributes (SurveyResponse)
   
 + Response 200 (application/json)
 
@@ -3173,7 +3118,7 @@ Record that the user skipped a survey.
 
 + Request (application/json)
 
-    + Attributes (SurveyResponse, required)
+    + Attributes (SurveyResponse)
   
 + Response 200 (application/json)
 
@@ -3316,7 +3261,7 @@ Update the status of an activity in the user's plan. If the update makes the pla
 
 + Request (application/json)
 
-    + Attributes (ActivityStatusUpdates, required)
+    + Attributes (ActivityStatusUpdates)
 
 + Response 200 (application/json)
 
@@ -3385,7 +3330,7 @@ For an event, e,  in the user’s calendar, it will be returned if the following
 
 + Response 200 (application/json)
 
-    + Attributes (array[Activity], required)
+    + Attributes (array[Activity])
     
 + Response 400
 
@@ -3408,11 +3353,11 @@ Update the estimated start time, end time, or duration for events. A consistency
 
 + Request (application/json)
 
-    + Attributes (ActivityTimingUpdates, required)
+    + Attributes (ActivityTimingUpdates)
     
 + Response 200 (application/json)
 
-    + Attributes (array[Activity], required)
+    + Attributes (array[Activity])
     
 + Response 400
 
@@ -3435,11 +3380,11 @@ Update the actual start time or end time for events. A consistency check will be
 
 + Request (application/json)
 
-    + Attributes (ActivityTimingUpdates, required)
+    + Attributes (ActivityTimingUpdates)
     
 + Response 200 (application/json)
 
-    + Attributes (array[Activity], required)
+    + Attributes (array[Activity])
     
 + Response 400
 
@@ -3465,11 +3410,11 @@ Update the current state of the user and update the user's planning problem.
 
 + Request (application/json)
 
-    + Attributes (Location, required)
+    + Attributes (Location)
 
 + Response 200 (application/json)
 
-    + Attributes (Problem, required)
+    + Attributes (Problem)
     
 + Response 400
 
@@ -3493,7 +3438,7 @@ Get the current planning problem for the user.
 
 + Response 200 (application/json)
 
-    + Attributes (Problem, required)
+    + Attributes (Problem)
     
 + Response 400
 
@@ -3517,11 +3462,11 @@ Replan the current planning problem and get solution.
 
 + Request (application/json)
 
-    + Attributes (Location, required)
+    + Attributes (Location)
 
 + Response 200 (application/json)
 
-    + Attributes (Solution, required)
+    + Attributes (Solution)
     
 + Response 400
 
@@ -3547,7 +3492,7 @@ Computing a new schedule for an existing plan with activity updates. If the plan
 
     The new plan for the problem.
 
-    + Attributes (Solution, required)
+    + Attributes (Solution)
     
 + Response 400
 
@@ -3573,7 +3518,7 @@ Computing a new schedule for the plan by re-computing relaxations to the existin
 
     The new plan for the problem.
 
-    + Attributes (Solution, required)
+    + Attributes (Solution)
     
 + Response 400
 
@@ -3675,7 +3620,7 @@ This query will return the positions of vehicles operating on a transit route.
 
     An array of vehicle positions for the transit routes.
 
-    + Attributes (array[TransitVehicleLocation], required)
+    + Attributes (array[TransitVehicleLocation])
 
 + Response 400
 
@@ -3706,7 +3651,7 @@ This query will return a list of the nearest parking from a particular location.
 
     An array of parking locations found that meet the search requirements.
 
-    + Attributes (array[ParkingLocation], required)
+    + Attributes (array[ParkingLocation])
 
 + Response 400
 
@@ -3740,7 +3685,7 @@ This query will return a list of the nearest carshare locations from a particula
 
     An array of carshare locations found that meet the search requirements.
 
-    + Attributes (array[CarShareLocation], required)
+    + Attributes (array[CarShareLocation])
 
 + Response 400
 
@@ -3773,7 +3718,7 @@ This query will return a list of carshare vehicles.
 
     An array of carshare vehicles at the location.
     
-    + Attributes (array[CarShareVehicle], optional)
+    + Attributes (array[CarShareVehicle])
 
 + Response 400
 
@@ -3807,7 +3752,7 @@ This query will return a list of the nearest bikeshare locations from a particul
 
     An array of bikeshare stations found that meet the search requirements.
 
-    + Attributes (array[BikeShareStation], required)
+    + Attributes (array[BikeShareStation])
 
 + Response 400
 
@@ -3839,7 +3784,7 @@ This query will return a list of the nearest bikeshare locations from a particul
 
     An array of rideshare service ETAs.
 
-    + Attributes (array[RideShareETA], required)
+    + Attributes (array[RideShareETA])
 
 + Response 400
 
@@ -3872,7 +3817,7 @@ This query will return a list of the nearest bikeshare locations from a particul
 
     An array of rideshare service estimates for the given location pairs.
 
-    + Attributes (array[RideShareEstimate], required)
+    + Attributes (array[RideShareEstimate])
 
 + Response 400
 
@@ -3901,7 +3846,7 @@ This query will return a list of the nearest bikeshare locations from a particul
 + Response 200 (application/json)
 
     + Attributes 
-        - profile (Profile, required)
+        + profile (Profile, required)
             
 + Response 400
 
@@ -3924,7 +3869,7 @@ This query will return a list of the nearest bikeshare locations from a particul
 
 + Response 200 (application/json)
 
-    + Attributes (Profile, required)
+    + Attributes (Profile)
             
 + Response 400
 
@@ -4112,7 +4057,7 @@ This query will return a list of the nearest bikeshare locations from a particul
  
 + Response 200 (application/json)
 
-    + Attributes (ProfileSurveyResponse, required)
+    + Attributes (ProfileSurveyResponse)
 
 + Response 400
 
@@ -4180,7 +4125,7 @@ This query will return a list of the nearest bikeshare locations from a particul
 
 + Request (application/json)
 
-    + Attributes (SurveyResponse, required)
+    + Attributes (SurveyResponse)
   
 + Response 200 (application/json)
 
@@ -4861,7 +4806,7 @@ This query will return a list of the nearest bikeshare locations from a particul
 
 + Request (application/json)
 
-    + Attributes (UserSessionData, required)
+    + Attributes (UserSessionData)
 
 + Response 200 (application/json)
 

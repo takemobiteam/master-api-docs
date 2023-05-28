@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "@funboxteam/blueprinter": "^5.4.2"
+  },
+  "scripts": {
+    "dev": "blueprinter -i apiary.apib -s -p 3000",
+    "doc": "blueprinter -i apiary.apib -o docs/index.html"
+  }
+}
