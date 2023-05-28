@@ -33,8 +33,7 @@ jobs:
         uses: actions/checkout@v3
       - name: Get aglio and build index page
         uses: actions/setup-node@v3
-      - run: npm install -g aglio
-      - run: aglio -i apiary.apib --theme-template triple -o docs/index.html
+      - run: npm run doc
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
