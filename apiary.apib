@@ -976,6 +976,39 @@ Save a user session data (problem and solution). Planner will also attempt to lo
 + Response 500
 
         Internal Server Error.
+
+
+## Save User Configuration [/mobility-planner/demo/v2/session/config{?user_id,trip_id,context_id,activity_category,collection_config_id,included,config_selection_id}]
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + trip_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the trip.
+    + context_id: `Boston_Massachusetts` (string, required) - a unique identifier for the destination/context inside the trip.
+    + activity_category: `ACCOMMODATION` (string, required) - an enum for the categories of activities this config applies to.
+    + collection_config_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the collection this config applies to.
+    + included: `false` (boolean, required) - a flag indicating if this categories of activities or the collection should be turned on or off in the itinerary.
+    + config_selection_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the configuration selection.
+
+### PUT
+
+Save a configuration for the user's trip.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + `sessions` (array[UserSessionData], required) - the saved trip object.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
      
      
 ## Get User Sessions [/mobility-planner/demo/v2/session{?user_id,session_id,trip_id,include_auto_saved,include_user_saved}]
@@ -994,7 +1027,7 @@ Retrieve the set of user session data created by the user earlier.
 + Response 200 (application/json)
 
     + Attributes
-        + `sessions` (array[UserSessionData], required) - the problem object.
+        + `sessions` (array[UserSessionData], required) - the saved trip object.
 
 + Response 400
 
@@ -1053,6 +1086,34 @@ Delete the previously saved trip, identified by the trip_id.
 
     + Attributes
         + `success`: true (boolean, required) - a boolean flag indicating if the deletion operation is successful.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Replan Saved Trip [/mobility-planner/demo/v2/session/replan{?user_id,trip_id}]
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + trip_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the trip.
+
+### GET
+
+Replan a saved trip for the user.
+
++ Response 200 (application/json)
+
+    + Attributes
+        + `sessions` (array[UserSessionData], required) - the updated saved trip object.
 
 + Response 400
 
