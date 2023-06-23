@@ -5519,12 +5519,59 @@ Saves context to a collection. If the user is in a context where a collection is
     
 ### PlannerConfig
 + `ground_transportation` (GroundTransportationConfig, optional) - the category of configurations for ground transportation decisions.
++ `trip_pace` (TripPace, optional) - the configuration for the pace of the trip.
++ `trip_meal_config` (TripMealConfig, optional) - the configuration for the meals in this trip.
++ `trip_mobility_config` (TripTransitConfig, optional) - the configuration for mobility options in this trip.
++ `trip_anatomy_configs` (array[TripAnatomyConfig], optional) - the day by day configurations for the trip.
++ `trip_collection_config` (TripCollectionConfig, optional) - the configuration for the different collections to be included in the trip.
++ `trip_budget_config` (TripBudgetConfig, optional) - the configuration for the budget of this trip.
 
 ### GroundTransportationConfig
 + `pre_flight_buffer_time` (number, optional) - an integer describing the buffer time (in seconds) that should be allocated after dropoff at the airport and before a flight.
 + `post_flight_buffer_time` (number, optional) - an integer describing the buffer time (in seconds) that should be allocated before pickup at the airport and after a flight.
 + `pre_train_buffer_time` (number, optional) - an integer describing the buffer time (in seconds) that should be allocated after dropoff at the rail station and before a train.
 + `post_train_buffer_time` (number, optional) - an integer describing the buffer time (in seconds) that should be allocated before pickup at the rail station and after a train.
+
+
+### TripMealConfig
++ `include_breakfast` (boolean, optional) - a boolean flag indicating if breakfast should be included in the plan.
++ `include_lunch` (boolean, optional) - a boolean flag indicating if lunch should be included in the plan.
++ `include_dinner` (boolean, optional) - a boolean flag indicating if dinner should be included in the plan.
++ `breakfast_time_window` (array[number], optional) - specifies the time of day range (in seconds) when planner can add breakfast activities.
++ `lunch_time_window` (array[number], optional) - specifies the time of day range (in seconds) when planner can add lunch activities.
++ `dinner_time_window` (array[number], optional) - specifies the time of day range (in seconds) when planner can add dinner activities.
++ `eatin_dineout_mixture`: 0.3 (number, optional) - a float number between 0 and 1 indicating the mix between eatin (smaller value) and dineout (larger value).
+
+
+### TripMobilityConfig
++ `allow_walking` (boolean, optional) - a boolean flag indicating if walking mode should be allowed in the plan.
++ `allow_transit` (boolean, optional) - a boolean flag indicating if public transit mode should be allowed in the plan.
++ `allow_driving` (boolean, optional) - a boolean flag indicating if driving mode should be allowed in the plan.
++ `max_walking_time_per_day`: 3600 (number, optional) - an integer number in seconds indicating max time allowed for walking during a day in the trip.
++ `max_transit_time_per_day`: 3600 (number, optional) - an integer number in seconds indicating max time allowed for public transit during a day in the trip.
++ `max_driving_time_per_day`: 3600 (number, optional) - an integer number in seconds indicating max time allowed for driving during a day in the trip.
++ `max_mobility_time_per_day`: 3600 (number, optional) - an integer number in seconds indicating max time allowed for all mobility activities during a day in the trip.
++ `allowed_modes` (array[string], optional) - a list of allowed mobility modes in the trip. Allowed values are DRIVE, BIKE, WALK, TRANSIT, TAXI
+
+
+### TripAnatomyConfig
++ `date` (string, optional) - the date in yyyy-MM-dd format.
++ `theme` (string, optional) - the theme for the day
+
+
+### TripCollectionConfig
++ `included_collections` (array[string], optional) - the list of collection Ids to be included in creating the trip.
++ `num_of_reviews` (array[number], optional) - specifies the number of reviews range (in seconds) when planner can recommend activities.
++ `star_rating_stays` (array[number], optional) - specifies the star rating range (in seconds) when planner recommend stay activities.
++ `star_rating_dining` (array[number], optional) - specifies the star rating range (in seconds) when planner recommend dining activities.
++ `star_rating_places` (array[number], optional) - specifies the star rating range (in seconds) when planner recommend places for activities.
+
+
+### TripBudgetConfig
++ `price_tolerance` (number, optional) - a float number from 0 to 1 indicating the price tolerance level for the trip (higher means less sensitive to price).
++ `stay_budget_per_day` (array[number], optional) - specifies the budget range (in seconds) for planner on stay options.
++ `experience_budget_per_day` (array[number], optional) - specifies the budget range (in seconds) for planner on experience activity options.
++ `dining_budget_per_day` (array[number], optional) - specifies the budget range (in seconds) for planner on dining options.
 
 
 ### PoiSuggestionElement
@@ -5852,6 +5899,16 @@ Saves context to a collection. If the user is in a context where a collection is
 + `activity_duration_multiplier`: `1.0` (number, optional) - specifies the multiplier to apply to the duration of activities.
 + `maximum_activities_per_day`: `3` (number, optional) - specifies the maximum number of experience activities in each day of the trip.
 + `minimum_break_between_activities`: `3600` (number, optional) - specifies the minimum break time (in seconds) between any experience activities in the trip.
++ `activity_time_window` (array[number], optional) - specifies the time of day range (in seconds) on when planner can add activities to the trip.
++ `activity_time_total` (array[number], optional) - specifies the total amount of time (in seconds) for activities that planner can add for one day.
++ `activity_buffer_time` (array[number], optional) - specifies the buffer time (in seconds) between activities when planner add them.
++ `breakfast_time_window` (array[number], optional) - specifies the time of day range (in seconds) when planner can add breakfast activities.
++ `lunch_time_window` (array[number], optional) - specifies the time of day range (in seconds) when planner can add lunch activities.
++ `dinner_time_window` (array[number], optional) - specifies the time of day range (in seconds) when planner can add dinner activities.
++ `idle_time` (array[number], optional) - specifies the amount of time range (in seconds) that planner should leave as idle time.
++ `light_activity_time` (array[number], optional) - specifies the amount of time range (in seconds) that planner should plan for light activities, such as walking or visiting museums.
++ `intensive_activity_time` (array[number], optional) - specifies the amount of time range (in seconds) that planner could plan intensive activities like hiking.
+
 
 ### ContextTripCandidate
 + `context` (CandidateItem, required) - the destination of the trip.
