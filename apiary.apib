@@ -1009,6 +1009,38 @@ Save a configuration for the user's trip.
 + Response 500
 
         Internal Server Error.
+
+
+## Save Planner Configuration [/mobility-planner/demo/v2/session/planner-config{?user_id,session_id}]
+
++ Parameters
+    + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
+    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the session.
+
+### POST
+
+Save a planner configuration for the user's trip.
+
++ Request (application/json)
+
+    + Attributes (PlannerConfig)
+
++ Response 200 (application/json)
+
+    + Attributes
+        + `sessions` (array[UserSessionData], required) - the saved trip object.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
      
      
 ## Get User Sessions [/mobility-planner/demo/v2/session{?user_id,session_id,trip_id,include_auto_saved,include_user_saved}]
