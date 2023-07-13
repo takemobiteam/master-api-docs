@@ -3130,6 +3130,64 @@ Return the textual response as well as suggested itinerary planning inputs for t
 + Response 500
 
         Internal Server Error.
+
+
+
+## Save Call Center Agent Notes [/mobility-planner/demo/v2/agent/notes]
+
+
+### POST
+
+Save the call center agent notes.
+
++ Request (application/json)
+
+    + Attributes (AgentNotes)
+
++ Response 200 (application/json)
+    
+    + Attributes 
+        + `notes` (AgentNotes, optional) - the saved agent notes object.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+
+## Get All Call Center Agent Notes For Users [/mobility-planner/demo/v2/agent/notes{?user_id}]
+
++ Parameters
+    + user_id: `asdf12349da` (string, required) - the id for the current user.
+
+### GET
+
+Get all call center agent notes saved for the user.
+
++ Response 200 (application/json)
+    
+    + Attributes 
+        + `results` (array[AgentNotes], optional) - the saved agent notes object.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
         
         
 # Group Insights
@@ -6800,3 +6858,11 @@ the direction towards the next stop or intermediate location.
 + `matched`: 3 (number, optional) - number of matched POIs.
 + `recommended`: 4 (number, optional) - number of recommended POIs.
 + `booked`: 5 (number, optional) - number of booked POIs.
+
+### AgentNotes
++ `id`: `123123-3215213fsac--weqrwqer` (string, required) - the id of the notes object.
++ `user_id`: `User1234` (string, required) - the id of the user.
++ `agent_id`: `Agent12345` (string, required) - the id of the call center agent.
++ `trip_id`: `1213ewqrwrqwr2323` (string, optional) - the id of the trip.
++ `content`: `Looking for hotels in Boston` (string, optional) - notes content.
++ `last_updated`: 51239834989 (number, optional) - UNIX timestamp in seconds that indicate the last updated time for this notes object.
