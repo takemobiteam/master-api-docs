@@ -939,11 +939,12 @@ Restore a previous planning session by recreating the planning session and probl
         Internal Server Error.
         
 
-## Save User Session [/mobility-planner/demo/v2/session{?user_id,session_id,auto_saved}]
+## Save User Session [/mobility-planner/demo/v2/session{?user_id,session_id,trip_id,auto_saved}]
 
 + Parameters
     + user_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user.
-    + session_id: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the session.
+    + session_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the session.
+    + trip_id: `3323-4432-5456345743-f343245346` (string, optional) - a unique identifier for the trip.
     + auto_saved: `false` (boolean, optional) - a boolean indicator: if true then the session is saved automatically by the client, if false then the save must have been triggered by the end user.
 
 ### POST
