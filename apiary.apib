@@ -3131,6 +3131,60 @@ Return the textual response as well as suggested itinerary planning inputs for t
 + Response 500
 
         Internal Server Error.
+        
+
+## Filter Recommendation through Chat [/mobility-planner/demo/v2/dialog/response{?mode,context}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + context: `New York_USA` (string, optional) - the name of the context.
+
+### POST
+
+Return the filter recommendations relevant for the users' journeys.
+
++ Request (application/json)
+
+    + Attributes
+        + input: `I want to go to a warm place with my family` (string, required) - string input from the user.
+
++ Response 200 (application/json)
+    
+    + Attributes 
+        + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a textual response for the request.
+        + response: `Here is a trip that may work for you` (string, required) - a textual response for the request.
+        + `traveler_information` (TravelerInformation, optional) - detected traveler information from the input.
+        + problem (Problem, optional) - the planning problem object parsed from the chat input.
+        + selected_filters (array[PreferenceDomainCandidate], required) - a list of must have trip preferences.
+        + `recommended_filters` (array[PreferenceDomainCandidate], required) - a list of recommended trip preferences.
+        + `not_recommended_filters` (array[PreferenceDomainCandidate], required) - a list of not recommended trip preferences.
+        + excluded_filters (array[PreferenceDomainCandidate], required) - a list of must avoid trip preferences.
+        + `trip_start_time`: `1513725841` (number, required) - in UNIX timestamp, the detected trip start time.
+        + `trip_end_time`: `1513725841` (number, required) - in UNIX timestamp, the detected trip end time.
+        + origin (OriginDestinationItem, optional) - parsed origin of the trip.
+        + destination (OriginDestinationItem, optional) - parsed destination of the trip.
+        + trip_contexts (array[CandidateItem], optional) - parsed contexts for the trip.
+        + pois (array[CandidateItemAbstract], optional) - parsed desired POIs for trip.
+        + activities (array[GoalItem], optional) - parsed desired activities for trip.
+        + budget (Budget, optional) - parsed budget information.
+        + intention (ChatIntention, optional) - parsed intention of the users.
+        + history (array[ChatEntry], optional) - history of the chat.
+        + show_destinations: `true` (boolean, required) - a boolean flag indicating if we have enough information for destination recommendation.
+        + show_sample_trips: `false` (boolean, required) - a boolean flag indicating if we have enough information for sample trip recommendation.
+        + raw_data (array[ChatRawData], required) - a boolean flag indicating if the query was processed successfully.
+        + success: `true` (boolean, required) - a boolean flag indicating if the query was processed successfully.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
 
 
 
