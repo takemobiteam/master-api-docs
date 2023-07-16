@@ -617,6 +617,67 @@ Replan with the new timeframe provided in the payload, and all activities in the
 
         Internal Server Error.
 
+
+## Replan With New Travelers [/mobility-planner/demo/v2/problem/new-travelers{?session_id}]
+
+Replan with the new travel information provided in the payload, and all activities in the original problem. Only the `.traveler_information` field in the payload will be considered.
+
++ Parameters
+    + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (Problem)
+  
++ Response 200 (application/json)
+
+    + Attributes (SolutionResponse)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Replan With New Preferences [/mobility-planner/demo/v2/problem/new-preferences{?session_id}]
+
+Replan with the new profile preferences provided in the payload, and all activities in the original problem. Only the `.profile` field in the payload will be considered.
+
++ Parameters
+    + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the user session.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (Problem)
+  
++ Response 200 (application/json)
+
+    + Attributes (SolutionResponse)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
 ## Replan With New Recommendations [/mobility-planner/demo/v2/problem/new-recommendations{?session_id,time_windows}]
 
 Replan with the new activities provided in the payload, and also insert saved places provided in previous iterations to the time windows provided (optional).
