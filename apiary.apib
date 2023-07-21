@@ -3061,7 +3061,36 @@ Retrieve recommended POIs, separated in themes, for the specified context given 
 
         Internal Server Error.
         
+
+## Get Alternative POIs for Destination [/mobility-planner/demo/v2/problem/alternative-recommendations{?poi_id,mode,context}]
+
++ Parameters
+    + `poi_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the POI.
+    + `mode` (ProblemMode, required) - the problem mode.
+    + `context`: `Singapore` (string, required) - the selected context for recommended POIs.
+
+### GET
+
+Retrieve recommended alternative POIs for the one provided.
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + results (array[CandidateItem], required) - a list of alternative POIs.
+
++ Response 400
+
+        Bad Request.
         
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
 ## POI Organization [/mobility-planner/demo/v2/problem/poi-organization{?organization,category,trip_id,user_id}]
 
 + Parameters
