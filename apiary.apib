@@ -2075,6 +2075,40 @@ Update the planning problem profile for the user.
 + Response 500
 
         Internal Server Error.
+
+
+
+        
+## Plan Profile [/mobility-planner/demo/v2/profile/collection{?mode}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for filtering preference options in the profile.
+
+### POST
+
+Retrieve a collection of user profiles.
+
++ Request (application/json)
+
+    + Attributes
+        + user_ids (array[string]) - a collection of user ids.
+
++ Response 200 (application/json)
+
+        The profile has been updated.
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
         
 ## Plan Profile Avatar [/mobility-planner/demo/v2/profile/avatar{?user_id}]
 
@@ -3321,6 +3355,35 @@ Get all call center agent notes saved for the user.
     
     + Attributes 
         + `results` (array[AgentNotes], optional) - the saved agent notes object.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+
+## Delete a Call Center Agent Notes For Users [/mobility-planner/demo/v2/agent/notes{?user_id,notes_id}]
+
++ Parameters
+    + user_id: `asdf12349da` (string, required) - the id for the current user.
+    + notes_id: `asdf12349da` (string, required) - the id for the note object.
+
+### DELETE
+
+Delete the call center agent notes identified by the notes_id.
+
++ Response 200 (application/json)
+    
+    + Attributes 
+        + `success`: true (boolean, optional) - indicate if the deletion operation is successful.
 
 + Response 400
 
