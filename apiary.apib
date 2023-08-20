@@ -6192,6 +6192,7 @@ Saves context to a collection. If the user is in a context where a collection is
 
 ### TripRecommendation
 + `included`: `false` (boolean, required) - specifies if recommended activities could be included in the itinerary.
++ `trip_notes` (array[TripNote]) - specifies a set of day by day notes about the trip.
 
 ### TripPace
 + `activity_duration_multiplier`: `1.0` (number, optional) - specifies the multiplier to apply to the duration of activities.
@@ -6207,6 +6208,9 @@ Saves context to a collection. If the user is in a context where a collection is
 + `light_activity_time` (array[number], optional) - specifies the amount of time range (in seconds) that planner should plan for light activities, such as walking or visiting museums.
 + `intensive_activity_time` (array[number], optional) - specifies the amount of time range (in seconds) that planner could plan intensive activities like hiking.
 
+### TripNote
++ `date`: `2023-07-11` (string, required) - specifies the referenced date of the trip note, in YYYY-MM-dd.
++ `content`: `a relaxing day on the beach` (string, required) - specifies the content of the trip note.
 
 ### ContextTripCandidate
 + `context` (CandidateItem, required) - the destination of the trip.
