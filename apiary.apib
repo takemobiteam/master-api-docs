@@ -2488,6 +2488,236 @@ Get suggestions for alternative POIs to a specified POI (throught the poi_id in 
 
         Internal Server Error.
 
+
+
+# Group Chat Interaction
+
+## Natural Language to Trip Requests [/mobility-planner/demo/v2/dialog/response{?mode,session_id}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + session_id: `Six Flags New England` (string, optional) - the UUID for the current session.
+
+### POST
+
+Return the textual response as well as suggested itinerary planning requests for the users' journeys.
+
++ Request (application/json)
+
+    + Attributes
+        + input: `I want to go to a warm place with my family` (string, required) - string input from the user.
+
++ Response 200 (application/json)
+    
+    + Attributes (ChatResponse)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+        
+
+## Natural Language to Filter Recommendations [/mobility-planner/demo/v2/dialog/filter-recommendation/response{?mode,context}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + context: `New York_USA` (string, optional) - the name of the context.
+
+### POST
+
+Return the filter recommendations relevant for the users' journeys.
+
++ Request (application/json)
+
+    + Attributes
+        + input: `I want to go to a warm place with my family` (string, required) - string input from the user.
+
++ Response 200 (application/json)
+    
+    + Attributes (ChatResponse)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## ChatGPT Plugin - Get Itinerary [/mobility-planner/demo/v2/problem/chatgpt]
+
+### POST
+
+Return the preferred plan for the given the itinerary request.
+
++ Request (application/json)
+
+    + Attributes (ChatPlanningRequest)
+
++ Response 200 (application/json)
+    
+    + Attributes (ChatPlanningResponse)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## ChatGPT Plugin - Get Itinerary Details [/mobility-planner/demo/v2/problem/chatgpt/itinerary]
+
+### POST
+
+Return the details of the itinerary on a specific day.
+
++ Request (application/json)
+
+    + Attributes (ChatItineraryDetailRequest)
+
++ Response 200 (application/json)
+    
+    + Attributes (ChatPlanningResponse)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## ChatGPT Plugin - Get Itinerary Details [/mobility-planner/demo/v2/problem/chatgpt/recommendation]
+
+### POST
+
+Return additional recommendations for the trip.
+
++ Request (application/json)
+
+    + Attributes (ChatRecommendationRequest)
+
++ Response 200 (application/json)
+    
+    + Attributes (ChatRecommendationResponse)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## ChatGPT Plugin - Add Activity [/mobility-planner/demo/v2/problem/chatgpt/additional-activity]
+
+### POST
+
+Add the provided activity to the itinerary.
+
++ Request (application/json)
+
+    + Attributes (ChatAddActivityRequest)
+
++ Response 200 (application/json)
+    
+    + Attributes (ChatPlanningResponse)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## ChatGPT Plugin - Select Alternative Activity [/mobility-planner/demo/v2/problem/chatgpt/selected-activity]
+
+### POST
+
+Update the itinerary with the selected alternative activity.
+
++ Request (application/json)
+
+    + Attributes (ChatSelectActivityRequest)
+
++ Response 200 (application/json)
+    
+    + Attributes (ChatPlanningResponse)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## ChatGPT Plugin - Remove Activity [/mobility-planner/demo/v2/problem/chatgpt/removed-activity]
+
+### POST
+
+Remove the provided activity from the itinerary.
+
++ Request (application/json)
+
+    + Attributes (ChatRemoveActivityRequest)
+
++ Response 200 (application/json)
+    
+    + Attributes (ChatPlanningResponse)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
 # Group Bluesky
 
 ## Get All Supported Tags - Also Known as Plan Profile Domain [/mobility-planner/demo/v2/profile/domain{?mode,context,parent}]
@@ -3201,115 +3431,6 @@ Retrieve organized POIs
 + Response 500
 
         Internal Server Error.
-        
-
-## Chat Interaction [/mobility-planner/demo/v2/dialog/response{?mode,session_id}]
-
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
-    + session_id: `Six Flags New England` (string, optional) - the UUID for the current session.
-
-### POST
-
-Return the textual response as well as suggested itinerary planning inputs for the users' journeys.
-
-+ Request (application/json)
-
-    + Attributes
-        + input: `I want to go to a warm place with my family` (string, required) - string input from the user.
-
-+ Response 200 (application/json)
-    
-    + Attributes 
-        + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a textual response for the request.
-        + response: `Here is a trip that may work for you` (string, required) - a textual response for the request.
-        + `traveler_information` (TravelerInformation, optional) - detected traveler information from the input.
-        + problem (Problem, optional) - the planning problem object parsed from the chat input.
-        + selected_filters (array[PreferenceDomainCandidate], required) - a list of must have trip preferences.
-        + `recommended_filters` (array[PreferenceDomainCandidate], required) - a list of recommended trip preferences.
-        + `not_recommended_filters` (array[PreferenceDomainCandidate], required) - a list of not recommended trip preferences.
-        + excluded_filters (array[PreferenceDomainCandidate], required) - a list of must avoid trip preferences.
-        + `trip_start_time`: `1513725841` (number, required) - in UNIX timestamp, the detected trip start time.
-        + `trip_end_time`: `1513725841` (number, required) - in UNIX timestamp, the detected trip end time.
-        + origin (OriginDestinationItem, optional) - parsed origin of the trip.
-        + destination (OriginDestinationItem, optional) - parsed destination of the trip.
-        + trip_contexts (array[CandidateItem], optional) - parsed contexts for the trip.
-        + pois (array[CandidateItemAbstract], optional) - parsed desired POIs for trip.
-        + activities (array[GoalItem], optional) - parsed desired activities for trip.
-        + budget (Budget, optional) - parsed budget information.
-        + intention (ChatIntention, optional) - parsed intention of the users.
-        + history (array[ChatEntry], optional) - history of the chat.
-        + show_destinations: `true` (boolean, required) - a boolean flag indicating if we have enough information for destination recommendation.
-        + show_sample_trips: `false` (boolean, required) - a boolean flag indicating if we have enough information for sample trip recommendation.
-        + raw_data (array[ChatRawData], required) - a boolean flag indicating if the query was processed successfully.
-        + success: `true` (boolean, required) - a boolean flag indicating if the query was processed successfully.
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-        
-
-## Filter Recommendation through Chat [/mobility-planner/demo/v2/dialog/response{?mode,context}]
-
-+ Parameters
-    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
-    + context: `New York_USA` (string, optional) - the name of the context.
-
-### POST
-
-Return the filter recommendations relevant for the users' journeys.
-
-+ Request (application/json)
-
-    + Attributes
-        + input: `I want to go to a warm place with my family` (string, required) - string input from the user.
-
-+ Response 200 (application/json)
-    
-    + Attributes 
-        + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a textual response for the request.
-        + response: `Here is a trip that may work for you` (string, required) - a textual response for the request.
-        + `traveler_information` (TravelerInformation, optional) - detected traveler information from the input.
-        + problem (Problem, optional) - the planning problem object parsed from the chat input.
-        + selected_filters (array[PreferenceDomainCandidate], required) - a list of must have trip preferences.
-        + `recommended_filters` (array[PreferenceDomainCandidate], required) - a list of recommended trip preferences.
-        + `not_recommended_filters` (array[PreferenceDomainCandidate], required) - a list of not recommended trip preferences.
-        + excluded_filters (array[PreferenceDomainCandidate], required) - a list of must avoid trip preferences.
-        + `trip_start_time`: `1513725841` (number, required) - in UNIX timestamp, the detected trip start time.
-        + `trip_end_time`: `1513725841` (number, required) - in UNIX timestamp, the detected trip end time.
-        + origin (OriginDestinationItem, optional) - parsed origin of the trip.
-        + destination (OriginDestinationItem, optional) - parsed destination of the trip.
-        + trip_contexts (array[CandidateItem], optional) - parsed contexts for the trip.
-        + pois (array[CandidateItemAbstract], optional) - parsed desired POIs for trip.
-        + activities (array[GoalItem], optional) - parsed desired activities for trip.
-        + budget (Budget, optional) - parsed budget information.
-        + intention (ChatIntention, optional) - parsed intention of the users.
-        + history (array[ChatEntry], optional) - history of the chat.
-        + show_destinations: `true` (boolean, required) - a boolean flag indicating if we have enough information for destination recommendation.
-        + show_sample_trips: `false` (boolean, required) - a boolean flag indicating if we have enough information for sample trip recommendation.
-        + raw_data (array[ChatRawData], required) - a boolean flag indicating if the query was processed successfully.
-        + success: `true` (boolean, required) - a boolean flag indicating if the query was processed successfully.
-
-+ Response 400
-
-        Bad Request.
-        
-+ Response 401
-
-        Unauthorized.
-        
-+ Response 500
-
-        Internal Server Error.
-
 
 
 ## Save Call Center Agent Notes [/mobility-planner/demo/v2/agent/notes]
@@ -6366,6 +6487,109 @@ Saves context to a collection. If the user is in a context where a collection is
     + Members
         + LB
         + UB
+
+### ChatResponse
++ `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the session.
++ response: `Here is a trip that may work for you` (string, required) - a textual response for the request.
++ problem (Problem, optional) - the planning problem object parsed from the chat input.
++ `traveler_information` (TravelerInformation, optional) - detected traveler information from the input.
++ selected_filters (array[PreferenceDomainCandidate], required) - a list of must have trip preferences.
++ `recommended_filters` (array[PreferenceDomainCandidate], required) - a list of recommended trip preferences.
++ `not_recommended_filters` (array[PreferenceDomainCandidate], required) - a list of not recommended trip preferences.
++ excluded_filters (array[PreferenceDomainCandidate], required) - a list of must avoid trip preferences.
++ `trip_start_time`: `1513725841` (number, required) - in UNIX timestamp, the detected trip start time.
++ `trip_start_date`: `2023-07-15` (string, required) - in YYYY-MM-dd, the detected trip start date.
++ `trip_end_time`: `1513725841` (number, required) - in UNIX timestamp, the detected trip end time.
++ `trip_end_date`: `2023-07-15` (string, required) - in YYYY-MM-dd, the detected trip end date.
++ origin (OriginDestinationItem, optional) - parsed origin of the trip.
++ destination (OriginDestinationItem, optional) - parsed destination of the trip.
++ trip_contexts (array[CandidateItem], optional) - parsed contexts for the trip.
++ pois (array[CandidateItemAbstract], optional) - parsed desired POIs for trip.
++ activities (array[GoalItem], optional) - parsed desired activities for trip.
++ budget (Budget, optional) - parsed budget information.
++ intention (ChatIntention, optional) - parsed intention of the users.
++ history (array[ChatEntry], optional) - history of the chat.
++ show_destinations: `true` (boolean, required) - a boolean flag indicating if we have enough information for destination recommendation.
++ show_sample_trips: `false` (boolean, required) - a boolean flag indicating if we have enough information for sample trip recommendation.
++ success: `true` (boolean, required) - a boolean flag indicating if the query was processed successfully.
++ raw_data (array[ChatRawData], required) - a boolean flag indicating if the query was processed successfully.
+
+### ChatPlanningRequest
++ `trip_start_datetime`: `2017-07-21` (string, required) - The start date of the trip. For example, 2017-07-21.
++ `trip_end_datetime`: `2017-07-21` (string, required) - The end date of the trip. For example, 2017-07-21.
++ `origin_name`: `Boston, MA` (string, required) - The name of the origin of the trip.
++ `origin_lat`: `48.15` (string, required) - The latitude of the origin location of the trip.
++ `origin_lng`: `-122.14` (string, required) - The longitude of the origin location of the trip.
++ `destination_name`: `Boston, MA` (string, required) - The name of the destination of the trip.
++ `destination_lat`: `48.15` (string, required) - The latitude of the destination location of the trip.
++ `destination_lng`: `-122.14` (string, required) - The longitude of the destination location of the trip.
++ `selected_accommodation_option_names` (array[string], optional) - An array of the names of accommodation options that should be included in the planned itienrary.
++ `selected_dining_option_names` (array[string], optional) -An array of the names of dining options and restaurants that should be included in the planned itienrary.
++ `selected_activity_option_names` (array[string], optional) - An array of the names of attractions, experiences and activities that should be included in the planned itienrary.
++ `num_adults`: `1` (number, required) - The number of people (age 16 to 64) in this trip.
++ `num_seniors`: `0` (number, required) - The number of people (age 65 and up) in this trip.
++ `num_children`: `0` (number, required) - The number of people between age 2 to 15 in this trip.
++ `children_ages` (array[string], optional) - A list of ages for the children in the trip.
++ `num_infants_on_seat`: `0` (number, required) - The number of infants whose age is 2 or below in this trip and will occupy a seat.
++ `num_infants_in_lap`: `0` (number, required) - The number of infants whose age is 2 or below in this trip and will not occupy a seat.
++ `num_rooms`: `0` (number, required) - The number of hotel rooms required for this trip.
++ `selected_accommodation_tags` (array[string], optional) - A list of accommodation related tags that describe the desired accommodation options in the trip.
++ `selected_activity_tags` (array[string], optional) - A list of activity related tags that describe the desired activities to plan for the trip.
++ `selected_dining_tags` (array[string], optional) - A list of food and dining related tags that describe the desired dining options to plan for the trip.
++ `selected_flight_tags` (array[string], optional) - A list of flight related tags that describe the desired flight options in the trip.
+
+
+### ChatPlanningResponse
++ `session_id`: `3323-4432-5456345743-f343245346` (string, required) - A unique identifier for the current itinerary planning session.
++ `activities` (array[Activity], required) - The planned activities in the itinerary.
++ `price` (Price, required) - The price of the planned itinerary.
++ `url`: `https://proxy.takemobi.io/session/1234567890` (string, required) - The url to a webpage in which users can visualize and further customize the itinerary.
+
+
+### ChatItineraryDetailRequest
++ `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the session.
++ `date`: `2023-07-15` (string, optional) - The selected date to show details in the trip.
+
+### ChatRecommendationRequest
++ `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the session.
++ `category`: `ACCOMMODATION` (string, required) - an enum for the category of recommendations requested. Supported values are ACCOMMODATION, DINING, FLIGHT and EXPERIENCE.
++ `sort_type`: `best_match` (string, required) - The sort order of the recommendations in the response. Default is best_match for the options that best match user preferences. price_high puts the most expensive options at the top, while price_low would put the cheapest options at the top. rating_high would put the options with the highest user ratings at the top, and duration_short would put the fastest options (only applicable to flights) at the top.
++ `trip_start_datetime`: `2017-07-21` (string, required) - The start date of the trip. For example, 2017-07-21.
++ `trip_end_datetime`: `2017-07-21` (string, required) - The end date of the trip. For example, 2017-07-21.
++ `origin_name`: `Boston, MA` (string, required) - The name of the origin of the trip.
++ `origin_lat`: `48.15` (string, required) - The latitude of the origin location of the trip.
++ `origin_lng`: `-122.14` (string, required) - The longitude of the origin location of the trip.
++ `destination_name`: `Boston, MA` (string, required) - The name of the destination of the trip.
++ `destination_lat`: `48.15` (string, required) - The latitude of the destination location of the trip.
++ `destination_lng`: `-122.14` (string, required) - The longitude of the destination location of the trip.
++ `selected_accommodation_tags` (array[string], optional) - A list of accommodation related tags that describe the desired accommodation options in the trip.
++ `selected_activity_tags` (array[string], optional) - A list of activity related tags that describe the desired activities to plan for the trip.
++ `selected_dining_tags` (array[string], optional) - A list of food and dining related tags that describe the desired dining options to plan for the trip.
++ `selected_flight_tags` (array[string], optional) - A list of flight related tags that describe the desired flight options in the trip.
+
+### ChatRecommendationResponse
++ `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the session.
++ `recommendation_sets` (array[ChatRecommendationSet], optional) - An array of recommended activity sets in the selected category for the trip. Each recommended activity set contains a theme and an array of activies recommended based on the provided trip preferences.
+
+### ChatSelectActivityRequest
++ `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the session.
++ `activity_name`: `Hilton Midtown Hotel` (string, required) - The name of the activity selected for the current itinerary.
++ `category`: `ACCOMMODATION` (string, required) - an enum for the category of recommendations requested. Supported values are ACCOMMODATION, DINING, FLIGHT and EXPERIENCE.
+
+### ChatAddActivityRequest
++ `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the session.
++ `activity_name`: `Hilton Midtown Hotel` (string, required) - The name of the activity selected for adding to the current itinerary.
++ `date`: `2023-07-15` (string, optional) - The selected date to add the activity.
++ `hour_of_day`: `18` (string, optional) - The preferred hour of the day for adding this activity.
+
+### ChatRemoveActivityRequest
++ `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the session.
++ `activity_name`: `Hilton Midtown Hotel` (string, required) - The name of the activity selected to remove from the current itinerary.
+
+### ChatRecommendationSet
++ `theme`: `Best Flights` (string, required) - The theme of this set of recommended activities.
++ `activities` (array[Activity], required) - An array of recommended activities in the selected category for the trip.
+
 
 ### RoutingSolutionSpec
 + candidates_evaluated: 1200000 (number, optional) - the number of candidate solutions evaluated during routing.
