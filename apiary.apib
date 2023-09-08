@@ -3434,12 +3434,15 @@ Retrieve organized POIs
         Internal Server Error.
 
 
-## Save Call Center Agent Notes [/mobility-planner/demo/v2/agent/notes]
+## Create call Center Agent Notes [/mobility-planner/demo/v2/agent/notes/{?user_id}]
 
 
 ### POST
 
-Save the call center agent notes.
+Create the call center agent notes.
+
++ Parameters
+    + user_id: `asdf12349da` (string, required) - the id for the current user.
 
 + Request (application/json)
 
@@ -3447,8 +3450,7 @@ Save the call center agent notes.
 
 + Response 200 (application/json)
     
-    + Attributes 
-        + `notes` (AgentNotes, optional) - the saved agent notes object.
+    + Attributes (AgentNotes) - the saved agent notes object.
 
 + Response 400
 
@@ -3462,20 +3464,87 @@ Save the call center agent notes.
 
         Internal Server Error.
 
+## Create call Center Agent Notes [/mobility-planner/demo/v2/agent/notes/{note_id}{?user_id}]
+
+
+### PUT
+
+Update the call center agent note.
+
++ Parameters
+    + user_id: `asdf12349da` (string, required) - the id for the current user.
+    + note_id (string, required) - the ID of the note to be updated
+
++ Request (application/json)
+
+    + Attributes (AgentNotes)
+
++ Response 200 (application/json)
+    
+    + Attributes (AgentNotes, optional) - the saved agent notes object.
+
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+
++ Response 404
+
+        Not found.
+
++ Response 500
+
+        Internal Server Error.
+
+
 
 
 ## Get All Call Center Agent Notes For Users [/mobility-planner/demo/v2/agent/notes{?user_id}]
 
-+ Parameters
-    + user_id: `asdf12349da` (string, required) - the id for the current user.
 
-### GET
+### Get all messages [GET]
 
 Get all call center agent notes saved for the user.
 
++ Parameters
+    + user_id: `asdf12349da` (string, required) - the id for the current user.
+
 + Response 200 (application/json)
     
-    + Attributes 
+    + Attributes
+
+        + `results` (array[AgentNotes], optional) - the saved agent notes object.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Get a single Call Center Agent Notes For Users [/mobility-planner/demo/v2/agent/notes/{note_id}{?user_id}]
+
+
+### GET
+
+Get a single call center agent notes saved for the user.
+
++ Parameters
+    + note_id (string, required) - the ID of the note to be deleted
+    + user_id: `asdf12349da` (string, required) - the id for the current user.
+
++ Response 200 (application/json)
+    
+    + Attributes
         + `results` (array[AgentNotes], optional) - the saved agent notes object.
 
 + Response 400
@@ -3492,15 +3561,16 @@ Get all call center agent notes saved for the user.
 
 
 
-## Delete a Call Center Agent Notes For Users [/mobility-planner/demo/v2/agent/notes{?user_id,notes_id}]
+## Delete a Call Center Agent Note [/mobility-planner/demo/v2/agent/notes/{note_id}{?user_id}]
 
-+ Parameters
-    + user_id: `asdf12349da` (string, required) - the id for the current user.
-    + notes_id: `asdf12349da` (string, required) - the id for the note object.
 
 ### DELETE
 
 Delete the call center agent notes identified by the notes_id.
+
++ Parameters
+    + node_id (string, required) - the ID of the note to be deleted
+    + user_id: `asdf12349da` (string, required) - the id for the current user.
 
 + Response 200 (application/json)
     
@@ -3519,7 +3589,171 @@ Delete the call center agent notes identified by the notes_id.
 
         Internal Server Error.
         
+
+## Call Center Interactions [/mobility-planner/demo/v2/agent/interactions/{?user_id}]
+
+
+### POST
+
+Create a call center interaction.
+
++ Parameters
+    + user_id: `asdf12349da` (string, required) - the id for the current user.
+
++ Request (application/json)
+
+    + Attributes (CallCenterInteraction)
+
++ Response 200 (application/json)
+    
+    + Attributes (CallCenterInteraction) - the saved agent interaction object.
+
++ Response 400
+
+        Bad Request.
         
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Update Center Interaction [/mobility-planner/demo/v2/agent/interactions/{?user_id}]
+
+
+### PUT
+
+Update a call center agent interaction.
+
++ Parameters
+    + user_id: `asdf12349da` (string, required) - the id for the current user.
+
++ Request (application/json)
+
+    + Attributes (CallCenterInteraction)
+
++ Response 200 (application/json)
+    
+    + Attributes (CallCenterInteraction, optional) - the saved agent interaction object.
+
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+
++ Response 404
+
+        Not found.
+
++ Response 500
+
+        Internal Server Error.
+
+
+
+
+## Get All Call Center Interactions For Users [/mobility-planner/demo/v2/agent/interactions{?user_id}]
+
+
+### GET
+
+Get all call center interactions for the user.
+
++ Parameters
+       + user_id: `asdf12349da` (string, required) - the id for the current user.
+
++ Response 200 (application/json)
+
+
+    + Attributes
+
+        + `results` (array[CallCenterInteraction], optional) - the saved agent interaction object.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+## Get a single Call Center Interactions For Users [/mobility-planner/demo/v2/agent/interactions/{interaction_id}{?user_id}]
+
+### GET
+
+Get all call center interaction saved for the user.
+
+
++ Response 200 (application/json)
+    
+    + Attributes
+
+        + user_id: `asdf12349da` (string, required) - the id for the current user.
+        + interaction_id:  (string, required) - the id of the interaction
+        + `results` (array[CallCenterInteraction], optional) - the saved interaction object.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+
++ Response 404
+
+        Not found.
+
++ Response 500
+
+        Internal Server Error.
+
+
+
+## Delete a Call Center Agent interaction [/mobility-planner/demo/v2/agent/interactions/{interaction_id}{?user_id}]
+
+
+### DELETE
+
+Delete the call center interaction identified by the interaction_id.
+
++ Parameters
+    + interaction_id (string, required) - the ID of the interaction to be deleted
+    + user_id: `asdf12349da` (string, required) - the id for the current user.
+
++ Response 200 (application/json)
+    
+    + Attributes 
+        + `success`: true (boolean, optional) - indicate if the deletion operation is successful.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+
++ Response 404
+
+        Not found.
+
++ Response 500
+
+        Internal Server Error.
+        
+
+
 # Group Insights
 
 ## Get Quiz Domain [/mobility-planner/demo/v2/survey/domain{?mode,context,user_id}]
@@ -7304,3 +7538,47 @@ the direction towards the next stop or intermediate location.
 + `content`: `Looking for hotels in Boston` (string, optional) - notes content.
 + `last_updated`: 51239834989 (number, optional) - UNIX timestamp in seconds that indicate the last updated time for this notes object.
 + `created_at`: 51239834989 (number, optional) - UNIX timestamp in seconds that indicate the creation time for this notes object.
+
+
+## CallCenterInteraction (object)
++ mode (ProblemMode)
++ type (InteractionType)
++ status (InteractionStatus)
++ id (string)
++ user_id (string)
++ agent_id (string)
++ trip_id (string)
++ content (string)
++ time_last_updated (number)
++ time_created (number)
++ from_agent (boolean)
++ trip_name (string)
++ trip_images (array[string])
++ context_names (array[string])
++ date_of_focus (string)
++ original_day_number (number)
++ poi_id (string)
++ poi_name (string)
++ poi_image (string)
++ poi_activity_start_time (number)
++ poi_activity_end_time (number)
++ replacement_poi_id (string)
++ replacement_poi_name (string)
++ replacement_poi_image (string)
+
+
+## InteractionType (enum)
+    + ITINERARY_CREATED
+    + ITINERARY_UPDATED
+    + ITINERARY_REQUEST
+    + POI_SWAP_REQUEST
+    + POI_SWAP
+    + POI_REQUEST
+    + ITINERARY_DAY_REQUEST
+    + MESSAGE
+
+## InteractionStatus (enum)
+    + REQUEST_PENDING
+    + REQUEST_APPROVED
+    + REQUEST_DENIED
+
