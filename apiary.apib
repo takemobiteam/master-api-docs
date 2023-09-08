@@ -3464,7 +3464,7 @@ Create the call center agent notes.
 
         Internal Server Error.
 
-## Create call Center Agent Notes [/mobility-planner/demo/v2/agent/notes/{note_id}{?user_id}]
+## Create call Center Agent Notes [/mobility-planner/demo/v2/agent/notes/{note_id}{?user_id,mode}]
 
 
 ### PUT
@@ -3472,6 +3472,7 @@ Create the call center agent notes.
 Update the call center agent note.
 
 + Parameters
+    + mode (ProblemMode, required) - the planner mode.
     + user_id: `asdf12349da` (string, required) - the id for the current user.
     + note_id (string, required) - the ID of the note to be updated
 
@@ -3503,7 +3504,7 @@ Update the call center agent note.
 
 
 
-## Get All Call Center Agent Notes For Users [/mobility-planner/demo/v2/agent/notes{?user_id}]
+## Get All Call Center Agent Notes For Users [/mobility-planner/demo/v2/agent/notes{?user_id,mode}]
 
 
 ### Get all messages [GET]
@@ -3512,6 +3513,7 @@ Get all call center agent notes saved for the user.
 
 + Parameters
     + user_id: `asdf12349da` (string, required) - the id for the current user.
+    + mode (ProblemMode, required) - the planner mode.
 
 + Response 200 (application/json)
     
@@ -3531,7 +3533,7 @@ Get all call center agent notes saved for the user.
 
         Internal Server Error.
 
-## Get a single Call Center Agent Notes For Users [/mobility-planner/demo/v2/agent/notes/{note_id}{?user_id}]
+## Get a single Call Center Agent Notes For Users [/mobility-planner/demo/v2/agent/notes/{note_id}{?user_id,mode}]
 
 
 ### GET
@@ -3539,6 +3541,7 @@ Get all call center agent notes saved for the user.
 Get a single call center agent notes saved for the user.
 
 + Parameters
+    + mode (ProblemMode, required) - the planner mode.
     + note_id (string, required) - the ID of the note to be deleted
     + user_id: `asdf12349da` (string, required) - the id for the current user.
 
@@ -3561,7 +3564,7 @@ Get a single call center agent notes saved for the user.
 
 
 
-## Delete a Call Center Agent Note [/mobility-planner/demo/v2/agent/notes/{note_id}{?user_id}]
+## Delete a Call Center Agent Note [/mobility-planner/demo/v2/agent/notes/{note_id}{?user_id,mode}]
 
 
 ### DELETE
@@ -3569,6 +3572,7 @@ Get a single call center agent notes saved for the user.
 Delete the call center agent notes identified by the notes_id.
 
 + Parameters
+    + mode (ProblemMode, required) - the planner mode.
     + node_id (string, required) - the ID of the note to be deleted
     + user_id: `asdf12349da` (string, required) - the id for the current user.
 
@@ -3590,7 +3594,7 @@ Delete the call center agent notes identified by the notes_id.
         Internal Server Error.
         
 
-## Call Center Interactions [/mobility-planner/demo/v2/agent/interactions/{?user_id}]
+## Call Center Interactions [/mobility-planner/demo/v2/agent/interactions/{?user_id,mode}]
 
 
 ### POST
@@ -3598,6 +3602,7 @@ Delete the call center agent notes identified by the notes_id.
 Create a call center interaction.
 
 + Parameters
+    + mode (ProblemMode, required) - the planner mode.
     + user_id: `asdf12349da` (string, required) - the id for the current user.
 
 + Request (application/json)
@@ -3620,7 +3625,7 @@ Create a call center interaction.
 
         Internal Server Error.
 
-## Update Center Interaction [/mobility-planner/demo/v2/agent/interactions/{?user_id}]
+## Update Center Interaction [/mobility-planner/demo/v2/agent/interactions/{?user_id,mode}]
 
 
 ### PUT
@@ -3628,6 +3633,7 @@ Create a call center interaction.
 Update a call center agent interaction.
 
 + Parameters
+    + mode (ProblemMode, required) - the planner mode.
     + user_id: `asdf12349da` (string, required) - the id for the current user.
 
 + Request (application/json)
@@ -3658,7 +3664,7 @@ Update a call center agent interaction.
 
 
 
-## Get All Call Center Interactions For Users [/mobility-planner/demo/v2/agent/interactions{?user_id}]
+## Get All Call Center Interactions For Users [/mobility-planner/demo/v2/agent/interactions{?user_id,mode}]
 
 
 ### GET
@@ -3666,7 +3672,8 @@ Update a call center agent interaction.
 Get all call center interactions for the user.
 
 + Parameters
-       + user_id: `asdf12349da` (string, required) - the id for the current user.
+    + mode (ProblemMode, required) - the planner mode.
+    + user_id: `asdf12349da` (string, required) - the id for the current user.
 
 + Response 200 (application/json)
 
@@ -3687,7 +3694,7 @@ Get all call center interactions for the user.
 
         Internal Server Error.
 
-## Get a single Call Center Interactions For Users [/mobility-planner/demo/v2/agent/interactions/{interaction_id}{?user_id}]
+## Get a single Call Center Interactions For Users [/mobility-planner/demo/v2/agent/interactions/{interaction_id}{?user_id,mode}]
 
 ### GET
 
@@ -3697,7 +3704,7 @@ Get all call center interaction saved for the user.
 + Response 200 (application/json)
     
     + Attributes
-
+        + mode (ProblemMode, required) - the planner mode.
         + user_id: `asdf12349da` (string, required) - the id for the current user.
         + interaction_id:  (string, required) - the id of the interaction
         + `results` (array[CallCenterInteraction], optional) - the saved interaction object.
@@ -3720,7 +3727,7 @@ Get all call center interaction saved for the user.
 
 
 
-## Delete a Call Center Agent interaction [/mobility-planner/demo/v2/agent/interactions/{interaction_id}{?user_id}]
+## Delete a Call Center Agent interaction [/mobility-planner/demo/v2/agent/interactions/{interaction_id}{?user_id,mode}]
 
 
 ### DELETE
@@ -3729,6 +3736,7 @@ Delete the call center interaction identified by the interaction_id.
 
 + Parameters
     + interaction_id (string, required) - the ID of the interaction to be deleted
+    + mode (ProblemMode, required) - the planner mode.
     + user_id: `asdf12349da` (string, required) - the id for the current user.
 
 + Response 200 (application/json)
@@ -7540,7 +7548,7 @@ the direction towards the next stop or intermediate location.
 + `created_at`: 51239834989 (number, optional) - UNIX timestamp in seconds that indicate the creation time for this notes object.
 
 
-### CallCenterInteraction (object)
+### CallCenterInteraction
 + mode (ProblemMode) - problem mode
 + type (InteractionType) - the interaction type
 + status (InteractionStatus) - the interaction status
