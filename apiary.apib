@@ -3450,7 +3450,7 @@ Create the call center agent notes.
 
 + Response 200 (application/json)
     
-    + Attributes (AgentNotes) - the saved agent notes object.
+    + Attributes (AgentNotes)
 
 + Response 400
 
@@ -3482,7 +3482,7 @@ Update the call center agent note.
 
 + Response 200 (application/json)
     
-    + Attributes (AgentNotes, optional) - the saved agent notes object.
+    + Attributes (AgentNotes)
 
 
 + Response 400
@@ -3519,7 +3519,7 @@ Get all call center agent notes saved for the user.
     
     + Attributes
 
-        + `results` (array[AgentNotes], optional) - the saved agent notes object.
+        + `results` (array[AgentNotes], optional)
 
 + Response 400
 
@@ -3548,7 +3548,7 @@ Get a single call center agent notes saved for the user.
 + Response 200 (application/json)
     
     + Attributes
-        + `results` (array[AgentNotes], optional) - the saved agent notes object.
+        + `results` (array[AgentNotes], optional)
 
 + Response 400
 
@@ -3611,7 +3611,7 @@ Create a call center interaction.
 
 + Response 200 (application/json)
     
-    + Attributes (CallCenterInteraction) - the saved agent interaction object.
+    + Attributes (CallCenterInteraction)
 
 + Response 400
 
@@ -3642,7 +3642,7 @@ Update a call center agent interaction.
 
 + Response 200 (application/json)
     
-    + Attributes (CallCenterInteraction, optional) - the saved agent interaction object.
+    + Attributes (CallCenterInteraction)
 
 
 + Response 400
@@ -3680,7 +3680,7 @@ Get all call center interactions for the user.
 
     + Attributes
 
-        + `results` (array[CallCenterInteraction], optional) - the saved agent interaction object.
+        + `results` (array[CallCenterInteraction], optional)
 
 + Response 400
 
@@ -3704,9 +3704,9 @@ Get all call center interaction saved for the user.
 + Response 200 (application/json)
     
     + Attributes
-        + mode (ProblemMode, required) - the planner mode.
+        + mode (AllowedProblemMode, required) - the planner mode.
         + user_id: `asdf12349da` (string, required) - the id for the current user.
-        + interaction_id:  (string, required) - the id of the interaction
+        + interaction_id  (string, required) - the id of the interaction
         + `results` (array[CallCenterInteraction], optional) - the saved interaction object.
 
 + Response 400
@@ -3736,7 +3736,7 @@ Delete the call center interaction identified by the interaction_id.
 
 + Parameters
     + interaction_id (string, required) - the ID of the interaction to be deleted
-    + mode (ProblemMode, required) - the planner mode.
+    + mode (AllowedProblemMode, required) - the planner mode.
     + user_id: `asdf12349da` (string, required) - the id for the current user.
 
 + Response 200 (application/json)
@@ -7548,8 +7548,24 @@ the direction towards the next stop or intermediate location.
 + `created_at`: 51239834989 (number, optional) - UNIX timestamp in seconds that indicate the creation time for this notes object.
 
 
+
+### InteractionType (enum[string])
++ ITINERARY_CREATED
++ ITINERARY_UPDATED
++ ITINERARY_REQUEST
++ POI_SWAP_REQUEST
++ POI_SWAP
++ POI_REQUEST
++ ITINERARY_DAY_REQUEST
++ MESSAGE
+
+### InteractionStatus (enum[string])
++ REQUEST_PENDING
++ REQUEST_APPROVED
++ REQUEST_DENIED
+
 ### CallCenterInteraction
- + mode (ProblemMode,required) - problem mode
+ + mode (AllowedProblemMode,required) - problem mode
  + type (InteractionType,required) - the interaction type
  + status (InteractionStatus,optional) - the interaction status
  + id (string, optional) - the ID
@@ -7559,7 +7575,7 @@ the direction towards the next stop or intermediate location.
  + content (string,optional) - the context
  + time_last_updated (number,optional) - the time last updated in epoch seconds autoset
  + time_created (number, optional) - the time created in epoch seconds autoset
- + from_agent (boolean,rquired) - whether this note if from the agent
+ + from_agent (boolean,required) - whether this note if from the agent
  + trip_name (string,optional) - the name of the trip
  + trip_images (array[string],optional) - the trip images
  + context_names (array[string],optional) - the context names
@@ -7573,20 +7589,4 @@ the direction towards the next stop or intermediate location.
  + replacement_poi_id (string,optional) - the replacement POI ID
  + replacement_poi_name (string,optional) - the replacement POI name
  + replacement_poi_image (string,optional) - the replacement POI image
-
-
-### InteractionType (enum)
-    + ITINERARY_CREATED
-    + ITINERARY_UPDATED
-    + ITINERARY_REQUEST
-    + POI_SWAP_REQUEST
-    + POI_SWAP
-    + POI_REQUEST
-    + ITINERARY_DAY_REQUEST
-    + MESSAGE
-
-### InteractionStatus (enum)
-    + REQUEST_PENDING
-    + REQUEST_APPROVED
-    + REQUEST_DENIED
 
