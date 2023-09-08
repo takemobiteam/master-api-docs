@@ -7541,30 +7541,30 @@ the direction towards the next stop or intermediate location.
 
 
 ## CallCenterInteraction (object)
-+ mode (ProblemMode)
-+ type (InteractionType)
-+ status (InteractionStatus)
-+ id (string)
-+ user_id (string)
-+ agent_id (string)
-+ trip_id (string)
-+ content (string)
-+ time_last_updated (number)
-+ time_created (number)
-+ from_agent (boolean)
-+ trip_name (string)
-+ trip_images (array[string])
-+ context_names (array[string])
-+ date_of_focus (string)
-+ original_day_number (number)
-+ poi_id (string)
-+ poi_name (string)
-+ poi_image (string)
-+ poi_activity_start_time (number)
-+ poi_activity_end_time (number)
-+ replacement_poi_id (string)
-+ replacement_poi_name (string)
-+ replacement_poi_image (string)
++ mode (ProblemMode) - problem mode
++ type (InteractionType) - the interaction type
++ status (InteractionStatus) - the interaction status
++ id (string) - the ID
++ user_id (string) - the user ID
++ agent_id (string) - the call center agent ID
++ trip_id (string) - the associated trip_id (if any)
++ content (string) - the context
++ time_last_updated (number) - the time last updated in epoch seconds
++ time_created (number) - the time created in epoch seconds
++ from_agent (boolean) - whether this note if from the agent
++ trip_name (string) - the name of the trip
++ trip_images (array[string]) - the trip images
++ context_names (array[string]) - the context names
++ date_of_focus (string) - the date of focus, if any
++ original_day_number (number) - the original date numbner
++ poi_id (string) - the POI id
++ poi_name (string) - the POI name
++ poi_image (string) - the POI image
++ poi_activity_start_time (number) - the activity start time
++ poi_activity_end_time (number) - the activity end time
++ replacement_poi_id (string) - the replacement POI ID
++ replacement_poi_name (string) - the replacement POI name
++ replacement_poi_image (string) - the replacement POI image
 
 
 ## InteractionType (enum)
