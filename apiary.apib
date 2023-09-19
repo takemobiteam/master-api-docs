@@ -5742,6 +5742,7 @@ Saves context to a collection. If the user is in a context where a collection is
 + name: `Chinese` (string, required) - the name of the filter.
 + parent: `Cuisine` (string, required) - the parent filter of the filter.
 + image: `http://takemobi.com/image.png` (string, optional) - an url to the image of the filter.
++ `to_avoid`: true (boolean, optional) - a boolean flag. If true this preference is considered negative input and planner will try to avoid it.
 
 ### PreferenceDomainCandidates
 + candidates (array[PreferenceDomainCandidate], required) - collection of preference domain candidates.
@@ -6236,6 +6237,7 @@ Saves context to a collection. If the user is in a context where a collection is
         + `NOT_APPLICABLE` 
 + relaxable: `true` (boolean, required) - if the desired time of duration/departure/arrival is relaxable.
 + explanation (ExplanationItem, optional) - explanations related to the activity.
++ `to_avoid`: true (boolean, optional) - a boolean flag. If true this POI is considered negative input and planner will try to avoid it.
 
 
 ### CandidateInformation
