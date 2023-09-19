@@ -5984,6 +5984,7 @@ Saves context to a collection. If the user is in a context where a collection is
 + name: `Chinese` (string, required) - the name of the filter.
 + parent: `Cuisine` (string, required) - the parent filter of the filter.
 + image: `http://takemobi.com/image.png` (string, optional) - an url to the image of the filter.
++ `to_avoid`: true (boolean, optional) - a boolean flag. If true this preference is considered negative input and planner will try to avoid it.
 
 ### PreferenceDomainCandidates
 + candidates (array[PreferenceDomainCandidate], required) - collection of preference domain candidates.
@@ -6478,6 +6479,7 @@ Saves context to a collection. If the user is in a context where a collection is
         + `NOT_APPLICABLE` 
 + relaxable: `true` (boolean, required) - if the desired time of duration/departure/arrival is relaxable.
 + explanation (ExplanationItem, optional) - explanations related to the activity.
++ `to_avoid`: true (boolean, optional) - a boolean flag. If true this POI is considered negative input and planner will try to avoid it.
 
 
 ### CandidateInformation
@@ -7546,8 +7548,7 @@ the direction towards the next stop or intermediate location.
 + `content`: `Looking for hotels in Boston` (string, optional) - notes content.
 + `last_updated`: 51239834989 (number, optional) - UNIX timestamp in seconds that indicate the last updated time for this notes object.
 + `created_at`: 51239834989 (number, optional) - UNIX timestamp in seconds that indicate the creation time for this notes object.
-
-
++ `highlighted`: true (boolean, optional) - a boolean flag. If true this note is highlighted.
 
 ### InteractionType (enum[string])
 + ITINERARY_CREATED
@@ -7565,28 +7566,27 @@ the direction towards the next stop or intermediate location.
 + REQUEST_DENIED
 
 ### CallCenterInteraction
- + mode (AllowedProblemMode,required) - problem mode
- + type (InteractionType,required) - the interaction type
- + status (InteractionStatus,optional) - the interaction status
- + id (string, optional) - the ID
- + user_id (string,required) - the user ID
- + agent_id (string,required) - the call center agent ID
- + trip_id (string,optional) - the associated trip_id (if any)
-git + content (string,optional) - the context
- + time_last_updated (number,optional) - the time last updated in epoch seconds autoset
- + time_created (number, optional) - the time created in epoch seconds autoset
- + from_agent (boolean,required) - whether this note if from the agent
- + trip_name (string,optional) - the name of the trip
- + trip_images (array[string],optional) - the trip images
- + context_names (array[string],optional) - the context names
- + date_of_focus (string,optional) - the date of focus, if any
- + original_day_number (number,optional) - the original date numbner
- + poi_id (string,optional) - the POI id
- + poi_name (string,optional) - the POI name
- + poi_image (string,optional) - the POI image
- + poi_activity_start_time (number,optional) - the activity start time
- + poi_activity_end_time (number,optional) - the activity end time
- + replacement_poi_id (string,optional) - the replacement POI ID
- + replacement_poi_name (string,optional) - the replacement POI name
- + replacement_poi_image (string,optional) - the replacement POI image
-
++ mode (AllowedProblemMode,required) - problem mode
++ type (InteractionType,required) - the interaction type
++ status (InteractionStatus,optional) - the interaction status
++ id (string, optional) - the ID
++ user_id (string,required) - the user ID
++ agent_id (string,required) - the call center agent ID
++ trip_id (string,optional) - the associated trip_id (if any)
++ content (string,optional) - the context
++ time_last_updated (number,optional) - the time last updated in epoch seconds autoset
++ time_created (number, optional) - the time created in epoch seconds autoset
++ from_agent (boolean,required) - whether this note if from the agent
++ trip_name (string,optional) - the name of the trip
++ trip_images (array[string],optional) - the trip images
++ context_names (array[string],optional) - the context names
++ date_of_focus (string,optional) - the date of focus, if any
++ original_day_number (number,optional) - the original date numbner
++ poi_id (string,optional) - the POI id
++ poi_name (string,optional) - the POI name
++ poi_image (string,optional) - the POI image
++ poi_activity_start_time (number,optional) - the activity start time
++ poi_activity_end_time (number,optional) - the activity end time
++ replacement_poi_id (string,optional) - the replacement POI ID
++ replacement_poi_name (string,optional) - the replacement POI name
++ replacement_poi_image (string,optional) - the replacement POI image
