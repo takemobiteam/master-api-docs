@@ -6516,8 +6516,8 @@ Saves context to a collection. If the user is in a context where a collection is
     + small: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%402x.png` (string, optional) - link to the small image.
     + medium: `https://s3.amazonaws.com/takemobi.mobileapp/icons/Transit/Generic/SmartMap/GenericTransitIconSmall%403x.png` (string, optional) - link to the medium size image.
 + location (Location, optional) - the location of the candidate.
-+ `start_timestamp`: `1519765200` (number, optional) - the start timestamp of the candidate, used in conjunction with the `start_constraint_type` property of its parent Goal object.
-+ `end_timestamp`: `1519765200` (number, optional) - the end timestamp of the candidate, used in conjunction with the `end_constraint_type` property of its parent Goal object.
++ `start_timestamp`: `1519765200` (number, optional) - the start timestamp of the candidate, used in conjunction with the `start_constraint_type` property of its parent Goal object. Either seconds of day (like 36000 for 10am), or UNIX timestamp in seconds.
++ `end_timestamp`: `1519765200` (number, optional) - the end timestamp of the candidate, used in conjunction with the `end_constraint_type` property of its parent Goal object. Either seconds of day (like 36000 for 10am), or UNIX timestamp in seconds.
 + origin (Location, optional) - the origin of the candidate. Use when the start and end locations of the candidate are different (such as flight, tour, etc.).
 + destination (Location, optional) - the destination of the candidate. Use when the start and end locations of the candidate are different (such as flight, tour, etc.).
 + `departure_timestamp`: `1519765200` (number, optional) - the departure timestamp from the origin location, used when physical movement is involved (such as flight, rail, tour, etc.).
@@ -6526,6 +6526,8 @@ Saves context to a collection. If the user is in a context where a collection is
 + recommendations (array[RecommendationExplanationItem], optional) - a list of explanation items on why this POI is good in different contexts (For you, for your trip, for the destination, etc.).
 + hours (array[HoursOfOperation], optional) - a list of hours objects describing the hours of operation for the POI.
 + `match` (ContextCandidateExplanation, optional) - providing details on how well this candidate matches the provided filters.
++ `parent_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the parent of the candidate.
++ `children_ids` (array[string], required) - an array of unique identifiers for the children of the candidate.
 
 ### Transportation
 + `segments` (array[TransportationSegment], optional) - a list of transportation segments, such as a list of flights, multiple train rides.
