@@ -467,6 +467,7 @@ Create a new planning problem and find the best solution for the current problem
 
         Internal Server Error.
 
+
 ## Create Problem and Find Multiple Versions of Solution [/mobility-planner/demo/v2/problem/versions]
 
 Create a new planning problem, and find the best solutions of different variations (budget, luxury, points maximizer) for it.
@@ -883,6 +884,31 @@ Find an updated plan that fix all the availability issues in the current solutio
         Internal Server Error.
 
 
+## Create Itinerary and Save [/mobility-planner/demo/v2/plan-and-save]
+
+Create a new planning problem and find the best solution for it. The trip will be saved with the problem id and links to web and pdf rendering will also be provided as part of the response.
+ 
+### POST
+
++ Request (application/json)
+
+    + Attributes (Problem)
+  
++ Response 200 (application/json)
+
+    + Attributes (SolutionResponse)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
 
 
 ## Check Session Liveness [/mobility-planner/demo/v2/session-liveness{?session_id}]
@@ -5894,6 +5920,7 @@ Saves context to a collection. If the user is in a context where a collection is
 + display (Display, optional) - any recommended configurations for displaying this solutions.
 + explanations (array[string], optional) - explanations for why no solution could be found by the planner.
 + theme: `Budget` (string, optional) - a descriptive theme for the solution.
++ urls (SolutionSpecUrls, optional) - a collection of URLs for accessing the itinerary from a web page or a PDF document.
 
 ### Solution
 + id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the solution object.
@@ -5921,6 +5948,11 @@ Saves context to a collection. If the user is in a context where a collection is
         + OVER_SUBSCRIBED
 + contexts (array[CandidateItem], required) - the list of trip context objects from the request.
 + `filter_spec` (SolutionFilterSpec, required) - specification on satisfied and unsatisfied filters.
+
+### SolutionSpecUrls
++ mobile: `https://singapore.takemobi.io/trip/mobile/e93b8dea-7a4a-4f05-9075-91b642e98a6a/singapore` (string, optional) - a link to a mobile app environment for viewing the itinerary.
++ web: `https://singapore.takemobi.io/trip/summary/e93b8dea-7a4a-4f05-9075-91b642e98a6a/singapore` (string, optional) - a link to a mobile responsive web page for viewing the itinerary.
++ pdf: `https://singapore.takemobi.io/trip/pdf/e93b8dea-7a4a-4f05-9075-91b642e98a6a/singapore` (string, optional) - a link to a pdf document for viewing the itinerary.
 
 ### Display
 + `display_whole_polyline`: false (boolean, optional) - if true, the polyline for the entire solution is recommended to be displayed in the background when each day's plan is being presented.
