@@ -2580,6 +2580,40 @@ Return the filter recommendations relevant for the users' journeys.
 + Response 500
 
         Internal Server Error.
+        
+
+## Email History to Itinerary [/mobility-planner/demo/v2/dialog/email_history/plan{?mode,session_id}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + session_id: `Six Flags New England` (string, optional) - the UUID for the current session.
+
+### POST
+
+Return the constraint and preference understanding as well as the suggested itinerary planning requests for the users' journeys based on the email history.
+
++ Request (application/json)
+
+    + Attributes
+        + input: `I want to go to Boston from New York on July 12th` (string, required) - the lastest email message from the user.
+        + history (array[ChatEntry], optional) - previous email messages related to this trip.
+        + problem (Problem, optional) - known traveler preferences, business rules, as well as other temporal and spatial constraints.
+
++ Response 200 (application/json)
+    
+    + Attributes (ChatResponse)
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
 
 
 ## ChatGPT Plugin - Get Itinerary [/mobility-planner/demo/v2/problem/chatgpt]
@@ -6770,7 +6804,8 @@ Saves context to a collection. If the user is in a context where a collection is
 ### ChatResponse
 + `session_id`: `3323-4432-5456345743-f343245346` (string, required) - a unique identifier for the session.
 + response: `Here is a trip that may work for you` (string, required) - a textual response for the request.
-+ problem (Problem, optional) - the planning problem object parsed from the chat input.
++ problem (Problem, optional) - the planning problem object parsed from the input.
++ solution (SolutionResponse, optional) - the planning solution object planned for the input.
 + `traveler_information` (TravelerInformation, optional) - detected traveler information from the input.
 + selected_filters (array[PreferenceDomainCandidate], required) - a list of must have trip preferences.
 + `recommended_filters` (array[PreferenceDomainCandidate], required) - a list of recommended trip preferences.
