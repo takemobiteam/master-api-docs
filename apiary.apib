@@ -2960,6 +2960,48 @@ Retrieve the candidate item object matching the specified planning problem mode 
         Internal Server Error.
 
 
+## Create Custom Itinerary Activity Candidate [/mobility-planner/demo/v2/domain/poi{?mode,catrgory,source_id,source_url}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + category (enum, required) - the category of the submitted travel activity content.
+        + Members
+            + ACCOMMODATION
+            + DINING
+            + EXPERIENCE
+            + TOUR
+            + EVENT
+            + TRANSPORTATION
+            + ACTIVITY
+    + source_name (string, optinoal) - an internal name for the source for the travel activity or booked content. If provided, it will be included in the created enriched content object.
+    + source_id (string, optinoal) - an internal unique identifier for the activity or booked content. If provided, it will be included in the created enriched content object.
+    + source_url (string, optinoal) - a url to a page that describes this travel content. If provided, the content may be used by the planning platform to retrieve additional information for creating the enriched record for the content.
+
+### POST
+
+Based on the provided information about a specific POI, a booking or an activity, create and return an enriched  Retrieve the candidate item object matching the specified planning problem mode and candidate id.
+
++ Request (application/json)
+
+    + Attributes (CandidateItem)
+
++ Response 200 (application/json)
+
+    + Attributes (CandidateItem, required) - a enriched itinerary candidate that was created based on the provided information and known content that matches the input.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
 ## Get Candidate Suggestions [/mobility-planner/demo/v2/domain/poi/suggestions{?mode,context,category,keyword}]
 
 + Parameters
