@@ -2979,7 +2979,7 @@ Retrieve the candidate item object matching the specified planning problem mode 
 
 ### POST
 
-Based on the provided information about a specific POI, a booking or an activity, create and return an enriched  Retrieve the candidate item object matching the specified planning problem mode and candidate id.
+Based on the provided information about a specific POI, a booking or an activity, create and return an enriched travel content object that could be used in travel itineraries. The planning platform will first attempt to match the provided travel content with known records in the content store based on name, category, address and other identifiable attributes, and return the highest quality ones for each attributes in the responded object. If there is no match or insufficient knowledge, the system would search through available mapping platforms, and try to parse information from the provided source url, in order to identify quality descriptions and images to use for the client. If none of the above steps help locate additional information, the system would still create and return an object, but only based on the information submitted by the client.
 
 + Request (application/json)
 
