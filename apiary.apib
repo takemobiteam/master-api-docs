@@ -2966,13 +2966,13 @@ Retrieve the candidate item object matching the specified planning problem mode 
     + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
     + category (enum, required) - the category of the submitted travel activity content.
         + Members
-            + ACCOMMODATION
-            + DINING
-            + EXPERIENCE
-            + TOUR
-            + EVENT
-            + TRANSPORTATION
-            + ACTIVITY
+            + `ACCOMMODATION`
+            + `DINING`
+            + `EXPERIENCE`
+            + `TOUR`
+            + `EVENT`
+            + `TRANSPORTATION`
+            + `ACTIVITY`
     + `source_name` (string, optinoal) - an internal name for the source for the travel activity or booked content. If provided, it will be included in the created enriched content object.
     + `source_id` (string, optinoal) - an internal unique identifier for the activity or booked content. If provided, it will be included in the created enriched content object.
     + `source_url` (string, optinoal) - a url to a page that describes this travel content. If provided, the content may be used by the planning platform to retrieve additional information for creating the enriched record for the content.
@@ -2987,7 +2987,8 @@ Based on the provided information about a specific POI, a booking or an activity
 
 + Response 200 (application/json)
 
-    + Attributes (CandidateItem)
+    + Attributes
+        + poi (CandidateItem, optional) - a matched and enriched content object that fit the input content description.
 
 + Response 400
 
