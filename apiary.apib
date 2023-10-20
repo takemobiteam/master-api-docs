@@ -2960,10 +2960,13 @@ Retrieve the candidate item object matching the specified planning problem mode 
         Internal Server Error.
 
 
-## Create Custom Itinerary Activity Candidate [/mobility-planner/demo/v2/domain/poi{?mode,category,source_name,source_id,source_url}]
+## Create Custom Itinerary Activity Candidate [/mobility-planner/demo/v2/domain/poi{?mode,source_name,source_id,source_url,category}]
 
 + Parameters
     + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + `source_name` (string, optinoal) - an internal name for the source for the travel activity or booked content. If provided, it will be included in the created enriched content object.
+    + `source_id` (string, optinoal) - an internal unique identifier for the activity or booked content. If provided, it will be included in the created enriched content object.
+    + `source_url` (string, optinoal) - a url to a page that describes this travel content. If provided, the content may be used by the planning platform to retrieve additional information for creating the enriched record for the content.
     + category (enum, required) - the category of the submitted travel activity content.
         + Members
             + `ACCOMMODATION`
@@ -2973,9 +2976,6 @@ Retrieve the candidate item object matching the specified planning problem mode 
             + `EVENT`
             + `TRANSPORTATION`
             + `ACTIVITY`
-    + `source_name` (string, optinoal) - an internal name for the source for the travel activity or booked content. If provided, it will be included in the created enriched content object.
-    + `source_id` (string, optinoal) - an internal unique identifier for the activity or booked content. If provided, it will be included in the created enriched content object.
-    + `source_url` (string, optinoal) - a url to a page that describes this travel content. If provided, the content may be used by the planning platform to retrieve additional information for creating the enriched record for the content.
 
 ### POST
 
