@@ -6550,8 +6550,8 @@ Saves context to a collection. If the user is in a context where a collection is
         + `TOUR`
 + optional: `true` (boolean, optional) - specify if the goal can be dropped from the user's plan.
 + `candidate_information` (CandidateInformation, required) - specify the candidate information known by the user for the goal.
-+ `allowed_incoming_modes` (array[string], optinoal) - specify the allowed incoming modes for going to this activity. Valid values are DRIVE, BIKE, WALK, TRANSIT, PARK, TAXI, BIKESHARE, CARSHARE, BLACKCAR, UBER, LYFT, ZIPCAR, MAVEN.
-+ `allowed_outgoing_modes` (array[string], optinoal) - specify the allowed outgoing modes for leaving from this activity. Valid values are DRIVE, BIKE, WALK, TRANSIT, PARK, TAXI, BIKESHARE, CARSHARE, BLACKCAR, UBER, LYFT, ZIPCAR, MAVEN.
++ `allowed_incoming_modes` (array[string], optional) - specify the allowed incoming modes for going to this activity. Valid values are DRIVE, BIKE, WALK, TRANSIT, PARK, TAXI, BIKESHARE, CARSHARE, BLACKCAR, UBER, LYFT, ZIPCAR, MAVEN.
++ `allowed_outgoing_modes` (array[string], optional) - specify the allowed outgoing modes for leaving from this activity. Valid values are DRIVE, BIKE, WALK, TRANSIT, PARK, TAXI, BIKESHARE, CARSHARE, BLACKCAR, UBER, LYFT, ZIPCAR, MAVEN.
 + duration: `180` (number, optional) - the desired duration of this candidate in seconds.
 + `start_constraint_type` (enum, optional) - the type of timing constraint for the start at this goal location. If NOT_APPLICABLE, the arrival timestamp of each candidate goal is ignored
     + Members
