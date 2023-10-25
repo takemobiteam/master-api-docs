@@ -6231,10 +6231,17 @@ Saves context to a collection. If the user is in a context where a collection is
 
 ### TravelerInformation
 + adults (number, required) - the number of adults.
++ seniors (number, optional) - the number of seniors.
 + children (number, optional) - the number of children.
 + child_ages (array[number], optional) - an array of child ages.
 + infants (number, optional) - the number of infants.
 + infant_types (array[InfantType], optional) - an array of infant types.
++ cabin_class (enum, optional) - the class of travel.
+    + Members
+        + ECONOMY
+        + PREMIUM_ECONOMY
+        + BUSINESS
+        + FIRST
 + rooms (number, required) - the number of rooms.
 
 ### InfantType (enum[string])
@@ -6502,16 +6509,16 @@ Saves context to a collection. If the user is in a context where a collection is
 + photo: `https://lh5.googleusercontent.com/p/AF1QipMckTTCJlA7LhbwA8AgJmCCK-P4ta0SP5uqVnWJ=w408-h306-k-no` (string, optional) - a link to a representative image of the location.
 
 ### OriginDestinationItem
-+ name: `Mary Chung` (string, required) - the name of the location.
++ name: `Mary Chung` (string, optional) - the name of the location.
 + address: `464 Massachusetts Ave` (string, optional) - the address of the location.
-+ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the location.
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, optional) - a unique identifier for the location.
 + lat: `42.35031` (number, required) - the latitude of the location.
 + lng: `-71.0571` (number, required) - the longitude of the location.
 + `arrival_timestamp`: `1519765200` (number, optional) - the desired arrival timestamp.
 + `departure_timestamp`: `1519765200` (number, optional) - the desired departure timestamp.
 + relaxable: `true` (boolean, optional) - if the desired time of departure/arrival is relaxable.
-+ `time_zone`: `America/New_York` (string, required) - contains the time zone of this location. The value is the name of the time zone as defined in the [IANA Time Zone Database](http://www.iana.org/time-zones).
-+ `allowed_modes` (array, required) - specify the allowed modes for leaving from the origin or arriving at the destination.
++ `time_zone`: `America/New_York` (string, optional) - contains the time zone of this location. The value is the name of the time zone as defined in the [IANA Time Zone Database](http://www.iana.org/time-zones).
++ `allowed_modes` (array, optional) - specify the allowed modes for leaving from the origin or arriving at the destination.
     - (enum)
         + DRIVE
         + BIKE
