@@ -5982,7 +5982,7 @@ Saves context to a collection. If the user is in a context where a collection is
 + curation (TripCuration, optional) - specifies if and when curated activities should be included in the itinerary.
 + recommendation (TripRecommendation, optional) - specifies if recommended activities should be included in the itinerary.
 + pace (TripPace, optional) - specifies the pace of the .
-+ mode (AllowedProblemMode, optional) - the planner mode used for this problem.
++ mode (AllowedProblemMode, required) - the planner mode used for this problem.
 + display (Display, optional) - the requested solution display configuration for this problem.
 
 ### AllowedProblemMode (enum[string])
@@ -6550,7 +6550,7 @@ Saves context to a collection. If the user is in a context where a collection is
         + `TOUR`
 + optional: `true` (boolean, optional) - specify if the goal can be dropped from the user's plan.
 + `candidate_information` (CandidateInformation, required) - specify the candidate information known by the user for the goal.
-+ `allowed_incoming_modes` (array, required) - specify the allowed incoming modes for going to this activity.
++ `allowed_incoming_modes` (array, optinoal) - specify the allowed incoming modes for going to this activity.
     - (enum)
         + DRIVE
         + BIKE
@@ -6565,7 +6565,7 @@ Saves context to a collection. If the user is in a context where a collection is
         + LYFT
         + ZIPCAR
         + MAVEN
-+ `allowed_outgoing_modes` (array, required) - specify the allowed outgoing modes for leaving from this activity.
++ `allowed_outgoing_modes` (array, optinoal) - specify the allowed outgoing modes for leaving from this activity.
     - (enum)
         + DRIVE
         + BIKE
@@ -6593,7 +6593,8 @@ Saves context to a collection. If the user is in a context where a collection is
         + `NOT_LATER_THAN`
         + `NOT_EARLIER_THAN`
         + `NOT_APPLICABLE` 
-+ relaxable: `true` (boolean, required) - if the desired time of duration/departure/arrival is relaxable.
++ relaxable: `true` (boolean, optional) - if the desired time of duration/departure/arrival is relaxable.
++ booked: `true` (boolean, optional) - if the activity has been booked.
 + explanation (ExplanationItem, optional) - explanations related to the activity.
 + `to_avoid`: true (boolean, optional) - a boolean flag. If true this POI is considered negative input and planner will try to avoid it.
 
@@ -6617,12 +6618,13 @@ Saves context to a collection. If the user is in a context where a collection is
 
 
 ### CandidateItem
-+ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the candidate.
++ id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, optional) - a unique identifier for the candidate.
 + `poi_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, optional) - a unique identifier, usually from the data source, for the candidate.
-+ index: `12` (number, required) - unique index number for the candidate.
-+ name: `Cambridge` (string, required) - the name of the candidate goal.
++ `source_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, optional) - a unique identifier from the data source for the candidate.
++ index: `12` (number, optional) - unique index number for the candidate.
++ name: `Cambridge` (string, optional) - the name of the candidate goal.
 + price (Price, optional) - the price of the candidate goal, if applicable.
-+ preferred: `false` (boolean, required) - specifies if the candidate is preferred by the user.
++ preferred: `false` (boolean, optional) - specifies if the candidate is preferred by the user.
 + preference (enum, optional) - the type of timing constraint for the end from this goal location. If NOT_APPLICABLE, the departure timestamp of each candidate goal is ignored
     + Members
         + `MAYBE`
@@ -6642,8 +6644,8 @@ Saves context to a collection. If the user is in a context where a collection is
 + recommendations (array[RecommendationExplanationItem], optional) - a list of explanation items on why this POI is good in different contexts (For you, for your trip, for the destination, etc.).
 + hours (array[HoursOfOperation], optional) - a list of hours objects describing the hours of operation for the POI.
 + `match` (ContextCandidateExplanation, optional) - providing details on how well this candidate matches the provided filters.
-+ `parent_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, required) - a unique identifier for the parent of the candidate.
-+ `children_ids` (array[string], required) - an array of unique identifiers for the children of the candidate.
++ `parent_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, optional) - a unique identifier for the parent of the candidate.
++ `children_ids` (array[string], optional) - an array of unique identifiers for the children of the candidate.
 
 ### Transportation
 + `segments` (array[TransportationSegment], optional) - a list of transportation segments, such as a list of flights, multiple train rides.
