@@ -6543,11 +6543,15 @@ Saves context to a collection. If the user is in a context where a collection is
     + Members
         + `FLIGHT`
         + `RAIL`
+        + `TRANSPORTATION`
         + `OTHER`
         + `ACCOMMODATION`
         + `EXPERIENCE`
         + `ATTRACTION`
         + `TOUR`
+        + `EVENT`
+        + `DINING`
+        + `CONTEXT`
 + optional: `true` (boolean, optional) - specify if the goal can be dropped from the user's plan.
 + `candidate_information` (CandidateInformation, required) - specify the candidate information known by the user for the goal.
 + `allowed_incoming_modes` (array[string], optional) - specify the allowed incoming modes for going to this activity. Valid values are DRIVE, BIKE, WALK, TRANSIT, PARK, TAXI, BIKESHARE, CARSHARE, BLACKCAR, UBER, LYFT, ZIPCAR, MAVEN.
@@ -6594,6 +6598,7 @@ Saves context to a collection. If the user is in a context where a collection is
 + `poi_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, optional) - a unique identifier, usually from the data source, for the candidate.
 + `source_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, optional) - a unique identifier from the data source for the candidate.
 + index: `12` (number, optional) - unique index number for the candidate.
++ categories (array[string], optional) - possible categories for this candidate POI. Allowed values are FLIGHT, RAIL, TRANSPORTATION, OTHER, ACCOMMODATION, EXPERIENCE, TOUR, EVENT, DINING, CONTEXT.
 + name: `Cambridge` (string, optional) - the name of the candidate goal.
 + price (Price, optional) - the price of the candidate goal, if applicable.
 + preferred: `false` (boolean, optional) - specifies if the candidate is preferred by the user.
