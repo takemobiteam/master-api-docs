@@ -6571,6 +6571,7 @@ Saves context to a collection. If the user is in a context where a collection is
         + `NOT_APPLICABLE` 
 + relaxable: `true` (boolean, optional) - if the desired time of duration/departure/arrival is relaxable.
 + booked: `true` (boolean, optional) - if the activity has been booked.
++ `booking_information` (BookingInformationItem, optional) - details about the booking for this activity.
 + explanation (ExplanationItem, optional) - explanations related to the activity.
 + `to_avoid`: true (boolean, optional) - a boolean flag. If true this POI is considered negative input and planner will try to avoid it.
 
@@ -6642,6 +6643,13 @@ Saves context to a collection. If the user is in a context where a collection is
 
 ### ExplanationItem
 + descriptions (array[string], optional) - an array of texts as contents of the explanation.
+
+### BookingInformationItem
++ `reservation_code`: `123456789` (string, optional) - the reservation code for the booking when available.
++ `confirmation_code`: `IAMTU6` (string, optional) - the confirmatino code for the booking when available.
++ `vendor_id`: `FLIGHT_AAL` (string, optional) - a unique identifier for the vendor that provided the booking. It will be used to map to available booking detail APIs from this vendor for lookup.
++ `vendor_name`: `American Airlines` (string, optional) - the bane for the vendor that provided the booking.
+
 
 ### POIDomain
 + destination: `Los Angeles, CA` (string, required) - the name of the destination metro that these POIs belond to.
