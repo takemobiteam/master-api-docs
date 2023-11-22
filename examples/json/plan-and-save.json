@@ -1,0 +1,334 @@
+{
+    "origin": {
+        "name": "New York, USA",
+        "lat": 40.7127753,
+        "lng": -74.0059728,
+        "time_zone": "America/New_York",
+        "departure_timestamp": 1711296000
+    },
+    "destination": {
+        "lat": 40.7127753,
+        "lng": -74.0059728,
+        "arrival_timestamp": 1712653200
+    },
+    "profile": {
+        "user_id": "MobiAgentUser",
+        "user_type": "LEISURE_TRAVELLER",
+        "preferences": [
+            {
+                "category": "ACCOMMODATION",
+                "included": true
+            },
+            {
+                "category": "DINING",
+                "included": true,
+                "types": [
+                    "Tuscan",
+                    "Greek",
+                    "Seafood",
+                    "Mediterranean"
+                ]
+            },
+            {
+                "category": "EXPERIENCE",
+                "included": true
+            },
+            {
+                "category": "TRANSPORTATION",
+                "included": true,
+                "types": [
+                    "EWR",
+                    "JNX",
+                    "Ground Transportation"
+                ]
+            },
+            {
+                "category": "RENTALCAR",
+                "included": true
+            }
+        ],
+        "mode_preferences": []
+    },
+    "traveler_information": {
+        "adults": 1,
+        "seniors": 0,
+        "children": 0,
+        "child_ages": [],
+        "infants": 0,
+        "infant_types": [],
+        "cabin_class": "ECONOMY",
+        "rooms": 1
+    },
+    "mode": "MOBI_AGENT",
+    "timezone": "America/New_York",
+    "activities": [
+        {
+            "booking_information": {
+                "confirmation_code": "893FEA",
+                "vendor_name": "Sabre GDS"
+            },
+            "category": "FLIGHT",
+            "candidate_information": {
+                "selection": {
+                    "departure_timestamp": 1711256100,
+                    "arrival_timestamp": 1711302300,
+                    "transportation": {
+                        "segments": [
+                            {
+                                "type": "FLIGHT",
+                                "origin": "EWR",
+                                "destination": "LIS",
+                                "departure_timestamp": 1711256100,
+                                "arrival_timestamp": 1711280100,
+                                "carrier_code": "TP",
+                                "number": "204",
+                                "cabin_class": "ECONOMY"
+                            },
+                            {
+                                "type": "FLIGHT",
+                                "origin": "LIS",
+                                "destination": "FCO",
+                                "departure_timestamp": 1711291200,
+                                "arrival_timestamp": 1711302300,
+                                "carrier_code": "TP",
+                                "number": "834",
+                                "cabin_class": "ECONOMY"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "booking_information": {
+                "confirmation_code": "ACR593",
+                "vendor_name": "Sabre GDS"
+            },
+            "category": "RAIL",
+            "candidate_information": {
+                "selection": {
+                    "departure_timestamp": 1711256100,
+                    "arrival_timestamp": 1711302300,
+                    "transportation": {
+                        "segments": [
+                            {
+                                "type": "TRAIN",
+                                "origin": "LHR",
+                                "destination": "FRA",
+                                "departure_timestamp": 1711256100,
+                                "arrival_timestamp": 1711280100,
+                                "carrier_code": "DB",
+                                "number": "345",
+                                "cabin_class": "ECONOMY"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "booking_information": {
+                "confirmation_code": "RRB789",
+                "vendor_name": "Sabre GDS"
+            },
+            "category": "RENTALCAR",
+            "candidate_information": {
+                "selection": {
+                    "pickup_timestamp": 1711256100,
+                    "dropoff_timestamp": 1711302300,
+                    "pickup_location": {
+                        "id": "8448852e-71dd-3a40-81d5-15fe8bf41c86",
+                        "name": "Budget:FLRO001",
+                        "lat": 43.80275,
+                        "lng": 11.20131,
+                        "address_line1": "Firenze Peretola Airport,Via Palagio Degli Spini",
+                        "city": "Florence",
+                        "postal_code": "50145",
+                        "country": "ITA"
+                    },
+                    "dropoff_location": {
+                        "id": "8448852e-71dd-3a40-81d5-15fe8bf41c86",
+                        "name": "Budget:FLRO001",
+                        "lat": 43.80275,
+                        "lng": 11.20131,
+                        "address_line1": "Firenze Peretola Airport,Via Palagio Degli Spini",
+                        "city": "Florence",
+                        "postal_code": "50145",
+                        "country": "ITA"
+                    }
+                }
+            }
+        },
+        {
+            "booking_information": {
+                "confirmation_code": "A57F80",
+                "vendor_name": "Virtuoso"
+            },
+            "category": "ACCOMMODATION",
+            "candidate_information": {
+                "selection": {
+                    "source_id": "12345",
+                    "name": "Castel Monastero",
+                    "start_timestamp": 1711332000,
+                    "end_timestamp": 1711332000,
+                    "location": {
+                        "address_line1": "Via Firenze, 8",
+                        "city": "Rome",
+                        "state_province": "RM",
+                        "postal_code": "184",
+                        "country": "Italy"
+                    }
+                }
+            }
+        },
+        {
+            "booking_information": {
+                "confirmation_code": "8934027F0",
+                "vendor_name": "TheFork"
+            },
+            "category": "DINING",
+            "candidate_information": {
+                "selection": {
+                    "source_id": "7975400",
+                    "name": "Panini Toscani",
+                    "start_timestamp": 1711332000,
+                    "end_timestamp": 1711332000,
+                    "location": {
+                        "address_line1": "Piazza del Duomo, 34/R",
+                        "city": "Florence",
+                        "state_province": "Province of Florence",
+                        "postal_code": "50122",
+                        "country": "Italy"
+                    }
+                }
+            }
+        },
+        {
+            "booking_information": {
+                "confirmation_code": "889023123",
+                "vendor_name": "Viator"
+            },
+            "category": "EXPERIENCE",
+            "candidate_information": {
+                "selection": {
+                    "source_id": "242857",
+                    "name": "Palazzo Medici Riccardi",
+                    "start_timestamp": 1711332000,
+                    "end_timestamp": 1711332000,
+                    "location": {
+                        "address_line1": "Via Camillo Cavour 1-3",
+                        "city": "Florence",
+                        "state_province": "Province of Florence",
+                        "postal_code": "50129",
+                        "country": "Italy",
+                        "address": "Via Camillo Cavour 1-3, 50129, Florence Italy"
+                    }
+                }
+            }
+        },
+        {
+            "optional": false,
+            "candidate_information": {
+                "candidates": [
+                    {
+                        "name": "Compact 4/5Door Car [Enterprise:Rental Location ROMC061]",
+                        "start_timestamp": 1711384000,
+                        "end_timestamp": 1711404000
+                    }
+                ]
+            },
+            "start_constraint_type": "NOT_EARLIER_THAN",
+            "end_constraint_type": "NOT_LATER_THAN"
+        },
+        {
+            "optional": false,
+            "candidate_information": {
+                "candidates": [
+                    {
+                        "id": "3b88b3ac-ca6c-3ef2-bbf6-5785579993ba",
+                        "name": "Rome_Italy",
+                        "categories": [
+                            "CONTEXT"
+                        ],
+                        "end_timestamp": 1711404000
+                    }
+                ]
+            }
+        },
+        {
+            "optional": false,
+            "candidate_information": {
+                "candidates": [
+                    {
+                        "id": "715f3f55-7e4c-3b44-be0c-6449ca24c4ec",
+                        "name": "Florence_Italy",
+                        "categories": [
+                            "CONTEXT"
+                        ],
+                        "end_timestamp": 1711749600
+                    }
+                ]
+            }
+        },
+        {
+            "optional": false,
+            "candidate_information": {
+                "candidates": [
+                    {
+                        "id": "2f53917e-f1bb-3792-8b8a-f8df1f54d971",
+                        "name": "Amalfi Coast_Italy",
+                        "categories": [
+                            "CONTEXT"
+                        ],
+                        "end_timestamp": 1712008800
+                    }
+                ]
+            }
+        },
+        {
+            "optional": false,
+            "candidate_information": {
+                "candidates": [
+                    {
+                        "id": "792a8971-9a5c-3236-8d78-255ead786a0c",
+                        "name": "Santorini_Greece",
+                        "categories": [
+                            "CONTEXT"
+                        ],
+                        "end_timestamp": 1712264400
+                    }
+                ]
+            }
+        },
+        {
+            "optional": false,
+            "candidate_information": {
+                "candidates": [
+                    {
+                        "id": "95467895-ab99-3e2a-a8e6-a434f09bfccc",
+                        "name": "Naxos_Naxos Island_Greece",
+                        "categories": [
+                            "CONTEXT"
+                        ],
+                        "end_timestamp": 1712523600
+                    }
+                ]
+            }
+        },
+        {
+            "optional": false,
+            "candidate_information": {
+                "candidates": [
+                    {
+                        "id": "841edb7a-2314-3af7-8fd2-23393e87ea74",
+                        "name": "Athens_Greece",
+                        "categories": [
+                            "CONTEXT"
+                        ],
+                        "end_timestamp": 1712610000
+                    }
+                ]
+            }
+        }
+    ]
+}
