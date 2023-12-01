@@ -6239,7 +6239,7 @@ Saves context to a collection. If the user is in a context where a collection is
 + children (number, optional) - the number of children.
 + child_ages (array[number], optional) - an array of child ages.
 + infants (number, optional) - the number of infants.
-+ infant_types (array[InfantType], optional) - an array of infant types.
++ infant_types (array[InfantType], optional) - an array of infant types. Could be IN_LAP or IN_SEAT.
 + cabin_class (enum, optional) - the class of travel.
     + Members
         + ECONOMY
@@ -6655,9 +6655,10 @@ Saves context to a collection. If the user is in a context where a collection is
 ### BookingInformationItem
 + `reservation_code`: `123456789` (string, optional) - the reservation code for the booking when available.
 + `confirmation_code`: `IAMTU6` (string, optional) - the confirmatino code for the booking when available.
++ `ticket_number`: `123-6709968553123` (string, optional) - the ticket number for the booking when available.
 + `vendor_id`: `FLIGHT_AAL` (string, optional) - a unique identifier for the vendor that provided the booking. It will be used to map to available booking detail APIs from this vendor for lookup.
-+ `vendor_name`: `American Airlines` (string, optional) - the bane for the vendor that provided the booking.
-
++ `vendor_name`: `American Airlines` (string, optional) - the name for the vendor that provided the booking.
++ `traveler_information` (TravelerInformation, optional) - the traveler information associated with this booking.
 
 ### POIDomain
 + destination: `Los Angeles, CA` (string, required) - the name of the destination metro that these POIs belond to.
