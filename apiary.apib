@@ -6607,7 +6607,8 @@ Saves context to a collection. If the user is in a context where a collection is
 + index: `12` (number, optional) - unique index number for the candidate.
 + categories (array[string], optional) - possible categories for this candidate POI. Allowed values are FLIGHT, RAIL, TRANSPORTATION, OTHER, ACCOMMODATION, EXPERIENCE, TOUR, EVENT, DINING, CONTEXT.
 + name: `Cambridge` (string, optional) - the name of the candidate goal.
-+ price (Price, optional) - the price of the candidate goal, if applicable.
++ prices (array[Price], optional) - the prices of the candidate goal, if applicable.
++ price_level (PriceLevel, optional) - the prices of the candidate goal, if applicable.
 + preferred: `false` (boolean, optional) - specifies if the candidate is preferred by the user.
 + preference (enum, optional) - the type of timing constraint for the end from this goal location. If NOT_APPLICABLE, the departure timestamp of each candidate goal is ignored
     + Members
@@ -7724,3 +7725,8 @@ the direction towards the next stop or intermediate location.
 ### ContextRecommendationAttribute (object)
 + category (AllowedPreferenceCategory) - the preference category
 + score (number) - the score, typically 1 for matched, or -1 for unmatched
+
+### PriceLevel (object)
++ lowerbound (number) - the price lower bound
++ upperbound (number) - the price upper bound
+
