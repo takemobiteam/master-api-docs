@@ -3091,9 +3091,7 @@ Retrieve recommended destinations (contexts) given the selected tags in the prof
 
 + Response 200 (application/json)
 
-    + Attributes 
-        + contexts (array[CandidateItem], required) - a list of recommended destination names.
-        + scores (array[number], required) - a list of matching count for each category of POIs at the recommended destinations (the higher the better). Also includes `SATISFIED_SELECTIONS` and `UNSATISFIED_SELECTIONS`
+    + Attributes (ContextRecommendationResult)
 
 + Response 400
 
@@ -7705,3 +7703,24 @@ the direction towards the next stop or intermediate location.
 + replacement_poi_id (string,optional) - the replacement POI ID
 + replacement_poi_name (string,optional) - the replacement POI name
 + replacement_poi_image (string,optional) - the replacement POI image
+
+
+### ContextRecommendationResult (object)
++ contexts (array[CandidateItem]) - the array of contexts
++ scores (object) - the scores for each context name
+    + *key* (object) - context name to scores for the context
+        + *key* (number) - count description to count
++ attributes (object) - the attributes for each context
+    + *key* (object) - context name to attributes
+        + *key* (ContextRecommendationAttribute) - attribute name to score
++ matches (object) - the context matches
+    + *key* (object) - context name to scores for the context
+        + *key* (number) - maps from context name to match value
++ mobi_scores (object) - the scores for each context
+    + *key* (object) - context name to scores for the context
+        + *key* (number) - score name to score
+
+
+### ContextRecommendationAttribute (object)
++ category (AllowedPreferenceCategory) - the preference category
++ score (number) - the score, typically 1 for matched, or -1 for unmatched
