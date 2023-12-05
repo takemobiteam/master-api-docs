@@ -3092,7 +3092,7 @@ Retrieve recommended destinations (contexts) given the selected tags in the prof
 + Response 200 (application/json)
 
     + Attributes 
-        + contexts (array[string], required) - a list of recommended destination names.
+        + contexts (array[CandidateItem], required) - a list of recommended destination names.
         + scores (array[number], required) - a list of matching count for each category of POIs at the recommended destinations (the higher the better). Also includes `SATISFIED_SELECTIONS` and `UNSATISFIED_SELECTIONS`
 
 + Response 400
