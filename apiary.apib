@@ -5813,12 +5813,13 @@ Saves context to a collection. If the user is in a context where a collection is
     + collection_id (string, required) - ID of the collection to remove the POI from
     + context_id (string, required) - ID of the context
     + mode (string, required) - the mode (group) of the profile to be retrieved
+    + from_all_collections (boolean, optional) - whether the context should be remove from all context collections.
 
 + Response 200 (application/json)
 
     + Attributes
         + result
-            + preview (PoiCollectionPreview, required) - collection preview
+            + preview (array[PoiCollectionPreview], required) - list of collection previews. May contain multiple collection previews if from_all_collections is true.
             + contexts (array[CandidateItem], required) - list of pois in collection
  
 + Response 400
