@@ -49,11 +49,11 @@
             "candidate_information": {
                 "candidates": null,
                 "selection": {
-                    "id": "3b88b3ac-ca6c-3ef2-bbf6-578557999307",
+                    "id": "3b88b3ac-ca6c-3ef2-bbf6-578558999299",
                     "source_id": null,
                     "name": null,
-                    "departure_timestamp": 1711256100,
-                    "arrival_timestamp": 1711302300,
+                    "departure_timestamp": 1711296000,
+                    "arrival_timestamp": 1711326000,
                     "pickup_timestamp": null,
                     "dropoff_timestamp": null,
                     "start_timestamp": null,
@@ -64,8 +64,8 @@
                                 "type": "FLIGHT",
                                 "origin": "EWR",
                                 "destination": "LIS",
-                                "departure_timestamp": 1711256100,
-                                "arrival_timestamp": 1711280100,
+                                "departure_timestamp": 1711296000,
+                                "arrival_timestamp": 1711306000,
                                 "carrier_code": "TP",
                                 "number": "204",
                                 "cabin_class": "ECONOMY"
@@ -74,8 +74,8 @@
                                 "type": "FLIGHT",
                                 "origin": "LIS",
                                 "destination": "FCO",
-                                "departure_timestamp": 1711291200,
-                                "arrival_timestamp": 1711302300,
+                                "departure_timestamp": 1711316000,
+                                "arrival_timestamp": 1711326000,
                                 "carrier_code": "TP",
                                 "number": "834",
                                 "cabin_class": "ECONOMY"
@@ -84,7 +84,9 @@
                     },
                     "pickup_location": null,
                     "dropoff_location": null,
-                    "location": null
+                    "location": null,
+                    "origin": null,
+                    "destination": null
                 }
             }
         },
@@ -103,8 +105,8 @@
                     "id": "3b88b3ac-ca6c-3ef2-bbf6-578557999306",
                     "source_id": null,
                     "name": null,
-                    "departure_timestamp": 1711256100,
-                    "arrival_timestamp": 1711302300,
+                    "departure_timestamp": 1711526000,
+                    "arrival_timestamp": 1711556000,
                     "pickup_timestamp": null,
                     "dropoff_timestamp": null,
                     "start_timestamp": null,
@@ -113,10 +115,10 @@
                         "segments": [
                             {
                                 "type": "TRAIN",
-                                "origin": "LHR",
-                                "destination": "FRA",
-                                "departure_timestamp": 1711256100,
-                                "arrival_timestamp": 1711280100,
+                                "origin": "FCO",
+                                "destination": "FLR",
+                                "departure_timestamp": 1711526000,
+                                "arrival_timestamp": 1711556000,
                                 "carrier_code": "DB",
                                 "number": "345",
                                 "cabin_class": "ECONOMY"
@@ -125,7 +127,9 @@
                     },
                     "pickup_location": null,
                     "dropoff_location": null,
-                    "location": null
+                    "location": null,
+                    "origin": null,
+                    "destination": null
                 }
             }
         },
@@ -146,15 +150,13 @@
                     "name": "Compact 4/5Door Car [Enterprise:Rental Location ROMC061]",
                     "departure_timestamp": null,
                     "arrival_timestamp": null,
-                    "pickup_timestamp": 1711256100,
-                    "dropoff_timestamp": 1711302300,
+                    "pickup_timestamp": 1711556000,
+                    "dropoff_timestamp": 1711956000,
                     "start_timestamp": null,
                     "end_timestamp": null,
                     "transportation": null,
                     "pickup_location": {
                         "name": "Budget:FLRO001",
-                        "lat": 43.80275,
-                        "lng": 11.20131,
                         "address_line1": "Firenze Peretola Airport,Via Palagio Degli Spini",
                         "address_line2": null,
                         "city": "Florence",
@@ -164,8 +166,6 @@
                     },
                     "dropoff_location": {
                         "name": "Budget:FLRO001",
-                        "lat": 43.80275,
-                        "lng": 11.20131,
                         "address_line1": "Firenze Peretola Airport,Via Palagio Degli Spini",
                         "address_line2": null,
                         "city": "Florence",
@@ -173,7 +173,9 @@
                         "postal_code": "50145",
                         "country": "ITA"
                     },
-                    "location": null
+                    "location": null,
+                    "origin": null,
+                    "destination": null
                 }
             }
         },
@@ -196,8 +198,8 @@
                     "arrival_timestamp": null,
                     "pickup_timestamp": null,
                     "dropoff_timestamp": null,
-                    "start_timestamp": 1711332000,
-                    "end_timestamp": 1711432000,
+                    "start_timestamp": 1711556000,
+                    "end_timestamp": 1711956000,
                     "transportation": null,
                     "pickup_location": null,
                     "dropoff_location": null,
@@ -205,13 +207,15 @@
                         "name": "Castel Monastero",
                         "lat": null,
                         "lng": null,
-                        "address_line1": "Via Firenze, 8",
+                        "address_line1": "Loc. Monastero D'Ombrone, 19",
                         "address_line2": null,
-                        "city": "Rome",
-                        "state_province": "RM",
-                        "postal_code": "184",
+                        "city": "Castelnuovo",
+                        "state_province": "Berardenga SI",
+                        "postal_code": "53019",
                         "country": "Italy"
-                    }
+                    },
+                    "origin": null,
+                    "destination": null
                 }
             }
         },
@@ -234,8 +238,8 @@
                     "arrival_timestamp": null,
                     "pickup_timestamp": null,
                     "dropoff_timestamp": null,
-                    "start_timestamp": 1711332000,
-                    "end_timestamp": 1711432000,
+                    "start_timestamp": 1711566000,
+                    "end_timestamp": 1711569000,
                     "transportation": null,
                     "pickup_location": null,
                     "dropoff_location": null,
@@ -249,7 +253,9 @@
                         "state_province": "Province of Florence",
                         "postal_code": "50122",
                         "country": "Italy"
-                    }
+                    },
+                    "origin": null,
+                    "destination": null
                 }
             }
         },
@@ -272,8 +278,8 @@
                     "arrival_timestamp": null,
                     "pickup_timestamp": null,
                     "dropoff_timestamp": null,
-                    "start_timestamp": 1711332000,
-                    "end_timestamp": 1711432000,
+                    "start_timestamp": 1711669000,
+                    "end_timestamp": 1711679000,
                     "transportation": null,
                     "pickup_location": null,
                     "dropoff_location": null,
@@ -288,7 +294,9 @@
                         "postal_code": "50129",
                         "country": "Italy",
                         "address": "Via Camillo Cavour 1-3, 50129, Florence Italy"
-                    }
+                    },
+                    "origin": null,
+                    "destination": null
                 }
             }
         },
@@ -311,12 +319,24 @@
                     "arrival_timestamp": null,
                     "pickup_timestamp": null,
                     "dropoff_timestamp": null,
-                    "start_timestamp": 1711332000,
-                    "end_timestamp": 1711432000,
+                    "start_timestamp": 1711779000,
+                    "end_timestamp": 1711789000,
                     "transportation": null,
                     "pickup_location": null,
                     "dropoff_location": null,
-                    "location": {
+                    "location": null,
+                    "origin": {
+                        "name": "Palazzo Medici Riccardi",
+                        "lat": null,
+                        "lng": null,
+                        "address_line1": "Via Camillo Cavour 1-3",
+                        "address_line2": null,
+                        "city": "Florence",
+                        "state_province": "Province of Florence",
+                        "postal_code": "50129",
+                        "country": "Italy"
+                    },
+                    "destination": {
                         "name": "Palazzo Medici Riccardi",
                         "lat": null,
                         "lng": null,
@@ -328,24 +348,6 @@
                         "country": "Italy"
                     }
                 }
-            }
-        },
-        {
-            "optional": false,
-            "booking_information": null,
-            "category": "CONTEXT",
-            "candidate_information": {
-                "candidates": [
-                    {
-                        "id": "792a8971-9a5c-3236-8d78-255ead786a0c",
-                        "name": "Santorini_Greece",
-                        "categories": [
-                            "CONTEXT"
-                        ],
-                        "end_timestamp": 1712264400
-                    }
-                ],
-                "selection": null
             }
         }
     ]
