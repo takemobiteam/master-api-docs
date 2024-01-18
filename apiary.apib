@@ -797,6 +797,35 @@ Replan a previously generated solution and get an updated one.
         Internal Server Error.
 
 
+## Validate Problem [/mobility-planner/demo/v2/problem/validate]
+
+Validate an input problem and return problem after POI matching has
+occcured. Also may populate encoding_warnings on the returned problem
+if any warnings were generated during problem validation.
+
+### POST
+
++ Request (application/json)
+
+    + Attributes (Problem)
+  
++ Response 200 (application/json)
+
+    + Attributes (Problem)
+    
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
 ## Checking Availability [/mobility-planner/demo/v2/availability-checking]
 
 Evaluating the availability of activities in the provided solution.
@@ -3040,6 +3069,97 @@ Retrieve the candidate POIs matching the specified search keyword.
 + Response 500
 
         Internal Server Error.
+
+
+## Get Candidates nearest to a point. [/mobility-planner/demo/v2/domain/poi/nearest{?mode,context,category,nsDistance,ewDistance,lat,lng,address,limit,sort,tags}]
+
++ Parameters
+    + mode `MOBI_AGENT` (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + lat `142.361145`(number, optional) - the latitude in floating point. Required unless address is specified.
+    + lng `-71.057083` (number, optional) - the longitude in floating point. Required unless address is specified.
+    + address `123 Main St, Springfield, MA` (string, optional) - the complete street address to use as the center point. Only required if lat/lng are not specified.
+    + context (string, optional) - the context for the POIs.
+    + nsDistance `10000` (int, optional) - the north/south distance of the constraining box in meters. Defaults to 10,000 meters.
+    + ewDistance `10000` (int, optional) - the east/west distance of the constraining box around each point in meters. Defaults to 10,000 meters.
+    + limit `3` (int, optional) - the number of POIs to return. Defaults to 3.
+    + sort `NEAREST` (denum, optional) - the sort to use. Defaults to NEAREST
+        + Members
+            + `NEAREST` - sort by nearest to point
+            + `BEST` - sort by rating and popularity
+    + tags (string, optional) - the comma separate list of required tags
+    + category `ACCOMMODATION` (enum, required) - the POI category. If not specified, POIs of all supported types will be returned.
+        + Members
+            + `ACCOMMODATION`
+            + `CONTEXT`
+            + `EXPERIENCE`
+            + `DINING`
+
+### GET
+
+Retrieve the nearest candidates to a point. The point can be specified via lat/lng or via an address.
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + items (array[CandidateItem], required) - a list of candidates that fit the search criteria.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+## Get Candidates nearest to points [/mobility-planner/demo/v2/domain/poi/nearest-to-points{?mode,context,category,nsDistance,ewDistance, points,limit,sort}]
+
++ Parameters
+    + mode `MOBI_AGENT` (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + points `142.361145,-71.057083;34.052235,-118.243683` (string, required) - a semi-colon delimite list of latitude/longitude points, with latitude and longitude being floating point numbers separated by commas.
+    + context (string, optional) - the context for the POIs.
+    + `10000` nsDistance (int, optional) - the north/south distance of the constraining box in meters. Defaults to 10,000 meters.
+    + ewDistance `10000` (int, optional) - the east/west distance of the constraining box around each point in meters. Defaults to 10,000 meters.
+    + limit `3` (int, optional) - the number of POIs to return. Defaults to 3.
+    + sort `NEAREST` (denum, optional) - the sort to use. Defaults to NEAREST
+        + Members
+            + `NEAREST` - sort by nearest to point
+            + `BEST` - sort by rating and popularity
+    + tags (string, optional) - the comma separate list of required tags
+    + category `ACCOMMODATION` (enum, required) - the POI category. If not specified, POIs of all supported types will be returned.
+        + Members
+            + `ACCOMMODATION`
+            + `CONTEXT`
+            + `EXPERIENCE`
+            + `DINING`
+
+
+
+### GET
+
+Retrieve the nearest candidates near each specified point.
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + items (array[array], required) - a list of lists of nearest candidates corresponding to each of the input points.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
 
 
 ## Get Filter Suggestions [/mobility-planner/demo/v2/domain/filter/suggestions{?mode,category,keyword,parent,session_id}]
@@ -5976,6 +6096,7 @@ Saves context to a collection. If the user is in a context where a collection is
 + origin (OriginDestinationItem, required) - the origin of the planning problem.
 + destination (OriginDestinationItem, required) - the destination of the planning problem.
 + current (Location, optional) - the current location of the user. Different from the origin and destination fields, no timing information is required for current location: the planner will use the current timestamp for it.
++ encoding_warnings (array[string], optional) - any encoding warnings. This is populated by problem/validate or places the problem is returned after planning.
 + flexible_ordering (boolean, required) - specifies if the ordering of goals can be modified by the planner.
 + activities (array[GoalItem], required) - the set of goals the user wants to achieve.
 + profile (Profile, optional) - the profile of the user.
@@ -5990,7 +6111,7 @@ Saves context to a collection. If the user is in a context where a collection is
 + display (Display, optional) - the requested solution display configuration for this problem.
 
 ### AllowedProblemMode (enum[string])
-+ MOBI_AGENT
++ MOBI_AGENT: default Mobi mode
 
 ### SolutionResponse
 + session_id: `e790d700-9f97-11ea-bb37-0242ac130002` (string, required) - unique identifier for the user session.
@@ -6011,6 +6132,8 @@ Saves context to a collection. If the user is in a context where a collection is
 + `dropped_activities` (array[GoalItem], required) - contains an array of activities requested by the user but not included in this solution.
 + locations (array[Location], required) - contains an array of locations used by this solution.
 + agents (array[AgentItem], optional) - the set of agents involved in the plan, and the Ids of their activities. Only ac
++ encoding_warnings (array[string], optional) - any encoding warnings. This is populated during an early phase of planning.
+
 
 ### SolutionSpec
 + candidates_evaluated: 1200000 (number, optional) - the number of candidate solutions evaluated during planning.
