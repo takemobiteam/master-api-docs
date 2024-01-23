@@ -6757,9 +6757,13 @@ Saves context to a collection. If the user is in a context where a collection is
 + `match` (ContextCandidateExplanation, optional) - providing details on how well this candidate matches the provided filters.
 + `parent_id`: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, optional) - a unique identifier for the parent of the candidate.
 + `children_ids` (array[string], optional) - an array of unique identifiers for the children of the candidate.
++ `offers` (array[PoiOffer], optional) - an array of different offerings (room types, ticket types) of this activity.
 
 ### Transportation
 + `segments` (array[TransportationSegment], optional) - a list of transportation segments, such as a list of flights, multiple train rides.
+
+### PoiOffer
++ `description`: `Oceanview Room` (string, required) - the description of the offer.
 
 
 ### TransportationSegment
