@@ -6889,6 +6889,11 @@ Saves context to a collection. If the user is in a context where a collection is
 ### PoiRecommendation
 + poi (CandidateItem, required) - the recommended POI object.
 + `time_slots` (array[TimeslotRecommendation], required) - a set of time windows in whiche the recommended POI could be included in the itinerary.
++ `travel_to_time`: `900` (number, required) - specifies the transportation time (in seconds) to this POI from the previous activity.
++ `travel_to_mode`: `TAXI` (string, required) - specifies the mode of transportation to this POI from the previous activity.
++ `travel_from_time`: `900` (number, required) - specifies the transportation time (in seconds) from this POI to the next activity.
++ `travel_from_mode`: `TAXI` (string, required) - specifies the mode of transportation from this POI to the next activity.
+
 
 
 ### TimeslotRecommendation
