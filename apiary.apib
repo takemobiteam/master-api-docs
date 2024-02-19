@@ -3116,6 +3116,46 @@ Retrieve the nearest candidates to a point. The point can be specified via lat/l
         Internal Server Error.
 
 
+## Get Candidates matching a search query, currently staging only. [/mobility-planner/demo/v2/domain/poi/search{?mode,context,category,context,query,fields,tags,offset,limit}]
+
++ Parameters
+    + mode `MOBI_AGENT` (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + context `Boston_Massachusetts` (string, optional) - the context to use. If unspecified, worldwide POIs will be queried.
+    + query `Hancock Tower` (string, required) - the search query string.
+    + tags (string, optional) - the comma separate list of required tags.
+    + offset `0` (int, optional) - the offset of the first return result in the result set. Default is zero.
+    + limit `10` (int, optional) - the number of POIs to return. Default is 10.
+    + category `ACCOMMODATION` (enum, optional) - the POI category. If not specified, POIs of all supported types will be queried.
+        + Members
+            + `ACCOMMODATION`
+            + `CONTEXT`
+            + `EXPERIENCE`
+            + `DINING`
+
+### GET
+
+Retrieve POI candidates matching queries.
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + items (array[CandidateItem], required) - a list of candidates that fit the search criteria.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
+
+
 ## Get Candidates nearest to points [/mobility-planner/demo/v2/domain/poi/nearest-to-points{?mode,context,category,nsDistance,ewDistance, points,limit,sort}]
 
 + Parameters
