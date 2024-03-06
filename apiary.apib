@@ -3116,6 +3116,36 @@ Retrieve the nearest candidates to a point. The point can be specified via lat/l
         Internal Server Error.
 
 
+## Get Candidate Metrics [/mobility-planner/demo/v2/domain/poi/metrics{?mode,start_date,end_date}]
+
++ Parameters
+    + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
+    + start_date (string, required) - the start date for the requested metrics, in yyyy-MM-dd.
+    + end_date (string, required) - the end date for the requested metrics, in yyyy-MM-dd.
+
+
+### GET
+
+Retrieve the candidate metrics, such availability, forecast, cost, nps, etc. for the requested date range.
+
++ Response 200 (application/json)
+
+    + Attributes 
+        + results (array[CandidateItemMetric], required) - a list of metric items for the requested date range and applicable candidate POIs/inventories.
+
++ Response 400
+
+        Bad Request.
+        
++ Response 401
+
+        Unauthorized.
+        
++ Response 500
+
+        Internal Server Error.
+
+
 ## Get Candidates matching a search query, currently staging only. [/mobility-planner/demo/v2/domain/poi/search{?mode,context,category,context,query,fields,tags,offset,limit}]
 
 + Parameters
@@ -6533,6 +6563,37 @@ Saves context to a collection. If the user is in a context where a collection is
         + CITY
         + COUNTRY
 + id: `df54ee42-35b2-4884-a6a8-e8f935b98bd5` (string, optional) - a unique identifier for the context object.
+
+
+### CandidateItemMetric
++ `name`: `Forecasted Hotel Rooms` (string, required) - the name of the metric object.
++ `description`: `Estimated rooms needed for the date range` (string, optional) - a text description for the metric object.
++ `date`: `2024-03-01` (string, optional) - date string for the date this metric apply to, in yyyy-MM-dd.
++ `time`: `12:00` (string, optional) - time of day string for the hour this metric apply to, in HH:mm.
++ `activity_category` (AllowedPreferenceCategory, optional) - the category of POIs/inventories this metrics object cover. For example, ACCOMMODATION, DINING, or EXPERIENCE.
++ `specification` (enum, required) - the specification of this metric object.
+    + Members
+        + AVAILABLE
+        + UNAVAILABLE
+        + MAXIMUM
+        + MINIMUM
+        + CONTRACTED
+        + FORECASTED
+        + PRE_ALLOCATED
+        + ALLOCATED
+        + CONSUMED
++ `type` (enum, optional) - the type of this metric object.
+    + Members
+        + QUANTITY
+        + COST
++ `objective` (enum, optional) - the objective when calculating the metrics in this object.
+    + Members
+        + NPS
+        + PRICE
++ `avg_value`: `3.5` (number, optional) - average value for the requested metric.
++ `min_value`: `3.5` (number, optional) - minimum value for the requested metric.
++ `max_value`: `3.5` (number, optional) - maximum value for the requested metric.
++ `total_value`: `3.5` (number, optional) - total value for the requested metric.
 
         
 ### SurveySuggestionRequest
