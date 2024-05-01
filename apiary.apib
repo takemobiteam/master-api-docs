@@ -6872,8 +6872,10 @@ Saves context to a collection. If the user is in a context where a collection is
     + Members
         + `FLIGHT`
         + `TRAIN`
-+ origin: `BOS` (string, required) - the code (Airport or Train Station) for the departure location of the segment.
-+ destination: `SFO` (string, required) - the code (Airport or Train Station) for the arrival location of the segment.
++ origin: `BOS` (string, optional) - the code (Airport or Train Station) for the departure location of the segment.
++ origin_location (Location, optional) - the location object for the departure location of the segment.
++ destination: `SFO` (string, optional) - the code (Airport or Train Station) for the arrival location of the segment.
++ destination_location (Location, optional) - the location object for the departure location of the segment.
 + `departure_timestamp`: `1519765200` (number, required) - the departure timestamp from the origin.
 + `arrival_timestamp`: `1519765200` (number, required) - the arrival timestamp at the destination.
 + `carrier_code`: `UA` (string, optional) - the code of the air or train carrier.
