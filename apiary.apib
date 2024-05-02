@@ -2937,15 +2937,15 @@ Retrieve all supported destinations (compatible contexts) given the specified pl
         Internal Server Error.
 
 
-## Get Matched Destination - Also Known as Plan Context [/mobility-planner/demo/v2/domain/context{?mode,name}]
+## Get Context By Name [/mobility-planner/demo/v2/domain/context{?mode,name}]
 
 + Parameters
     + mode (AllowedProblemMode, required) - the planner mode used for this context domain.
-    + name: `Boston_Massachusetts` (string, required) - the name of the context.
+    + name: `Boston_MA_US` (string, required) - the name of the context.
 
 ### GET
 
-Retrieve matched destination given the specified planning problem mode and context name.
+Retrieve the context with the passed name. Note: Context is what travel destinations are called internally.
 
 + Response 200 (application/json)
 
