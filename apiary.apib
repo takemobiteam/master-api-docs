@@ -6162,7 +6162,8 @@ Saves context to a collection. If the user is in a context where a collection is
 + are_images: false (boolean, required) - are the results images
 
 ### Problem
-+ id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, required) - unique identifier for the problem object.
++ id: `a1111c8c-c720-46c3-8534-2fcdd730040d` (string, optional) - unique identifier for the problem object.
++ `external_id`: `123456789` (string, optional) - unique external system identifier for the problem object.
 + origin (OriginDestinationItem, required) - the origin of the planning problem.
 + destination (OriginDestinationItem, required) - the destination of the planning problem.
 + current (Location, optional) - the current location of the user. Different from the origin and destination fields, no timing information is required for current location: the planner will use the current timestamp for it.
