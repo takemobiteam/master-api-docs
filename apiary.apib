@@ -6189,6 +6189,7 @@ Saves context to a collection. If the user is in a context where a collection is
 + solution (Solution, optional) - the solution object for the problem.
 + spec (SolutionSpec, optional) - the specifications of the solution and the planning process.
 + highlights (SolutionHighlights, optional) - the highlights of the solution.
++ `travel_tips` (array[TravelTip], optional) - the travel tips for the solution.
 + destination (Location, optional) - the representative location of this plan.
 + display (Display, optional) - any recommended configurations for displaying this solutions.
 + explanations (array[string], optional) - explanations for why no solution could be found by the planner.
@@ -6250,6 +6251,15 @@ Saves context to a collection. If the user is in a context where a collection is
 + `title`: `Destination Highlights` (string, optional) - a high level text description for the solution highlights.
 + `pois` (array[CandidateItem], optional) - the list of POI highlights.
 + `activities` (array[Activity], optional) - the list of activity highlights in the itinerary.
+
+### TravelTip
++ `title`: `Destination Highlights` (string, optional) - a high level text description for the travel tip.
++ `country`: `France` (string, optional) - the destination country where the travel tip applies for.
++ `content` (array[TripInfo], optional) - the list of detailed travel tips.
+
+### TripInfo
++ `title`: `Currency Information` (string, optional) - a high level text description for the travel tip information.
++ `content` (array[string], optional) - the list of detailed travel tips.
 
 ### SolutionFilterSpec
 + `satisfied_filters` (array[PreferenceDomainCandidate], optional) - the list of satisfied filter objects.
