@@ -3146,7 +3146,7 @@ Retrieve the candidate metrics, such availability, forecast, cost, nps, etc. for
         Internal Server Error.
 
 
-## Get Candidates matching a search query, currently staging only. [/mobility-planner/demo/v2/domain/poi/search{?mode,context,category,context,query,fields,tags,offset,limit}]
+## Get Candidates matching a search query, currently staging only. [/mobility-planner/demo/v2/domain/poi/search{?mode,context,category,context,query,fields,tags,offset,limit,sort}]
 
 + Parameters
     + mode `MOBI_AGENT` (AllowedProblemMode, required) - the planner mode used for this context domain.
@@ -3161,6 +3161,7 @@ Retrieve the candidate metrics, such availability, forecast, cost, nps, etc. for
             + `CONTEXT`
             + `EXPERIENCE`
             + `DINING`
+    + sort '_relevance desc' (string, optional) - a sort string composed of comma-separated list of sort orders. Each sort order consists of a sort property name, optionally followed by " asc" (ascending) or " desc" (for descending). Subsequrent sort orders only apply when previous sort orders result in a sorting tie. A sort order can reference a sort psuedo-property such as "_revelance" (how closely the results match the search terms), "_relevanceAndImportance" (sort mostly by relevance, but also consider importance for similar matches). Other examples sort strings: "_revelance desc, base_poi_score desc", "location.country,location.state_province,location.city,name".
 
 ### GET
 
