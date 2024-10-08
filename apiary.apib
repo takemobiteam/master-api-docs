@@ -6903,6 +6903,8 @@ Saves context to a collection. If the user is in a context where a collection is
 + `vendor_id`: `FLIGHT_AAL` (string, optional) - a unique identifier for the vendor that provided the booking. It will be used to map to available booking detail APIs from this vendor for lookup.
 + `vendor_name`: `American Airlines` (string, optional) - the name for the vendor that provided the booking.
 + `traveler_information` (TravelerInformation, optional) - the traveler information associated with this booking.
++ `cancelled` (boolean, optional) - a status flag indicating if the booking has been cancelled.
++ `modified` (boolean, optional) - a status flag indicating if the booking has been modified.
 
 ### POIDomain
 + destination: `Los Angeles, CA` (string, required) - the name of the destination metro that these POIs belond to.
